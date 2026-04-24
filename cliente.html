@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Área do Cliente — Barbearia Planos</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .cliente-layout { display: flex; min-height: 100vh; }
+    .cliente-sidebar { width: 260px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 24px; position: fixed; height: 100vh; }
+    .cliente-main { flex: 1; margin-left: 260px; padding: 24px 32px; }
+    .cliente-avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #0a0a0f; font-weight: 700; margin-bottom: 12px; }
+    .cliente-menu { margin-top: 32px; }
+    .cliente-menu a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); color: var(--text-secondary); margin-bottom: 4px; transition: var(--transition); }
+    .cliente-menu a:hover, .cliente-menu a.active { background: var(--bg-hover); color: var(--text-primary); }
+    .cliente-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; }
+    .assinatura-box { text-align: center; padding: 40px 24px; }
+    .assinatura-box .price { font-size: 2.5rem; color: var(--accent); font-weight: 800; font-family: 'Playfair Display', serif; }
+    .agendamentos-list { display: flex; flex-direction: column; gap: 12px; }
+    .agendamento-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+    .planos-cliente { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .plano-cliente-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; text-align: center; transition: var(--transition); }
+    .plano-cliente-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: var(--shadow); }
+    .plano-cliente-card .price { font-size: 2rem; color: var(--accent); font-weight: 800; font-family: 'Playfair Display', serif; margin: 12px 0; }
+    .plano-cliente-card ul { list-style: none; margin: 16px 0; text-align: left; }
+    .plano-cliente-card li { padding: 6px 0; color: var(--text-secondary); font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+    .plano-cliente-card li::before { content: '✓'; color: var(--success); font-weight: 700; }
+    .cortes-progress { margin-top: 16px; }
+    .cortes-progress .progress-bar { height: 10px; }
+  </style>
+</head>
+<body>
+  <div class="cliente-layout">
+    <aside class="cliente-sidebar">
+      <div class="cliente-avatar" id="cliAvatar">C</div>
+      <div style="font-weight:700;" id="cliNome">Cliente</div>
+      <div class="text-muted" style="font-size:0.8rem;" id="cliEmail">email</div>
+      <nav class="cliente-menu">
+        <a href="#" class="active" onclick="mostrarSecao('visao');return false;" data-tooltip="Visão geral da sua conta"><i class="fas fa-home"></i> Visão Geral</a>
+        <a href="#" onclick="mostrarSecao('assinar');return false;" data-tooltip="Ver planos de assinatura"><i class="fas fa-id-card"></i> Assinar Plano</a>
+        <a href="#" onclick="mostrarSecao('agendar');return false;" data-tooltip="Agendar novo horário"><i class="fas fa-calendar-plus"></i> Novo Agendamento</a>
+        <a href="#" onclick="sair();return false;" data-tooltip="Sair da conta"><i class="fas fa-sign-out-alt"></i> Sair</a>
+      </nav>
+    </aside>
+    <main class="cliente-main">
+      <div class="topbar" style="margin-bottom:24px;">
+        <div class="page-title"><h1>Área do Cliente</h1><p>Seus agendamentos e assinatura</p></div>
+      </div>
+
+      <section id="sec-visao">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div class="cliente-card">
+            <h3 style="margin-bottom:12px;"><i class="fas fa-id-card" style="color:var(--accent);"></i> Sua Assinatura</h3>
+            <div id="boxAssinatura">
+              <p class="text-muted">Você não possui uma assinatura ativa.</p>
+            </div>
+          </div>
+          <div class="cliente-card">
+            <h3 style="margin-bottom:12px;"><i class="fas fa-calendar-alt" style="color:var(--accent);"></i> Próximo Agendamento</h3>
+            <div id="boxProximo"><p class="text-muted">Nenhum agendamento próximo.</p></div>
+          </div>
+        </div>
+
+        <div class="cliente-card mt-4">
+          <h3 style="margin-bottom:16px;"><i class="fas fa-history" style="color:var(--accent);"></i> Histórico de Agendamentos</h3>
+          <div class="agendamentos-list" id="listaAgendamentos"><p class="text-muted">Nenhum agendamento.</p></div>
+        </div>
+      </section>
+
+      <section id="sec-assinar" style="display:none;">
+        <h2 style="margin-bottom:20px;text-align:center;">Escolha seu Plano</h2>
+        <div class="planos-cliente" id="planosCliente"></div>
+      </section>
+
+      <section id="sec-agendar" style="display:none;">
+        <div class="cliente-card" style="max-width:560px;margin:0 auto;">
+          <h3 style="margin-bottom:16px;">Novo Agendamento</h3>
+          <form id="formAgendarCliente">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div class="form-group"><label>Data</label><input type="date" id="acData" required data-tooltip="Escolha uma data a partir de hoje"></div>
+              <div class="form-group"><label>Horário</label><input type="time" id="acHora" required data-tooltip="Horário do atendimento"></div>
+            </div>
+            <div class="form-group"><label>Serviço</label><select id="acServico" required data-tooltip="Serviço desejado"></select></div>
+            <div class="form-group"><label>Barbeiro (opcional)</label><select id="acBarbeiro" data-tooltip="Escolha um barbeiro específico"><option value="">Qualquer</option></select></div>
+            <button type="submit" class="btn btn-primary w-full" data-tooltip="Confirmar agendamento"><i class="fas fa-calendar-check"></i> Agendar</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script>
+    DB.seed();
+    const sessao = DB.getSession();
+    if (!sessao || sessao.tipo !== 'cliente') { window.location.href = 'login.html'; }
+    const user = DB.getUser(sessao?.userId);
+    const barbearia = user ? DB.getBarbearia(user.barbeariaId) : null;
+    if (!user) { window.location.href = 'login.html'; }
+
+    document.getElementById('cliNome').textContent = user.nome;
+    document.getElementById('cliEmail').textContent = user.email;
+    document.getElementById('cliAvatar').textContent = user.nome.charAt(0).toUpperCase();
+
+    function hoje() { return new Date().toISOString().split('T')[0]; }
+
+    const servicos = DB.getServicos(barbearia.id);
+    const colaboradores = DB.getColaboradores(barbearia.id);
+    const planos = DB.getPlanos(barbearia.id);
+    const selS = document.getElementById('acServico');
+    servicos.forEach(s => { const o = document.createElement('option'); o.value = s.id; o.textContent = s.nome; selS.appendChild(o); });
+    const selB = document.getElementById('acBarbeiro');
+    colaboradores.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.nome; selB.appendChild(o); });
+    document.getElementById('acData').min = hoje();
+
+    function renderCliente() {
+      // Assinatura
+      const ass = DB.getAssinaturas(barbearia.id).find(a => a.clienteId === user.id);
+      const boxAss = document.getElementById('boxAssinatura');
+      if (ass && ass.status === 'ativa') {
+        const plano = DB.getPlanos(barbearia.id).find(p => p.id === ass.planoId);
+        const cortes = DB.getCortesUsados(barbearia.id, user.id);
+        const cortesInclusos = plano?.cortesInclusos || 0;
+        const pct = cortesInclusos > 0 ? Math.min(100, Math.round((cortes.length / cortesInclusos) * 100)) : 0;
+        boxAss.innerHTML = `
+          <div class="assinatura-box">
+            <div style="font-size:1.1rem;font-weight:600;">${plano?.nome||'Plano'}</div>
+            <div class="price">R$ ${(parseFloat(plano?.preco)||0).toFixed(2).replace('.',',')}<span style="font-size:1rem;color:var(--text-muted);">/mês</span></div>
+            <div class="badge badge-success mt-4" data-tooltip="Sua assinatura está ativa"><i class="fas fa-check"></i> Ativa</div>
+            <div class="text-muted mt-4" style="font-size:0.85rem;" data-tooltip="Data da próxima cobrança">Próxima cobrança: ${ass.proximaCobranca||'-'}</div>
+            ${cortesInclusos !== 999 ? `
+            <div class="cortes-progress">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:0.8rem;">
+                <span>Cortes utilizados</span><span>${cortes.length} / ${cortesInclusos}</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:var(--${pct>=90?'danger':pct>=70?'warning':'success'});"></div></div>
+            </div>
+            ` : '<div class="text-muted mt-4" style="font-size:0.85rem;">Cortes ilimitados</div>'}
+          </div>
+        `;
+      } else {
+        boxAss.innerHTML = `
+          <p class="text-muted">Você não possui uma assinatura ativa.</p>
+          <button class="btn btn-primary btn-sm mt-4" onclick="mostrarSecao('assinar')" data-tooltip="Ver planos disponíveis"><i class="fas fa-id-card"></i> Assinar Agora</button>
+        `;
+      }
+
+      // Planos disponíveis
+      const planosEl = document.getElementById('planosCliente');
+      planosEl.innerHTML = planos.map(p => `
+        <div class="plano-cliente-card" data-tooltip="${p.descricao||''}">
+          <h3>${p.nome}</h3>
+          <div class="price">R$ ${(parseFloat(p.preco)||0).toFixed(2).replace('.',',')}<span style="font-size:1rem;color:var(--text-muted);">/mês</span></div>
+          <p class="text-muted" style="font-size:0.85rem;">${p.descricao||''}</p>
+          <ul>${(p.beneficios||[]).map(b => `<li>${b}</li>`).join('')}</ul>
+          <button class="btn btn-primary w-full" onclick="assinarPlano('${p.id}')" data-tooltip="Assinar plano ${p.nome}"><i class="fas fa-check"></i> Assinar</button>
+        </div>
+      `).join('');
+
+      // Agendamentos
+      const ags = DB.getAgendamentos(barbearia.id).filter(a => a.clienteId === user.id).sort((a,b)=>(b.data+b.horario).localeCompare(a.data+a.horario));
+      const lista = document.getElementById('listaAgendamentos');
+      const boxProx = document.getElementById('boxProximo');
+      if (ags.length === 0) {
+        lista.innerHTML = '<p class="text-muted">Nenhum agendamento.</p>';
+      } else {
+        lista.innerHTML = ags.map(a => {
+          const s = servicos.find(sv => sv.id === a.servicoId);
+          const b = colaboradores.find(co => co.id === a.colaboradorId);
+          return `<div class="agendamento-item" data-tooltip="Status: ${a.status||'agendado'}">
+            <div><strong>${a.data}</strong> às ${a.horario}<div class="text-muted" style="font-size:0.8rem;">${s?.nome||'Serviço'} • ${b?.nome||'Barbeiro'}</div></div>
+            <span class="badge badge-${a.status==='confirmado'?'success':a.status==='cancelado'?'danger':a.status==='concluido'?'success':'info'}">${a.status||'agendado'}</span>
+          </div>`;
+        }).join('');
+        const prox = ags.filter(a => a.data >= hoje()).sort((a,b)=>(a.data+a.horario).localeCompare(b.data+b.horario))[0];
+        if (prox) {
+          const s = servicos.find(sv => sv.id === prox.servicoId);
+          boxProx.innerHTML = `<div><strong>${prox.data}</strong> às ${prox.horario}<div class="text-muted" style="font-size:0.85rem;">${s?.nome||'Serviço'}</div></div>`;
+        } else {
+          boxProx.innerHTML = '<p class="text-muted">Nenhum agendamento próximo.</p>';
+        }
+      }
+    }
+
+    window.assinarPlano = function(planoId) {
+      const plano = planos.find(p => p.id === planoId);
+      if (!plano) return;
+      // Cancela assinatura anterior se houver
+      const antiga = DB.getAssinaturas(barbearia.id).find(a => a.clienteId === user.id);
+      if (antiga) DB.cancelarAssinatura(antiga.id);
+      const prox = new Date(); prox.setMonth(prox.getMonth() + 1);
+      const ass = DB.saveAssinatura({ barbeariaId: barbearia.id, clienteId: user.id, planoId, status: 'ativa', proximaCobranca: prox.toISOString().split('T')[0] });
+      DB.saveCobranca({ barbeariaId: barbearia.id, assinaturaId: ass.id, clienteId: user.id, valor: plano.preco, dataVencimento: prox.toISOString().split('T')[0], status: 'pendente', metodo: 'Pix' });
+      alert(`Parabéns! Você assinou o plano ${plano.nome}.`);
+      renderCliente();
+      mostrarSecao('visao');
+    };
+
+    window.mostrarSecao = function(sec) {
+      document.getElementById('sec-visao').style.display = sec==='visao'?'block':'none';
+      document.getElementById('sec-assinar').style.display = sec==='assinar'?'block':'none';
+      document.getElementById('sec-agendar').style.display = sec==='agendar'?'block':'none';
+      document.querySelectorAll('.cliente-menu a').forEach(a => a.classList.toggle('active', a.getAttribute('onclick')?.includes(sec)));
+    };
+
+    window.sair = function() { DB.clearSession(); window.location.href = 'login.html'; };
+
+    document.getElementById('formAgendarCliente').addEventListener('submit', e => {
+      e.preventDefault();
+      DB.saveAgendamento({
+        barbeariaId: barbearia.id, clienteId: user.id,
+        data: document.getElementById('acData').value,
+        horario: document.getElementById('acHora').value,
+        servicoId: document.getElementById('acServico').value,
+        colaboradorId: document.getElementById('acBarbeiro').value || null,
+        status: 'agendado'
+      });
+      alert('Agendamento realizado!');
+      e.target.reset();
+      renderCliente();
+      mostrarSecao('visao');
+    });
+
+    renderCliente();
+  </script>
+</body>
+</html>

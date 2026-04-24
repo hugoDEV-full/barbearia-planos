@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo — Barbearia Planos</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-icon"><i class="fas fa-cut"></i></div>
+          <div>
+            <div class="sidebar-brand-text" id="brandName">Barbearia</div>
+            <div class="sidebar-brand-sub">Painel Admin</div>
+          </div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Principal</div>
+          <div class="nav-item active" data-tab="dashboard" data-tooltip="Dashboard com indicadores"><span class="nav-icon"><i class="fas fa-chart-line"></i></span> Visão Geral</div>
+          <div class="nav-item" data-tab="clientes" data-tooltip="Gerenciar clientes"><span class="nav-icon"><i class="fas fa-users"></i></span> Clientes</div>
+          <div class="nav-item" data-tab="assinaturas" data-tooltip="Planos, cobranças e cortes"><span class="nav-icon"><i class="fas fa-id-card"></i></span> Assinaturas</div>
+          <div class="nav-item" data-tab="agendamentos" data-tooltip="Controle de horários"><span class="nav-icon"><i class="fas fa-calendar-alt"></i></span> Agendamentos</div>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Gestão</div>
+          <div class="nav-item" data-tab="servicos" data-tooltip="Serviços oferecidos"><span class="nav-icon"><i class="fas fa-scissors"></i></span> Serviços</div>
+          <div class="nav-item" data-tab="colaboradores" data-tooltip="Equipe de barbeiros"><span class="nav-icon"><i class="fas fa-user-tie"></i></span> Colaboradores</div>
+          <div class="nav-item" data-tab="estoque" data-tooltip="Produtos e movimentações"><span class="nav-icon"><i class="fas fa-boxes"></i></span> Estoque</div>
+          <div class="nav-item" data-tab="financas" data-tooltip="Receitas e despesas"><span class="nav-icon"><i class="fas fa-dollar-sign"></i></span> Finanças</div>
+          <div class="nav-item" data-tab="relatorios" data-tooltip="Análises e métricas"><span class="nav-icon"><i class="fas fa-file-alt"></i></span> Relatórios</div>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Sistema</div>
+          <div class="nav-item" data-tab="config" data-tooltip="Configurações da barbearia"><span class="nav-icon"><i class="fas fa-cog"></i></span> Configurações</div>
+          <div class="nav-item" onclick="sair()" data-tooltip="Sair do sistema"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span> Sair</div>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">A</div>
+          <div>
+            <div class="user-name" id="userName">Admin</div>
+            <div class="user-role">Administrador</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="topbar">
+        <div class="page-title">
+          <h1 id="pageTitle">Visão Geral</h1>
+          <p id="pageSubtitle">Acompanhe os principais indicadores da sua barbearia</p>
+        </div>
+        <div class="topbar-actions">
+          <a href="#" id="publicLink" target="_blank" class="btn btn-secondary btn-sm" data-tooltip="Ver site público da barbearia"><i class="fas fa-external-link-alt"></i> Ver Site</a>
+          <button class="btn btn-primary btn-sm" onclick="abrirModal('agendamento')" data-tooltip="Criar novo agendamento"><i class="fas fa-plus"></i> Novo Agendamento</button>
+        </div>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div class="tab-content active" id="tab-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Faturamento do Mês</div>
+            <div class="stat-value" id="statFaturamento">R$ 0</div>
+            <div class="stat-change up"><i class="fas fa-arrow-up"></i> <span id="statFaturamentoChange">0%</span> vs mês anterior</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Clientes Ativos</div>
+            <div class="stat-value" id="statClientes">0</div>
+            <div class="stat-change up"><i class="fas fa-arrow-up"></i> <span id="statClientesChange">0</span> novos este mês</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Assinaturas Ativas</div>
+            <div class="stat-value" id="statAssinaturas">0</div>
+            <div class="stat-change up" id="statAssinaturasChangeWrap"><i class="fas fa-check"></i> <span id="statAssinaturasChange">0%</span> de retenção</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Agendamentos Hoje</div>
+            <div class="stat-value" id="statAgendamentosHoje">0</div>
+            <div class="stat-change" id="statAgendamentosChangeWrap"><i class="fas fa-calendar"></i> <span id="statAgendamentosChange">0</span> esta semana</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Faturamento dos Últimos 7 Dias</div>
+            </div>
+            <div class="bar-chart" id="chartFaturamento"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Próximos Agendamentos</div>
+            </div>
+            <div id="proximosAgendamentos" style="display:flex;flex-direction:column;gap:12px;">
+              <p class="text-muted text-center">Nenhum agendamento próximo.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header">
+            <div class="card-title">Alertas do Sistema</div>
+          </div>
+          <div id="alertasSistema" style="display:flex;flex-direction:column;gap:10px;">
+            <div class="badge badge-info"><i class="fas fa-info-circle"></i> Sistema funcionando normalmente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLIENTES -->
+      <div class="tab-content" id="tab-clientes">
+        <div class="flex-between mb-4">
+          <input type="text" id="searchClientes" placeholder="Buscar clientes..." style="max-width:320px;">
+          <button class="btn btn-primary btn-sm" onclick="abrirModal('cliente')"><i class="fas fa-plus"></i> Adicionar Cliente</button>
+        </div>
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr><th>Nome</th><th>Email</th><th>Telefone</th><th>Assinatura</th><th>Desde</th><th>Ações</th></tr>
+              </thead>
+              <tbody id="tabelaClientes"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ASSINATURAS -->
+      <div class="tab-content" id="tab-assinaturas">
+        <div class="flex-between mb-4">
+          <div class="tabs">
+            <div class="tab active" onclick="filtrarAssinaturas('ativas',this)">Ativas</div>
+            <div class="tab" onclick="filtrarAssinaturas('vencidas',this)">Vencidas</div>
+            <div class="tab" onclick="filtrarAssinaturas('canceladas',this)">Canceladas</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="abrirModal('assinatura')" data-tooltip="Criar nova assinatura para cliente"><i class="fas fa-plus"></i> Nova Assinatura</button>
+        </div>
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr><th>Cliente</th><th>Plano</th><th>Valor</th><th>Início</th><th>Renovação</th><th>Status</th><th>Cortes</th><th>Ações</th></tr>
+              </thead>
+              <tbody id="tabelaAssinaturas"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- AGENDAMENTOS -->
+      <div class="tab-content" id="tab-agendamentos">
+        <div class="flex-between mb-4">
+          <input type="date" id="dataAgendamentoFiltro" style="max-width:180px;">
+          <button class="btn btn-primary btn-sm" onclick="abrirModal('agendamento')"><i class="fas fa-plus"></i> Novo Agendamento</button>
+        </div>
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr><th>Data</th><th>Horário</th><th>Cliente</th><th>Serviço</th><th>Barbeiro</th><th>Status</th><th>Ações</th></tr>
+              </thead>
+              <tbody id="tabelaAgendamentos"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SERVIÇOS -->
+      <div class="tab-content" id="tab-servicos">
+        <div class="flex-between mb-4">
+          <h3 style="font-size:1.1rem;">Serviços Oferecidos</h3>
+          <button class="btn btn-primary btn-sm" onclick="abrirModal('servico')"><i class="fas fa-plus"></i> Novo Serviço</button>
+        </div>
+        <div class="services-grid" id="gridServicos"></div>
+      </div>
+
+      <!-- COLABORADORES -->
+      <div class="tab-content" id="tab-colaboradores">
+        <div class="flex-between mb-4">
+          <h3 style="font-size:1.1rem;">Equipe</h3>
+          <button class="btn btn-primary btn-sm" onclick="abrirModal('colaborador')"><i class="fas fa-plus"></i> Novo Colaborador</button>
+        </div>
+        <div class="team-grid" id="gridColaboradores"></div>
+      </div>
+
+      <!-- ESTOQUE -->
+      <div class="tab-content" id="tab-estoque">
+        <div class="flex-between mb-4">
+          <input type="text" id="searchEstoque" placeholder="Buscar produtos..." style="max-width:320px;">
+          <div class="flex gap-2">
+            <button class="btn btn-secondary btn-sm" onclick="abrirModal('movimentacao')"><i class="fas fa-exchange-alt"></i> Movimentar</button>
+            <button class="btn btn-primary btn-sm" onclick="abrirModal('produto')"><i class="fas fa-plus"></i> Novo Produto</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr><th>Produto</th><th>Categoria</th><th>Qtd</th><th>Mínimo</th><th>Custo</th><th>Venda</th><th>Status</th><th>Ações</th></tr>
+              </thead>
+              <tbody id="tabelaEstoque"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card mt-4">
+          <div class="card-header"><div class="card-title">Últimas Movimentações</div></div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Qtd</th><th>Motivo</th></tr>
+              </thead>
+              <tbody id="tabelaMovimentacoes"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- FINANÇAS -->
+      <div class="tab-content" id="tab-financas">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">Receitas (Mês)</div><div class="stat-value text-success" id="finReceitas">R$ 0</div></div>
+          <div class="stat-card"><div class="stat-label">Despesas (Mês)</div><div class="stat-value text-danger" id="finDespesas">R$ 0</div></div>
+          <div class="stat-card"><div class="stat-label">Lucro Líquido</div><div class="stat-value" id="finLucro">R$ 0</div></div>
+          <div class="stat-card"><div class="stat-label">Ticket Médio</div><div class="stat-value" id="finTicket">R$ 0</div></div>
+        </div>
+        <div class="flex-between mb-4">
+          <div class="tabs">
+            <div class="tab active" onclick="filtrarFinancas('todos',this)">Todas</div>
+            <div class="tab" onclick="filtrarFinancas('receita',this)">Receitas</div>
+            <div class="tab" onclick="filtrarFinancas('despesa',this)">Despesas</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="abrirModal('transacao')"><i class="fas fa-plus"></i> Lançar</button>
+        </div>
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr><th>Data</th><th>Tipo</th><th>Categoria</th><th>Descrição</th><th>Valor</th><th>Ações</th></tr>
+              </thead>
+              <tbody id="tabelaFinancas"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- RELATÓRIOS -->
+      <div class="tab-content" id="tab-relatorios">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">Taxa de Ocupação</div><div class="stat-value" id="relOcupacao">0%</div><div class="progress-bar mt-4"><div class="progress-fill" id="relOcupacaoBar" style="width:0%"></div></div></div>
+          <div class="stat-card"><div class="stat-label">Clientes Recorrentes</div><div class="stat-value" id="relRecorrentes">0%</div></div>
+          <div class="stat-card"><div class="stat-label">Serviço Mais Popular</div><div class="stat-value" style="font-size:1.4rem;" id="relTopServico">-</div></div>
+          <div class="stat-card"><div class="stat-label">Produtos em Alerta</div><div class="stat-value text-warning" id="relAlertas">0</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Faturamento por Categoria</div></div>
+            <div id="chartCategorias" style="display:flex;flex-direction:column;gap:10px;padding:10px 0;"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Evolução Mensal</div></div>
+            <div class="bar-chart" id="chartMensal" style="height:180px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONFIGURAÇÕES -->
+      <div class="tab-content" id="tab-config">
+        <div class="card" style="max-width:700px;">
+          <div class="card-header"><div class="card-title">Configurações da Barbearia</div></div>
+          <form id="configForm" style="display:grid;gap:16px;">
+            <div class="form-group">
+              <label>Nome</label>
+              <input type="text" id="cfgNome">
+            </div>
+            <div class="form-group">
+              <label>Slogan</label>
+              <input type="text" id="cfgSlogan">
+            </div>
+            <div class="form-group">
+              <label>Descrição</label>
+              <textarea id="cfgDescricao" rows="3"></textarea>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div class="form-group"><label>Telefone</label><input type="text" id="cfgTelefone"></div>
+              <div class="form-group"><label>Email</label><input type="email" id="cfgEmail"></div>
+            </div>
+            <div class="form-group">
+              <label>Endereço</label>
+              <input type="text" id="cfgEndereco">
+            </div>
+            <div class="form-group">
+              <label>Instagram</label>
+              <input type="text" id="cfgInstagram">
+            </div>
+            <div class="form-group">
+              <label>Cor Primária</label>
+              <input type="color" id="cfgCor" style="height:44px;padding:4px;">
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Salvar Alterações</button>
+          </form>
+          <hr style="border-color:var(--border);margin:24px 0;">
+          <button class="btn btn-danger btn-sm" onclick="if(confirm('Isso apagará TODOS os dados. Tem certeza?')){DB.reset();alert('Dados resetados.');window.location.reload();}"><i class="fas fa-trash"></i> Resetar Todos os Dados</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAIS -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Título</h3>
+        <button class="modal-close" onclick="fecharModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer" id="modalFooter">
+        <button class="btn btn-secondary btn-sm" onclick="fecharModal()">Cancelar</button>
+        <button class="btn btn-primary btn-sm" id="modalConfirm">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

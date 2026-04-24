@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barbearia Planos — Sistema de Assinaturas para Barbearias</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <nav class="public-header">
+    <div class="public-logo">
+      <div class="sidebar-brand-icon"><i class="fas fa-cut"></i></div>
+      <div>
+        <div class="sidebar-brand-text">Barbearia Planos</div>
+      </div>
+    </div>
+    <div class="public-nav">
+      <a href="#recursos" data-tooltip="Conheça os recursos">Recursos</a>
+      <a href="#planos" data-tooltip="Planos da plataforma">Planos</a>
+      <a href="login.html" data-tooltip="Acessar painel administrativo">Entrar</a>
+      <a href="setup.html" class="btn btn-primary btn-sm" data-tooltip="Criar sua barbearia grátis">Começar Grátis</a>
+    </div>
+  </nav>
+
+  <section class="landing-hero">
+    <div class="landing-hero-content">
+      <h1>Assinaturas para sua <span>Barbearia</span></h1>
+      <p>Gerencie clientes, agendamentos, estoque, finanças e crie planos de assinatura recorrente. Tudo em uma plataforma profissional e gratuita para hospedar no Netlify.</p>
+      <div class="landing-hero-buttons">
+        <a href="setup.html" class="btn btn-primary" data-tooltip="Crie sua barbearia em segundos"><i class="fas fa-rocket"></i> Criar Minha Barbearia</a>
+        <a href="login.html" class="btn btn-secondary" data-tooltip="Acesse o painel administrativo"><i class="fas fa-sign-in-alt"></i> Acessar Painel</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-features" id="recursos">
+    <div class="section-header">
+      <h2>Tudo que sua barbearia precisa</h2>
+      <p>Controle total do seu negócio em um só lugar. Simule, gerencie e escale.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">💳</div>
+        <h3>Planos de Assinatura</h3>
+        <p>Crie planos personalizados com cortes ilimitados, combos e benefícios exclusivos para seus clientes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <h3>Agendamentos Inteligentes</h3>
+        <p>Controle de horários, disponibilidade de barbeiros e confirmação automática de atendimentos.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <h3>Controle de Estoque</h3>
+        <p>Gerencie produtos, entrada e saída de mercadoria, alertas de reposição e contagem em tempo real.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Finanças & Fluxo de Caixa</h3>
+        <p>Lance receitas e despesas, acompanhe o lucro diário e visualize gráficos de desempenho financeiro.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Relatórios Completos</h3>
+        <p>Dashboard com métricas de faturamento, clientes ativos, taxa de ocupação e produtos mais vendidos.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3>Site Personalizado</h3>
+        <p>Cada barbearia tem sua página pública com marca, serviços, equipe e link direto para agendamento.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-plans" id="planos">
+    <div class="section-header">
+      <h2>Planos da Plataforma</h2>
+      <p>Escolha o melhor para o tamanho do seu negócio. (Simulado — tudo funciona no Grátis)</p>
+    </div>
+    <div class="plans-grid">
+      <div class="plan-card">
+        <div class="plan-name">Grátis</div>
+        <div class="plan-price">R$ 0 <span>/mês</span></div>
+        <ul class="plan-features">
+          <li>1 barbearia</li>
+          <li>Até 50 clientes</li>
+          <li>Agendamentos</li>
+          <li>Controle de estoque</li>
+          <li>Relatórios básicos</li>
+        </ul>
+        <a href="setup.html" class="btn btn-secondary w-full">Começar</a>
+      </div>
+      <div class="plan-card featured">
+        <div class="plan-badge">MAIS POPULAR</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">R$ 49 <span>/mês</span></div>
+        <ul class="plan-features">
+          <li>Tudo do Grátis</li>
+          <li>Clientes ilimitados</li>
+          <li>Múltiplos barbeiros</li>
+          <li>Relatórios avançados</li>
+          <li>Personalização completa</li>
+        </ul>
+        <a href="setup.html" class="btn btn-primary w-full">Assinar (Simulado)</a>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">Franquia</div>
+        <div class="plan-price">R$ 149 <span>/mês</span></div>
+        <ul class="plan-features">
+          <li>Tudo do Pro</li>
+          <li>Múltiplas unidades</li>
+          <li>Gestão de franqueados</li>
+          <li>API de integração</li>
+          <li>Suporte prioritário</li>
+        </ul>
+        <a href="setup.html" class="btn btn-secondary w-full">Contato (Simulado)</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    <p>Barbearia Planos — Sistema de Gestão para Barbearias. Criado para rodar no Netlify.</p>
+    <p class="mt-4 text-muted">Dados simulados com localStorage. Nenhum backend necessário.</p>
+  </footer>
+
+  <script src="js/storage.js"></script>
+  <script>
+    // Seed inicial se necessário
+    DB.seed();
+  </script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barbearia</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .public-hero { padding: 80px 40px; text-align: center; background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); }
+    .public-hero h1 { font-size: 2.8rem; margin-bottom: 8px; }
+    .public-hero .slogan { color: var(--accent); font-size: 1.1rem; margin-bottom: 16px; }
+    .public-hero p { color: var(--text-secondary); max-width: 600px; margin: 0 auto 32px; }
+    .public-section { padding: 60px 40px; max-width: 1100px; margin: 0 auto; }
+    .public-section h2 { text-align: center; margin-bottom: 40px; font-size: 2rem; }
+    .plans-public { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+    .plan-public-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 24px; text-align: center; transition: var(--transition); }
+    .plan-public-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: var(--shadow); }
+    .plan-public-card h3 { font-size: 1.3rem; margin-bottom: 8px; }
+    .plan-public-card .price { font-size: 2.2rem; color: var(--accent); font-weight: 800; font-family: 'Playfair Display', serif; margin: 12px 0; }
+    .plan-public-card ul { list-style: none; margin: 20px 0; text-align: left; }
+    .plan-public-card li { padding: 6px 0; color: var(--text-secondary); font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+    .plan-public-card li::before { content: '✓'; color: var(--success); font-weight: 700; }
+    .agendar-box { max-width: 520px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
+    .horarios-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 16px; }
+    .horario-item { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; text-align: center; font-size: 0.85rem; }
+    .horario-item.fechado { opacity: 0.5; }
+    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center; }
+    .contact-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+    .contact-item i { font-size: 1.5rem; color: var(--accent); margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <nav class="public-header">
+    <div class="public-logo">
+      <div class="sidebar-brand-icon" data-tooltip="Logo da barbearia"><i class="fas fa-cut"></i></div>
+      <div>
+        <div class="sidebar-brand-text" id="pubNome">Barbearia</div>
+      </div>
+    </div>
+    <div class="public-nav">
+      <a href="#servicos" data-tooltip="Conheça nossos serviços">Serviços</a>
+      <a href="#planos" data-tooltip="Planos de assinatura">Planos</a>
+      <a href="#equipe" data-tooltip="Nossa equipe">Equipe</a>
+      <a href="#agendar" data-tooltip="Agende seu horário">Agendar</a>
+      <a href="login.html" data-tooltip="Acessar conta">Entrar</a>
+    </div>
+  </nav>
+
+  <section class="public-hero">
+    <h1 id="heroNome">Barbearia</h1>
+    <div class="slogan" id="heroSlogan">Slogan</div>
+    <p id="heroDesc">Descrição</p>
+    <a href="#agendar" class="btn btn-primary" data-tooltip="Clique para agendar"><i class="fas fa-calendar-check"></i> Agendar Horário</a>
+  </section>
+
+  <section class="public-section" id="servicos">
+    <h2>Nossos Serviços</h2>
+    <div class="services-grid" id="pubServicos"></div>
+  </section>
+
+  <section class="public-section" id="planos" style="background: var(--bg-secondary); border-radius: var(--radius); margin: 20px auto;">
+    <h2>Planos de Assinatura</h2>
+    <div class="plans-public" id="pubPlanos"></div>
+  </section>
+
+  <section class="public-section" id="equipe">
+    <h2>Nossa Equipe</h2>
+    <div class="team-grid" id="pubEquipe"></div>
+  </section>
+
+  <section class="public-section" id="agendar">
+    <h2>Agendar Horário</h2>
+    <div class="agendar-box">
+      <form id="agendarForm">
+        <div class="form-group">
+          <label>Nome</label>
+          <input type="text" id="agNome" placeholder="Seu nome" required data-tooltip="Digite seu nome completo">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="agEmail" placeholder="seu@email.com" required data-tooltip="Email para confirmar o agendamento">
+        </div>
+        <div class="form-group">
+          <label>Telefone</label>
+          <input type="text" id="agTel" placeholder="(11) 99999-9999" data-tooltip="Telefone com DDD">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="form-group"><label>Data</label><input type="date" id="agData" required data-tooltip="Escolha uma data"></div>
+          <div class="form-group"><label>Horário</label><input type="time" id="agHora" required data-tooltip="Horário desejado"></div>
+        </div>
+        <div class="form-group">
+          <label>Serviço</label>
+          <select id="agServico" required data-tooltip="Escolha o serviço"></select>
+        </div>
+        <div class="form-group">
+          <label>Barbeiro (opcional)</label>
+          <select id="agBarbeiro" data-tooltip="Escolha um barbeiro específico"><option value="">Qualquer</option></select>
+        </div>
+        <button type="submit" class="btn btn-primary w-full" data-tooltip="Confirmar seu agendamento"><i class="fas fa-calendar-check"></i> Confirmar Agendamento</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="public-section" id="contato">
+    <h2>Contato & Horários</h2>
+    <div class="contact-grid">
+      <div class="contact-item" data-tooltip="Endereço da barbearia"><i class="fas fa-map-marker-alt"></i><div id="pubEndereco">-</div></div>
+      <div class="contact-item" data-tooltip="Telefone para contato"><i class="fas fa-phone"></i><div id="pubTelefone">-</div></div>
+      <div class="contact-item" data-tooltip="Email para contato"><i class="fas fa-envelope"></i><div id="pubEmail">-</div></div>
+      <div class="contact-item" data-tooltip="Instagram"><i class="fab fa-instagram"></i><div id="pubInstagram">-</div></div>
+    </div>
+    <div class="horarios-grid" id="pubHorarios"></div>
+  </section>
+
+  <footer class="landing-footer">
+    <p id="footerNome">Barbearia</p>
+    <p class="mt-4 text-muted">Powered by Barbearia Planos</p>
+  </footer>
+
+  <script src="js/storage.js"></script>
+  <script>
+    DB.seed();
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('slug') || 'vintage';
+    const barbearia = DB.getBarbeariaBySlug(slug);
+
+    if (!barbearia) {
+      document.body.innerHTML = '<div style="text-align:center;padding:100px 20px;"><h1>Barbearia não encontrada</h1><p><a href="index.html">Voltar ao início</a></p></div>';
+    } else {
+      document.title = barbearia.nome;
+      document.getElementById('pubNome').textContent = barbearia.nome;
+      document.getElementById('heroNome').textContent = barbearia.nome;
+      document.getElementById('heroSlogan').textContent = barbearia.slogan || '';
+      document.getElementById('heroDesc').textContent = barbearia.descricao || '';
+      document.getElementById('footerNome').textContent = barbearia.nome;
+      document.getElementById('pubEndereco').textContent = barbearia.endereco || '-';
+      document.getElementById('pubTelefone').textContent = barbearia.telefone || '-';
+      document.getElementById('pubEmail').textContent = barbearia.email || '-';
+      document.getElementById('pubInstagram').textContent = barbearia.instagram || '-';
+
+      // Serviços
+      const servicos = DB.getServicos(barbearia.id);
+      document.getElementById('pubServicos').innerHTML = servicos.map(s => `
+        <div class="service-card" data-tooltip="Duração: ${s.duracao||'-'} min">
+          <h3>${s.nome}</h3>
+          <p class="text-muted" style="font-size:0.85rem;">${s.descricao||''}</p>
+          <div class="price">R$ ${(parseFloat(s.preco)||0).toFixed(2).replace('.',',')}</div>
+          <div class="text-muted" style="font-size:0.8rem;">⏱ ${s.duracao||'-'} min</div>
+        </div>
+      `).join('');
+
+      // Planos
+      const planos = DB.getPlanos(barbearia.id);
+      document.getElementById('pubPlanos').innerHTML = planos.map(p => `
+        <div class="plan-public-card" data-tooltip="${p.descricao||''}">
+          <h3>${p.nome}</h3>
+          <div class="price">R$ ${(parseFloat(p.preco)||0).toFixed(2).replace('.',',')}<span style="font-size:1rem;color:var(--text-muted);">/mês</span></div>
+          <p class="text-muted" style="font-size:0.85rem;">${p.descricao||''}</p>
+          <ul>${(p.beneficios||[]).map(b => `<li>${b}</li>`).join('')}</ul>
+          <a href="login.html" class="btn btn-secondary w-full" data-tooltip="Faça login para assinar"><i class="fas fa-sign-in-alt"></i> Assinar (Login)</a>
+        </div>
+      `).join('');
+
+      // Equipe
+      const colaboradores = DB.getColaboradores(barbearia.id);
+      document.getElementById('pubEquipe').innerHTML = colaboradores.map(c => `
+        <div class="team-card" data-tooltip="Especialidade: ${c.especialidade||'Geral'}">
+          <div style="width:120px;height:120px;border-radius:50%;background:var(--bg-hover);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:2.5rem;color:var(--accent);">
+            <i class="fas fa-user-tie"></i>
+          </div>
+          <h4>${c.nome}</h4>
+          <p class="text-muted" style="font-size:0.85rem;">${c.especialidade||''}</p>
+        </div>
+      `).join('');
+
+      // Horários
+      const horario = barbearia.horarioFuncionamento || {};
+      const dias = {seg:'Segunda',ter:'Terça',qua:'Quarta',qui:'Quinta',sex:'Sexta',sab:'Sábado',dom:'Domingo'};
+      document.getElementById('pubHorarios').innerHTML = Object.entries(dias).map(([k,label]) => {
+        const h = horario[k] || 'fechado';
+        return `<div class="horario-item ${h==='fechado'?'fechado':''}" data-tooltip="Horário de ${label}"><strong>${label}</strong><div>${h==='fechado'?'Fechado':h}</div></div>`;
+      }).join('');
+
+      // Selects do agendamento
+      const selServico = document.getElementById('agServico');
+      servicos.forEach(s => { const o = document.createElement('option'); o.value = s.id; o.textContent = s.nome; selServico.appendChild(o); });
+      const selBarbeiro = document.getElementById('agBarbeiro');
+      colaboradores.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.nome; selBarbeiro.appendChild(o); });
+
+      // Data mínima = hoje
+      document.getElementById('agData').min = new Date().toISOString().split('T')[0];
+
+      document.getElementById('agendarForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const nome = document.getElementById('agNome').value.trim();
+        const email = document.getElementById('agEmail').value.trim();
+        const tel = document.getElementById('agTel').value.trim();
+        let cliente = DB.getUsers().find(u => u.email === email && u.barbeariaId === barbearia.id);
+        if (!cliente) {
+          cliente = DB.saveUser({ barbeariaId: barbearia.id, nome, email, telefone: tel, tipo: 'cliente', senha: '123456', avatar: '' });
+        }
+        DB.saveAgendamento({
+          barbeariaId: barbearia.id,
+          clienteId: cliente.id,
+          data: document.getElementById('agData').value,
+          horario: document.getElementById('agHora').value,
+          servicoId: document.getElementById('agServico').value,
+          colaboradorId: document.getElementById('agBarbeiro').value || null,
+          status: 'agendado'
+        });
+        alert('Agendamento realizado com sucesso! Faça login para acompanhar.');
+        e.target.reset();
+      });
+    }
+  </script>
+</body>
+</html>
