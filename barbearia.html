@@ -13,14 +13,22 @@
     .public-hero p { color: var(--text-secondary); max-width: 600px; margin: 0 auto 32px; }
     .public-section { padding: 60px 40px; max-width: 1100px; margin: 0 auto; }
     .public-section h2 { text-align: center; margin-bottom: 40px; font-size: 2rem; }
+    .service-category { margin-bottom: 40px; }
+    .service-category h3 { font-size: 1.2rem; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .service-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; text-align: center; transition: var(--transition); }
+    .service-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: var(--shadow); }
+    .service-card h3 { margin: 8px 0 4px; font-size: 1.05rem; }
+    .service-card .price { font-size: 1.4rem; color: var(--accent); font-weight: 700; margin: 10px 0; }
     .plans-public { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
-    .plan-public-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 24px; text-align: center; transition: var(--transition); }
+    .plan-public-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 24px; text-align: center; transition: var(--transition); position: relative; }
     .plan-public-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: var(--shadow); }
     .plan-public-card h3 { font-size: 1.3rem; margin-bottom: 8px; }
     .plan-public-card .price { font-size: 2.2rem; color: var(--accent); font-weight: 800; font-family: 'Playfair Display', serif; margin: 12px 0; }
     .plan-public-card ul { list-style: none; margin: 20px 0; text-align: left; }
     .plan-public-card li { padding: 6px 0; color: var(--text-secondary); font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
     .plan-public-card li::before { content: '✓'; color: var(--success); font-weight: 700; }
+    .plan-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #0a0a0f; padding: 4px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
     .agendar-box { max-width: 520px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
     .horarios-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 16px; }
     .horario-item { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; text-align: center; font-size: 0.85rem; }
@@ -28,6 +36,7 @@
     .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center; }
     .contact-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
     .contact-item i { font-size: 1.5rem; color: var(--accent); margin-bottom: 10px; }
+    .cat-icon { font-size: 1.5rem; }
   </style>
 </head>
 <body>
@@ -39,7 +48,7 @@
       </div>
     </div>
     <div class="public-nav">
-      <a href="#servicos" data-tooltip="Conheça nossos serviços">Serviços</a>
+      <a href="#servicos" data-tooltip="Nossos serviços">Serviços</a>
       <a href="#planos" data-tooltip="Planos de assinatura">Planos</a>
       <a href="#equipe" data-tooltip="Nossa equipe">Equipe</a>
       <a href="#agendar" data-tooltip="Agende seu horário">Agendar</a>
@@ -56,7 +65,7 @@
 
   <section class="public-section" id="servicos">
     <h2>Nossos Serviços</h2>
-    <div class="services-grid" id="pubServicos"></div>
+    <div id="servicosCategorias"></div>
   </section>
 
   <section class="public-section" id="planos" style="background: var(--bg-secondary); border-radius: var(--radius); margin: 20px auto;">
@@ -139,26 +148,61 @@
       document.getElementById('pubEmail').textContent = barbearia.email || '-';
       document.getElementById('pubInstagram').textContent = barbearia.instagram || '-';
 
-      // Serviços
+      // Serviços por categoria
       const servicos = DB.getServicos(barbearia.id);
-      document.getElementById('pubServicos').innerHTML = servicos.map(s => `
-        <div class="service-card" data-tooltip="Duração: ${s.duracao||'-'} min">
-          <h3>${s.nome}</h3>
-          <p class="text-muted" style="font-size:0.85rem;">${s.descricao||''}</p>
-          <div class="price">R$ ${(parseFloat(s.preco)||0).toFixed(2).replace('.',',')}</div>
-          <div class="text-muted" style="font-size:0.8rem;">⏱ ${s.duracao||'-'} min</div>
-        </div>
-      `).join('');
+      const categorias = {
+        'Cortes': [],
+        'Barba': [],
+        'Química': [],
+        'Combos': []
+      };
+      servicos.forEach(s => {
+        const nome = s.nome.toLowerCase();
+        if (nome.includes('corte') && !nome.includes('barba')) categorias['Cortes'].push(s);
+        else if (nome.includes('barba') || nome.includes('sobrancelha') || nome.includes('pigmentação')) categorias['Barba'].push(s);
+        else if (nome.includes('descoloração') || nome.includes('coloração') || nome.includes('luzes') || nome.includes('hidratação')) categorias['Química'].push(s);
+        else if (nome.includes('corte') && nome.includes('barba')) categorias['Combos'].push(s);
+        else categorias['Cortes'].push(s);
+      });
+      // Coloca corte+barba em combos
+      if (categorias['Cortes'].some(s => s.nome.includes('Barba'))) {
+        const combo = categorias['Cortes'].find(s => s.nome.includes('Barba'));
+        if (combo) {
+          categorias['Combos'].push(combo);
+          categorias['Cortes'] = categorias['Cortes'].filter(s => s.id !== combo.id);
+        }
+      }
+
+      const catIcones = { 'Cortes': 'fa-cut', 'Barba': 'fa-user', 'Química': 'fa-flask', 'Combos': 'fa-star' };
+      document.getElementById('servicosCategorias').innerHTML = Object.entries(categorias).map(([cat, lista]) => {
+        if (lista.length === 0) return '';
+        return `
+          <div class="service-category">
+            <h3><i class="fas ${catIcones[cat]||'fa-circle'} cat-icon"></i> ${cat}</h3>
+            <div class="services-grid">
+              ${lista.map(s => `
+                <div class="service-card" data-tooltip="Duração: ${s.duracao||'-'} min | ${s.descricao||''}">
+                  <h3>${s.nome}</h3>
+                  <p class="text-muted" style="font-size:0.8rem;">${s.descricao||''}</p>
+                  <div class="price">R$ ${(parseFloat(s.preco)||0).toFixed(2).replace('.',',')}</div>
+                  <div class="text-muted" style="font-size:0.75rem;">⏱ ${s.duracao||'-'} min</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
 
       // Planos
       const planos = DB.getPlanos(barbearia.id);
-      document.getElementById('pubPlanos').innerHTML = planos.map(p => `
+      document.getElementById('pubPlanos').innerHTML = planos.map((p, idx) => `
         <div class="plan-public-card" data-tooltip="${p.descricao||''}">
+          ${idx===2?'<div class="plan-badge">MAIS POPULAR</div>':''}
           <h3>${p.nome}</h3>
           <div class="price">R$ ${(parseFloat(p.preco)||0).toFixed(2).replace('.',',')}<span style="font-size:1rem;color:var(--text-muted);">/mês</span></div>
           <p class="text-muted" style="font-size:0.85rem;">${p.descricao||''}</p>
           <ul>${(p.beneficios||[]).map(b => `<li>${b}</li>`).join('')}</ul>
-          <a href="login.html" class="btn btn-secondary w-full" data-tooltip="Faça login para assinar"><i class="fas fa-sign-in-alt"></i> Assinar (Login)</a>
+          <a href="login.html" class="btn btn-${idx===2?'primary':'secondary'} w-full" data-tooltip="Faça login para assinar"><i class="fas fa-sign-in-alt"></i> Assinar (Login)</a>
         </div>
       `).join('');
 
@@ -188,7 +232,6 @@
       const selBarbeiro = document.getElementById('agBarbeiro');
       colaboradores.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.nome; selBarbeiro.appendChild(o); });
 
-      // Data mínima = hoje
       document.getElementById('agData').min = new Date().toISOString().split('T')[0];
 
       document.getElementById('agendarForm').addEventListener('submit', e => {

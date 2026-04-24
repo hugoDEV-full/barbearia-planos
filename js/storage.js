@@ -253,33 +253,43 @@ const DB = {
       createdAt: this._now(), updatedAt: this._now()
     }]);
 
-    // Planos
+    // Planos de assinatura realistas para barbearia
     this._set('planos', [
-      { id: this._uid(), barbeariaId, nome: 'Básico', descricao: '2 cortes por mês', preco: 59.90, cortesInclusos: 2, beneficios: ['2 cortes', '1 modelagem de barba'], ativo: true, createdAt: this._now() },
-      { id: this._uid(), barbeariaId, nome: 'Premium', descricao: 'Cortes ilimitados', preco: 119.90, cortesInclusos: 999, beneficios: ['Cortes ilimitados', 'Barba inclusa', '10% off produtos'], ativo: true, createdAt: this._now() },
-      { id: this._uid(), barbeariaId, nome: 'VIP', descricao: 'Experiência completa', preco: 199.90, cortesInclusos: 999, beneficios: ['Tudo do Premium', 'Bebida cortesia', 'Horário prioritário', '15% off produtos'], ativo: true, createdAt: this._now() }
+      { id: this._uid(), barbeariaId, nome: 'Corte Mensal', descricao: '1 corte por mês', preco: 49.90, cortesInclusos: 1, beneficios: ['1 corte à escolha', 'Consultoria de estilo'], ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Corte + Barba', descricao: '4 serviços por mês (corte + barba)', preco: 89.90, cortesInclusos: 4, beneficios: ['2 cortes', '2 barbas terapia', 'Sobrancelha inclusa'], ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Combo Premium', descricao: 'Cortes e barbas ilimitados', preco: 139.90, cortesInclusos: 999, beneficios: ['Cortes ilimitados', 'Barba terapia ilimitada', 'Sobrancelha inclusa', '10% off produtos'], ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'VIP Total', descricao: 'Experiência completa com química', preco: 199.90, cortesInclusos: 999, beneficios: ['Tudo do Premium', 'Descoloração/Pintura 1x/mês', 'Hidratação ilimitada', 'Bebida cortesia', 'Horário prioritário'], ativo: true, createdAt: this._now() }
     ]);
 
-    // Serviços
+    // Serviços realistas de barbearia
     this._set('servicos', [
-      { id: this._uid(), barbeariaId, nome: 'Corte de Cabelo', descricao: 'Corte tradicional ou moderno', preco: 45.00, duracao: 30, ativo: true, createdAt: this._now() },
-      { id: this._uid(), barbeariaId, nome: 'Barba', descricao: 'Modelagem completa com toalha quente', preco: 35.00, duracao: 25, ativo: true, createdAt: this._now() },
-      { id: this._uid(), barbeariaId, nome: 'Corte + Barba', descricao: 'Combo completo', preco: 70.00, duracao: 50, ativo: true, createdAt: this._now() },
-      { id: this._uid(), barbeariaId, nome: 'Tratamento Capilar', descricao: 'Hidratação e reconstrução', preco: 55.00, duracao: 40, ativo: true, createdAt: this._now() }
+      { id: this._uid(), barbeariaId, nome: 'Corte Degradê', descricao: 'Degradê navalhado, pezinho e acabamento', preco: 50.00, duracao: 40, ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Corte Social', descricao: 'Corte clássico ou moderno com tesoura/máquina', preco: 40.00, duracao: 30, ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Corte + Barba', descricao: 'Combo corte completo + barba terapia', preco: 80.00, duracao: 60, ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Barba Terapia', descricao: 'Modelagem com toalha quente, óleos e finalização', preco: 40.00, duracao: 30, ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Sobrancelha', descricao: 'Design e acabamento com linha ou pinça', preco: 20.00, duracao: 15, ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Hidratação Capilar', descricao: 'Hidratação profunda com máscaras especiais', preco: 55.00, duracao: 35, ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Descoloração / Platinado', descricao: 'Descoloração completa + tonalização platinada', preco: 180.00, duracao: 120, ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Coloração / Pintura', descricao: 'Coloração completa com tonalizante profissional', preco: 120.00, duracao: 90, ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Luzes / Mechas', descricao: 'Mechas ou luzes masculinas com acabamento', preco: 150.00, duracao: 100, ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Pigmentação em Barba', descricao: 'Pigmentação capilar para barba com efeito natural', preco: 60.00, duracao: 30, ativo: true, createdAt: this._now() }
     ]);
 
-    // Colaboradores
+    // Colaboradores com especialidades reais
     this._set('colaboradores', [
-      { id: this._uid(), barbeariaId, nome: 'João Silva', especialidade: 'Cortes clássicos', telefone: '(11) 98888-1111', ativo: true, createdAt: this._now() },
-      { id: this._uid(), barbeariaId, nome: 'Pedro Oliveira', especialidade: 'Barba e bigode', telefone: '(11) 98888-2222', ativo: true, createdAt: this._now() },
-      { id: this._uid(), barbeariaId, nome: 'Marcos Souza', especialidade: 'Degradê e designs', telefone: '(11) 98888-3333', ativo: true, createdAt: this._now() }
+      { id: this._uid(), barbeariaId, nome: 'João Silva', especialidade: 'Degradê, designs e cortes modernos', telefone: '(11) 98888-1111', ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Pedro Oliveira', especialidade: 'Barba terapia e pigmentação', telefone: '(11) 98888-2222', ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Marcos Souza', especialidade: 'Química, coloração e descoloração', telefone: '(11) 98888-3333', ativo: true, createdAt: this._now() }
     ]);
 
-    // Produtos / Estoque
+    // Produtos / Estoque de barbearia
     this._set('produtos', [
       { id: this._uid(), barbeariaId, nome: 'Pomada Modeladora', categoria: 'Finalização', quantidade: 12, precoCusto: 18.50, precoVenda: 39.90, minimo: 5, createdAt: this._now() },
       { id: this._uid(), barbeariaId, nome: 'Óleo para Barba', categoria: 'Barba', quantidade: 8, precoCusto: 22.00, precoVenda: 49.90, minimo: 5, createdAt: this._now() },
       { id: this._uid(), barbeariaId, nome: 'Shampoo Masculino', categoria: 'Higiene', quantidade: 15, precoCusto: 12.00, precoVenda: 29.90, minimo: 5, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Condicionador Masculino', categoria: 'Higiene', quantidade: 10, precoCusto: 14.00, precoVenda: 34.90, minimo: 5, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Pó Descolorante', categoria: 'Química', quantidade: 6, precoCusto: 35.00, precoVenda: 79.90, minimo: 3, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Tonalizante Coloração', categoria: 'Química', quantidade: 8, precoCusto: 18.00, precoVenda: 45.90, minimo: 3, createdAt: this._now() },
       { id: this._uid(), barbeariaId, nome: 'Navalha Profissional', categoria: 'Equipamento', quantidade: 3, precoCusto: 45.00, precoVenda: 89.90, minimo: 2, createdAt: this._now() },
       { id: this._uid(), barbeariaId, nome: 'Tesoura Fio Laser', categoria: 'Equipamento', quantidade: 4, precoCusto: 55.00, precoVenda: 119.90, minimo: 2, createdAt: this._now() }
     ]);
