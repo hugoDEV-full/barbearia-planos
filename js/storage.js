@@ -230,14 +230,15 @@ const DB = {
     const barbeariaId = this._uid();
     const barbearia = {
       id: barbeariaId,
-      nome: 'Barbearia Vintage',
+      nome: 'Hugo Barbearia',
       slug: 'vintage',
       slogan: 'Estilo clássico, atitude moderna',
-      descricao: 'A melhor experiência em cuidados masculinos desde 2015.',
-      endereco: 'Rua dos Barbeiros, 123 - Centro',
-      telefone: '(11) 99999-8888',
-      email: 'contato@vintagebarber.com',
-      instagram: '@vintagebarber',
+      descricao: 'A melhor experiência em cuidados masculinos. Cortes, barba, química e muito mais com Hugo Leonardo.',
+      endereco: 'Brasília - DF',
+      telefone: '(61) 98297-6481',
+      whatsapp: '5561982976481',
+      email: 'hugo.leonardo.jobs@gmail.com',
+      instagram: '@hugoleonardo',
       logo: '',
       corPrimaria: '#d4a853',
       horarioFuncionamento: { seg: '09:00-18:00', ter: '09:00-18:00', qua: '09:00-18:00', qui: '09:00-18:00', sex: '09:00-20:00', sab: '09:00-14:00', dom: 'fechado' },
@@ -248,8 +249,8 @@ const DB = {
     // Admin
     const adminId = this._uid();
     this._set('users', [{
-      id: adminId, barbeariaId, nome: 'Carlos Admin', email: 'admin@vintage.com',
-      senha: 'admin123', telefone: '(11) 99999-1111', tipo: 'admin', avatar: '',
+      id: adminId, barbeariaId, nome: 'Hugo Leonardo', email: 'hugo.leonardo.jobs@gmail.com',
+      senha: 'admin123', telefone: '(61) 98297-6481', tipo: 'admin', avatar: '',
       createdAt: this._now(), updatedAt: this._now()
     }]);
 
@@ -277,9 +278,9 @@ const DB = {
 
     // Colaboradores com especialidades reais
     this._set('colaboradores', [
-      { id: this._uid(), barbeariaId, nome: 'João Silva', especialidade: 'Degradê, designs e cortes modernos', telefone: '(11) 98888-1111', ativo: true, createdAt: this._now() },
-      { id: this._uid(), barbeariaId, nome: 'Pedro Oliveira', especialidade: 'Barba terapia e pigmentação', telefone: '(11) 98888-2222', ativo: true, createdAt: this._now() },
-      { id: this._uid(), barbeariaId, nome: 'Marcos Souza', especialidade: 'Química, coloração e descoloração', telefone: '(11) 98888-3333', ativo: true, createdAt: this._now() }
+      { id: this._uid(), barbeariaId, nome: 'Hugo Leonardo', especialidade: 'Degradê, designs e cortes modernos', telefone: '(61) 98297-6481', ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Pedro Oliveira', especialidade: 'Barba terapia e pigmentação', telefone: '(61) 99999-2222', ativo: true, createdAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Marcos Souza', especialidade: 'Química, coloração e descoloração', telefone: '(61) 99999-3333', ativo: true, createdAt: this._now() }
     ]);
 
     // Produtos / Estoque de barbearia
