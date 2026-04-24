@@ -7,19 +7,26 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    .public-hero { padding: 80px 40px; text-align: center; background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); }
-    .public-hero h1 { font-size: 2.8rem; margin-bottom: 8px; }
-    .public-hero .slogan { color: var(--accent); font-size: 1.1rem; margin-bottom: 16px; }
-    .public-hero p { color: var(--text-secondary); max-width: 600px; margin: 0 auto 32px; }
+    .public-hero-img {
+      position: relative;
+      padding: 120px 40px;
+      text-align: center;
+      background: linear-gradient(rgba(10,10,15,0.7), rgba(10,10,15,0.9)), url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1400&q=80') center/cover no-repeat;
+    }
+    .public-hero-img h1 { font-size: 3rem; margin-bottom: 8px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+    .public-hero-img .slogan { color: var(--accent); font-size: 1.2rem; margin-bottom: 16px; }
+    .public-hero-img p { color: var(--text-secondary); max-width: 600px; margin: 0 auto 32px; }
     .public-section { padding: 60px 40px; max-width: 1100px; margin: 0 auto; }
     .public-section h2 { text-align: center; margin-bottom: 40px; font-size: 2rem; }
     .service-category { margin-bottom: 40px; }
     .service-category h3 { font-size: 1.2rem; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
     .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-    .service-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; text-align: center; transition: var(--transition); }
+    .service-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: var(--transition); }
     .service-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: var(--shadow); }
-    .service-card h3 { margin: 8px 0 4px; font-size: 1.05rem; }
-    .service-card .price { font-size: 1.4rem; color: var(--accent); font-weight: 700; margin: 10px 0; }
+    .service-card img { width: 100%; height: 160px; object-fit: cover; border-bottom: 1px solid var(--border); }
+    .service-card-body { padding: 20px; text-align: center; }
+    .service-card h3 { margin: 0 0 4px; font-size: 1rem; }
+    .service-card .price { font-size: 1.3rem; color: var(--accent); font-weight: 700; margin: 8px 0; }
     .plans-public { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
     .plan-public-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 24px; text-align: center; transition: var(--transition); position: relative; }
     .plan-public-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: var(--shadow); }
@@ -36,6 +43,12 @@
     .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center; }
     .contact-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
     .contact-item i { font-size: 1.5rem; color: var(--accent); margin-bottom: 10px; }
+    .team-card img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); margin-bottom: 12px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .gallery-item { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); aspect-ratio: 4/3; position: relative; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+    .gallery-item:hover img { transform: scale(1.08); }
+    .gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); padding: 16px; font-size: 0.85rem; font-weight: 600; }
     .cat-icon { font-size: 1.5rem; }
   </style>
 </head>
@@ -49,6 +62,7 @@
     </div>
     <div class="public-nav">
       <a href="#servicos" data-tooltip="Nossos serviços">Serviços</a>
+      <a href="#galeria" data-tooltip="Galeria de fotos">Galeria</a>
       <a href="#planos" data-tooltip="Planos de assinatura">Planos</a>
       <a href="#equipe" data-tooltip="Nossa equipe">Equipe</a>
       <a href="#agendar" data-tooltip="Agende seu horário">Agendar</a>
@@ -56,7 +70,7 @@
     </div>
   </nav>
 
-  <section class="public-hero">
+  <section class="public-hero-img">
     <h1 id="heroNome">Barbearia</h1>
     <div class="slogan" id="heroSlogan">Slogan</div>
     <p id="heroDesc">Descrição</p>
@@ -68,7 +82,37 @@
     <div id="servicosCategorias"></div>
   </section>
 
-  <section class="public-section" id="planos" style="background: var(--bg-secondary); border-radius: var(--radius); margin: 20px auto;">
+  <section class="public-section" id="galeria" style="background: var(--bg-secondary); border-radius: var(--radius); max-width: 1100px; margin: 20px auto;">
+    <h2>Galeria</h2>
+    <div class="gallery-grid">
+      <div class="gallery-item" data-tooltip="Ambiente da barbearia">
+        <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&q=80" alt="Ambiente">
+        <div class="gallery-overlay">Ambiente</div>
+      </div>
+      <div class="gallery-item" data-tooltip="Corte degradê">
+        <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&q=80" alt="Corte">
+        <div class="gallery-overlay">Corte Degradê</div>
+      </div>
+      <div class="gallery-item" data-tooltip="Barba terapia">
+        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&q=80" alt="Barba">
+        <div class="gallery-overlay">Barba Terapia</div>
+      </div>
+      <div class="gallery-item" data-tooltip="Descoloração profissional">
+        <img src="https://images.unsplash.com/photo-1582095133179-bfd08e2fc6b3?w=600&q=80" alt="Química">
+        <div class="gallery-overlay">Química</div>
+      </div>
+      <div class="gallery-item" data-tooltip="Equipe trabalhando">
+        <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&q=80" alt="Equipe">
+        <div class="gallery-overlay">Equipe</div>
+      </div>
+      <div class="gallery-item" data-tooltip="Produtos profissionais">
+        <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&q=80" alt="Produtos">
+        <div class="gallery-overlay">Produtos</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="public-section" id="planos">
     <h2>Planos de Assinatura</h2>
     <div class="plans-public" id="pubPlanos"></div>
   </section>
@@ -148,30 +192,30 @@
       document.getElementById('pubEmail').textContent = barbearia.email || '-';
       document.getElementById('pubInstagram').textContent = barbearia.instagram || '-';
 
+      // Imagens por categoria de serviço
+      const imgMap = {
+        'Corte Degradê': 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=400&q=80',
+        'Corte Social': 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400&q=80',
+        'Corte + Barba': 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=400&q=80',
+        'Barba Terapia': 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&q=80',
+        'Sobrancelha': 'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=400&q=80',
+        'Hidratação Capilar': 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=400&q=80',
+        'Descoloração / Platinado': 'https://images.unsplash.com/photo-1582095133179-bfd08e2fc6b3?w=400&q=80',
+        'Coloração / Pintura': 'https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=400&q=80',
+        'Luzes / Mechas': 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&q=80',
+        'Pigmentação em Barba': 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=400&q=80'
+      };
+
       // Serviços por categoria
       const servicos = DB.getServicos(barbearia.id);
-      const categorias = {
-        'Cortes': [],
-        'Barba': [],
-        'Química': [],
-        'Combos': []
-      };
+      const categorias = { 'Cortes': [], 'Barba': [], 'Química': [], 'Combos': [] };
       servicos.forEach(s => {
         const nome = s.nome.toLowerCase();
-        if (nome.includes('corte') && !nome.includes('barba')) categorias['Cortes'].push(s);
+        if (nome.includes('corte') && nome.includes('barba')) categorias['Combos'].push(s);
+        else if (nome.includes('corte')) categorias['Cortes'].push(s);
         else if (nome.includes('barba') || nome.includes('sobrancelha') || nome.includes('pigmentação')) categorias['Barba'].push(s);
-        else if (nome.includes('descoloração') || nome.includes('coloração') || nome.includes('luzes') || nome.includes('hidratação')) categorias['Química'].push(s);
-        else if (nome.includes('corte') && nome.includes('barba')) categorias['Combos'].push(s);
-        else categorias['Cortes'].push(s);
+        else categorias['Química'].push(s);
       });
-      // Coloca corte+barba em combos
-      if (categorias['Cortes'].some(s => s.nome.includes('Barba'))) {
-        const combo = categorias['Cortes'].find(s => s.nome.includes('Barba'));
-        if (combo) {
-          categorias['Combos'].push(combo);
-          categorias['Cortes'] = categorias['Cortes'].filter(s => s.id !== combo.id);
-        }
-      }
 
       const catIcones = { 'Cortes': 'fa-cut', 'Barba': 'fa-user', 'Química': 'fa-flask', 'Combos': 'fa-star' };
       document.getElementById('servicosCategorias').innerHTML = Object.entries(categorias).map(([cat, lista]) => {
@@ -182,10 +226,13 @@
             <div class="services-grid">
               ${lista.map(s => `
                 <div class="service-card" data-tooltip="Duração: ${s.duracao||'-'} min | ${s.descricao||''}">
-                  <h3>${s.nome}</h3>
-                  <p class="text-muted" style="font-size:0.8rem;">${s.descricao||''}</p>
-                  <div class="price">R$ ${(parseFloat(s.preco)||0).toFixed(2).replace('.',',')}</div>
-                  <div class="text-muted" style="font-size:0.75rem;">⏱ ${s.duracao||'-'} min</div>
+                  <img src="${imgMap[s.nome]||'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=400&q=80'}" alt="${s.nome}">
+                  <div class="service-card-body">
+                    <h3>${s.nome}</h3>
+                    <p class="text-muted" style="font-size:0.8rem;">${s.descricao||''}</p>
+                    <div class="price">R$ ${(parseFloat(s.preco)||0).toFixed(2).replace('.',',')}</div>
+                    <div class="text-muted" style="font-size:0.75rem;">⏱ ${s.duracao||'-'} min</div>
+                  </div>
                 </div>
               `).join('')}
             </div>
@@ -206,13 +253,16 @@
         </div>
       `).join('');
 
-      // Equipe
+      // Equipe com fotos reais
       const colaboradores = DB.getColaboradores(barbearia.id);
-      document.getElementById('pubEquipe').innerHTML = colaboradores.map(c => `
+      const fotosBarbeiros = [
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80',
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&q=80',
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&q=80'
+      ];
+      document.getElementById('pubEquipe').innerHTML = colaboradores.map((c, i) => `
         <div class="team-card" data-tooltip="Especialidade: ${c.especialidade||'Geral'}">
-          <div style="width:120px;height:120px;border-radius:50%;background:var(--bg-hover);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:2.5rem;color:var(--accent);">
-            <i class="fas fa-user-tie"></i>
-          </div>
+          <img src="${fotosBarbeiros[i]||fotosBarbeiros[0]}" alt="${c.nome}">
           <h4>${c.nome}</h4>
           <p class="text-muted" style="font-size:0.85rem;">${c.especialidade||''}</p>
         </div>

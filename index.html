@@ -6,6 +6,21 @@
   <title>Barbearia Planos — Sistema de Assinaturas para Barbearias</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .hero-with-image { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+    .hero-image { border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-lg); border: 1px solid var(--border); }
+    .hero-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; max-width: 1200px; margin: 0 auto; }
+    .gallery-item { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); aspect-ratio: 4/3; position: relative; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+    .gallery-item:hover img { transform: scale(1.08); }
+    .gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); padding: 20px; font-size: 0.9rem; font-weight: 600; }
+    .feature-img { width: 100%; height: 160px; object-fit: cover; border-radius: var(--radius-sm); margin-bottom: 16px; border: 1px solid var(--border); }
+    @media (max-width: 768px) {
+      .hero-with-image { grid-template-columns: 1fr; }
+      .hero-image { order: -1; height: 280px; }
+    }
+  </style>
 </head>
 <body>
   <nav class="public-header">
@@ -17,6 +32,7 @@
     </div>
     <div class="public-nav">
       <a href="#recursos" data-tooltip="Conheça os recursos">Recursos</a>
+      <a href="#galeria" data-tooltip="Veja fotos">Galeria</a>
       <a href="#planos" data-tooltip="Planos da plataforma">Planos</a>
       <a href="login.html" data-tooltip="Acessar painel administrativo">Entrar</a>
       <a href="setup.html" class="btn btn-primary btn-sm" data-tooltip="Criar sua barbearia grátis">Começar Grátis</a>
@@ -24,12 +40,17 @@
   </nav>
 
   <section class="landing-hero">
-    <div class="landing-hero-content">
-      <h1>Assinaturas para sua <span>Barbearia</span></h1>
-      <p>Gerencie clientes, agendamentos, estoque, finanças e crie planos de assinatura recorrente. Tudo em uma plataforma profissional e gratuita para hospedar no Netlify.</p>
-      <div class="landing-hero-buttons">
-        <a href="setup.html" class="btn btn-primary" data-tooltip="Crie sua barbearia em segundos"><i class="fas fa-rocket"></i> Criar Minha Barbearia</a>
-        <a href="login.html" class="btn btn-secondary" data-tooltip="Acesse o painel administrativo"><i class="fas fa-sign-in-alt"></i> Acessar Painel</a>
+    <div class="hero-with-image">
+      <div class="landing-hero-content" style="padding:0;">
+        <h1>Assinaturas para sua <span>Barbearia</span></h1>
+        <p>Gerencie clientes, agendamentos, estoque, finanças e crie planos de assinatura recorrente. Tudo em uma plataforma profissional e gratuita para hospedar no Netlify.</p>
+        <div class="landing-hero-buttons">
+          <a href="setup.html" class="btn btn-primary" data-tooltip="Crie sua barbearia em segundos"><i class="fas fa-rocket"></i> Criar Minha Barbearia</a>
+          <a href="login.html" class="btn btn-secondary" data-tooltip="Acesse o painel administrativo"><i class="fas fa-sign-in-alt"></i> Acessar Painel</a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=800&q=80" alt="Barbearia" data-tooltip="Ambiente profissional de barbearia">
       </div>
     </div>
   </section>
@@ -41,34 +62,67 @@
     </div>
     <div class="features-grid">
       <div class="feature-card">
-        <div class="feature-icon">💳</div>
+        <img src="https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=400&q=80" class="feature-img" alt="Planos">
         <h3>Planos de Assinatura</h3>
         <p>Crie planos personalizados com cortes ilimitados, combos e benefícios exclusivos para seus clientes.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">📅</div>
+        <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=400&q=80" class="feature-img" alt="Agendamentos">
         <h3>Agendamentos Inteligentes</h3>
         <p>Controle de horários, disponibilidade de barbeiros e confirmação automática de atendimentos.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">📦</div>
+        <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=400&q=80" class="feature-img" alt="Estoque">
         <h3>Controle de Estoque</h3>
         <p>Gerencie produtos, entrada e saída de mercadoria, alertas de reposição e contagem em tempo real.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">💰</div>
+        <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&q=80" class="feature-img" alt="Finanças">
         <h3>Finanças & Fluxo de Caixa</h3>
         <p>Lance receitas e despesas, acompanhe o lucro diário e visualize gráficos de desempenho financeiro.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">📊</div>
+        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80" class="feature-img" alt="Relatórios">
         <h3>Relatórios Completos</h3>
         <p>Dashboard com métricas de faturamento, clientes ativos, taxa de ocupação e produtos mais vendidos.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🎨</div>
+        <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400&q=80" class="feature-img" alt="Site">
         <h3>Site Personalizado</h3>
         <p>Cada barbearia tem sua página pública com marca, serviços, equipe e link direto para agendamento.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="public-section" id="galeria" style="background: var(--bg-secondary);">
+    <div class="section-header">
+      <h2>Galeria</h2>
+      <p>Veja como sua barbearia pode ficar com um site profissional.</p>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item" data-tooltip="Ambiente de barbearia vintage">
+        <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&q=80" alt="Barbearia">
+        <div class="gallery-overlay">Ambiente Premium</div>
+      </div>
+      <div class="gallery-item" data-tooltip="Corte degradê profissional">
+        <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&q=80" alt="Corte">
+        <div class="gallery-overlay">Corte Degradê</div>
+      </div>
+      <div class="gallery-item" data-tooltip="Barba terapia com toalha quente">
+        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&q=80" alt="Barba">
+        <div class="gallery-overlay">Barba Terapia</div>
+      </div>
+      <div class="gallery-item" data-tooltip="Profissional em ação">
+        <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&q=80" alt="Barbeiro">
+        <div class="gallery-overlay">Equipe Especializada</div>
+      </div>
+      <div class="gallery-item" data-tooltip="Descoloração e platinado">
+        <img src="https://images.unsplash.com/photo-1582095133179-bfd08e2fc6b3?w=600&q=80" alt="Química">
+        <div class="gallery-overlay">Química Capilar</div>
+      </div>
+      <div class="gallery-item" data-tooltip="Produtos profissionais">
+        <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&q=80" alt="Produtos">
+        <div class="gallery-overlay">Produtos de Qualidade</div>
       </div>
     </div>
   </section>
@@ -126,7 +180,6 @@
 
   <script src="js/storage.js"></script>
   <script>
-    // Seed inicial se necessário
     DB.seed();
   </script>
 </body>
