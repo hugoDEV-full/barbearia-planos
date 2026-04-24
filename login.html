@@ -47,7 +47,7 @@
       const user = DB.getUsers().find(u => u.email === email && u.senha === senha);
       if (!user) { alert('Email ou senha incorretos.'); return; }
       DB.setSession({ userId: user.id, tipo: user.tipo, barbeariaId: user.barbeariaId });
-      window.location.href = user.tipo === 'admin' ? 'admin.html' : 'cliente.html';
+      window.location.href = user.tipo === 'admin' ? 'portal-admin.html' : 'cliente.html';
     });
   </script>
 </body>
