@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assinar Plano — Hugo Barbearia</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .checkout-page { max-width: 520px; margin: 60px auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px; }
+    .checkout-resumo { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px; margin-bottom: 24px; }
+    .checkout-resumo h3 { margin-bottom: 8px; }
+    .checkout-price { font-size: 2rem; color: var(--accent); font-weight: 800; font-family: 'Playfair Display', serif; }
+  </style>
+</head>
+<body class="auth-page">
+  <div class="auth-box" style="max-width:560px;">
+    <div class="auth-logo">
+      <div class="sidebar-brand-icon" style="margin:0 auto 12px;width:50px;height:50px;font-size:1.5rem;"><i class="fas fa-cut"></i></div>
+      <h1>Assinar Plano</h1>
+      <p>Preencha seus dados para ativar a assinatura</p>
+    </div>
+    <div class="checkout-resumo" id="resumo">
+      <h3 id="pNome">Plano</h3>
+      <p class="text-muted" id="pDesc">Descrição</p>
+      <div class="checkout-price" id="pPreco">R$ 0</div>
+    </div>
+    <div class="auth-card" style="padding:0;border:none;background:transparent;">
+      <form id="checkoutForm">
+        <div class="form-group"><label>Nome completo</label><input type="text" id="nome" required placeholder="Seu nome"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="email" required placeholder="seu@email.com"></div>
+        <div class="form-group"><label>Telefone</label><input type="text" id="tel" placeholder="(61) 99999-9999"></div>
+        <div class="form-group">
+          <label>Forma de pagamento (simulado)</label>
+          <select id="pagamento">
+            <option value="pix">Pix</option>
+            <option value="dinheiro">Dinheiro na barbearia</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary w-full"><i class="fas fa-check"></i> Confirmar Assinatura</button>
+      </form>
+    </div>
+    <div class="auth-footer">
+      <a href="planos.html">← Voltar aos planos</a>
+    </div>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script>
+    DB.seed();
+    const params = new URLSearchParams(window.location.search);
+    const planoId = params.get('plano');
+    const barbearia = DB.getBarbearias()[0];
+    const plano = DB.getPlanos(barbearia.id).find(p => p.id === planoId);
+    if (!plano) { alert('Plano não encontrado.'); window.location.href = 'planos.html'; }
+
+    document.getElementById('pNome').textContent = plano.nome;
+    document.getElementById('pDesc').textContent = plano.descricao || '';
+    document.getElementById('pPreco').textContent = 'R$ ' + (parseFloat(plano.preco)||0).toFixed(2).replace('.',',');
+
+    document.getElementById('checkoutForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      let cliente = DB.getUsers().find(u => u.email === email && u.barbeariaId === barbearia.id);
+      if (!cliente) {
+        cliente = DB.saveUser({ barbeariaId: barbearia.id, nome: document.getElementById('nome').value.trim(), email, telefone: document.getElementById('tel').value.trim(), tipo: 'cliente', senha: '123456', avatar: '' });
+      }
+      const antiga = DB.getAssinaturas(barbearia.id).find(a => a.clienteId === cliente.id);
+      if (antiga) DB.cancelarAssinatura(antiga.id);
+      const prox = new Date(); prox.setMonth(prox.getMonth() + 1);
+      const ass = DB.saveAssinatura({ barbeariaId: barbearia.id, clienteId: cliente.id, planoId: plano.id, status: 'ativa', proximaCobranca: prox.toISOString().split('T')[0] });
+      DB.saveCobranca({ barbeariaId: barbearia.id, assinaturaId: ass.id, clienteId: cliente.id, valor: plano.preco, dataVencimento: prox.toISOString().split('T')[0], status: 'pendente', metodo: document.getElementById('pagamento').value });
+      window.location.href = 'confirmacao.html?tipo=plano';
+    });
+  </script>
+</body>
+</html>

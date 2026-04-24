@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contato — Hugo Barbearia</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .page-header { background: linear-gradient(rgba(10,10,15,0.85), rgba(10,10,15,0.95)), url('https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=1400&q=80') center/cover; padding: 80px 40px; text-align: center; }
+    .page-header h1 { font-size: 2.4rem; }
+    .contact-page { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1000px; margin: 40px auto; align-items: start; }
+    .contact-info-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
+    .contact-info-item { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .contact-info-item i { font-size: 1.3rem; color: var(--accent); width: 28px; }
+    .contact-form-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
+    .map-box { max-width: 1000px; margin: 0 auto 60px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); height: 320px; background: var(--bg-card); display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+    @media (max-width: 768px) { .contact-page { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav class="public-header">
+    <div class="public-logo">
+      <div class="sidebar-brand-icon"><i class="fas fa-cut"></i></div>
+      <div><div class="sidebar-brand-text">Hugo Barbearia</div></div>
+    </div>
+    <div class="public-nav">
+      <a href="index.html">Início</a>
+      <a href="servicos.html">Serviços</a>
+      <a href="planos.html">Planos</a>
+      <a href="agendar.html">Agendar</a>
+      <a href="login.html">Área do Cliente</a>
+    </div>
+  </nav>
+
+  <section class="page-header">
+    <h1>Contato</h1>
+    <p class="text-muted">Fale com a gente pelo WhatsApp, email ou venha nos visitar.</p>
+  </section>
+
+  <div class="contact-page">
+    <div class="contact-info-box">
+      <h3 style="margin-bottom:20px;"><i class="fas fa-address-card" style="color:var(--accent);"></i> Informações</h3>
+      <div class="contact-info-item"><i class="fas fa-map-marker-alt"></i><div><strong>Endereço</strong><div class="text-muted" id="endereco">Brasília - DF</div></div></div>
+      <div class="contact-info-item"><i class="fab fa-whatsapp"></i><div><strong>WhatsApp</strong><div class="text-muted"><a href="https://wa.me/5561982976481" target="_blank" style="color:var(--accent);">(61) 98297-6481</a></div></div></div>
+      <div class="contact-info-item"><i class="fas fa-envelope"></i><div><strong>Email</strong><div class="text-muted"><a href="mailto:hugo.leonardo.jobs@gmail.com" style="color:var(--accent);">hugo.leonardo.jobs@gmail.com</a></div></div></div>
+      <div class="contact-info-item"><i class="fab fa-instagram"></i><div><strong>Instagram</strong><div class="text-muted" id="instagram">@hugoleonardo</div></div></div>
+      <div class="contact-info-item"><i class="fas fa-clock"></i><div><strong>Horário</strong><div class="text-muted">Seg a Sex: 09h às 18h | Sáb: 09h às 14h</div></div></div>
+    </div>
+    <div class="contact-form-box">
+      <h3 style="margin-bottom:20px;"><i class="fas fa-paper-plane" style="color:var(--accent);"></i> Envie uma mensagem</h3>
+      <form id="formContato">
+        <div class="form-group"><label>Nome</label><input type="text" id="cNome" required placeholder="Seu nome"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="cEmail" required placeholder="seu@email.com"></div>
+        <div class="form-group"><label>Assunto</label><input type="text" id="cAssunto" placeholder="Ex: Dúvida sobre planos"></div>
+        <div class="form-group"><label>Mensagem</label><textarea id="cMsg" rows="4" required placeholder="Sua mensagem..."></textarea></div>
+        <button type="submit" class="btn btn-primary w-full"><i class="fas fa-paper-plane"></i> Enviar Mensagem</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="map-box">
+    <div><i class="fas fa-map-marked-alt" style="font-size:2rem;color:var(--accent);margin-bottom:10px;display:block;text-align:center;"></i>Mapa será integrado aqui (Google Maps embed)</div>
+  </div>
+
+  <footer class="landing-footer">
+    <p>Hugo Barbearia — Brasília - DF</p>
+    <p class="mt-4 text-muted">WhatsApp: (61) 98297-6481 | hugo.leonardo.jobs@gmail.com</p>
+  </footer>
+
+  <script>
+    document.getElementById('formContato').addEventListener('submit', e => {
+      e.preventDefault();
+      alert('Mensagem enviada! Responderemos em breve pelo email ou WhatsApp.');
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>

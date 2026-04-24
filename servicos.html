@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serviços — Hugo Barbearia</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .page-header { background: linear-gradient(rgba(10,10,15,0.85), rgba(10,10,15,0.95)), url('https://images.unsplash.com/photo-1582095133179-bfd08e2fc6b3?w=1400&q=80') center/cover; padding: 80px 40px; text-align: center; }
+    .page-header h1 { font-size: 2.4rem; }
+    .service-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 900px; margin: 0 auto 40px; }
+    .service-detail-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; display: flex; gap: 20px; align-items: flex-start; }
+    .service-detail-card img { width: 100px; height: 100px; object-fit: cover; border-radius: var(--radius-sm); flex-shrink: 0; }
+    .service-detail-card h3 { margin-bottom: 6px; }
+    .service-detail-card .price { font-size: 1.3rem; color: var(--accent); font-weight: 700; }
+    @media (max-width: 768px) { .service-detail { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav class="public-header">
+    <div class="public-logo">
+      <div class="sidebar-brand-icon"><i class="fas fa-cut"></i></div>
+      <div><div class="sidebar-brand-text">Hugo Barbearia</div></div>
+    </div>
+    <div class="public-nav">
+      <a href="index.html">Início</a>
+      <a href="planos.html">Planos</a>
+      <a href="agendar.html">Agendar</a>
+      <a href="contato.html">Contato</a>
+      <a href="login.html">Área do Cliente</a>
+    </div>
+  </nav>
+
+  <section class="page-header">
+    <h1>Nossos Serviços</h1>
+    <p class="text-muted">Do corte clássico à química completa. Qualidade e estilo em cada detalhe.</p>
+  </section>
+
+  <section class="public-section" id="servicos" style="padding-top:40px;">
+    <div id="servicosCategorias"></div>
+  </section>
+
+  <section class="public-section" style="text-align:center; padding-bottom:80px;">
+    <a href="agendar.html" class="btn btn-primary btn-lg"><i class="fas fa-calendar-check"></i> Agendar Horário Agora</a>
+  </section>
+
+  <footer class="landing-footer">
+    <p>Hugo Barbearia — Brasília - DF</p>
+    <p class="mt-4 text-muted">WhatsApp: (61) 98297-6481 | hugo.leonardo.jobs@gmail.com</p>
+  </footer>
+
+  <script src="js/storage.js"></script>
+  <script>
+    DB.seed();
+    const barbearia = DB.getBarbearias()[0];
+    const imgMap = {
+      'Corte Degradê': 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=400&q=80',
+      'Corte Social': 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400&q=80',
+      'Corte + Barba': 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=400&q=80',
+      'Barba Terapia': 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&q=80',
+      'Sobrancelha': 'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=400&q=80',
+      'Hidratação Capilar': 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=400&q=80',
+      'Descoloração / Platinado': 'https://images.unsplash.com/photo-1582095133179-bfd08e2fc6b3?w=400&q=80',
+      'Coloração / Pintura': 'https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=400&q=80',
+      'Luzes / Mechas': 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&q=80',
+      'Pigmentação em Barba': 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=400&q=80'
+    };
+    const servicos = DB.getServicos(barbearia.id);
+    const categorias = { 'Cortes': [], 'Barba': [], 'Química': [], 'Combos': [] };
+    servicos.forEach(s => {
+      const nome = s.nome.toLowerCase();
+      if (nome.includes('corte') && nome.includes('barba')) categorias['Combos'].push(s);
+      else if (nome.includes('corte')) categorias['Cortes'].push(s);
+      else if (nome.includes('barba') || nome.includes('sobrancelha') || nome.includes('pigmentação')) categorias['Barba'].push(s);
+      else categorias['Química'].push(s);
+    });
+    const catIcones = { 'Cortes': 'fa-cut', 'Barba': 'fa-user', 'Química': 'fa-flask', 'Combos': 'fa-star' };
+    document.getElementById('servicosCategorias').innerHTML = Object.entries(categorias).map(([cat, lista]) => {
+      if (lista.length === 0) return '';
+      return `
+        <div style="margin-bottom:40px;">
+          <h3 style="font-size:1.2rem;color:var(--accent);margin-bottom:16px;"><i class="fas ${catIcones[cat]}"></i> ${cat}</h3>
+          <div class="service-detail">
+            ${lista.map(s => `
+              <div class="service-detail-card">
+                <img src="${imgMap[s.nome]||''}" alt="${s.nome}">
+                <div>
+                  <h3>${s.nome}</h3>
+                  <p class="text-muted" style="font-size:0.85rem;margin-bottom:8px;">${s.descricao||''}</p>
+                  <div class="price">R$ ${(parseFloat(s.preco)||0).toFixed(2).replace('.',',')}</div>
+                  <div class="text-muted" style="font-size:0.8rem;">⏱ ${s.duracao||'-'} min</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+  </script>
+</body>
+</html>

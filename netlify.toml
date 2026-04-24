@@ -2,7 +2,18 @@
   publish = "."
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "/admin/*"
+  to = "/admin.html"
   status = 200
   force = false
+
+[[redirects]]
+  from = "/cliente/*"
+  to = "/cliente.html"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
