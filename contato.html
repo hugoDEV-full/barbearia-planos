@@ -15,6 +15,18 @@
     .contact-info-item i { font-size: 1.3rem; color: var(--accent); width: 28px; }
     .contact-form-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
     .map-box { max-width: 1000px; margin: 0 auto 60px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); height: 320px; background: var(--bg-card); display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+    .sistema-section { background: var(--bg-secondary); padding: 80px 40px; }
+    .sistema-section h2 { text-align: center; font-size: 2.2rem; margin-bottom: 12px; }
+    .sistema-section > p { text-align: center; color: var(--text-secondary); margin-bottom: 48px; max-width: 700px; margin-left: auto; margin-right: auto; }
+    .func-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+    .func-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; text-align: center; transition: var(--transition); }
+    .func-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: var(--shadow); }
+    .func-card i { font-size: 2rem; color: var(--accent); margin-bottom: 14px; }
+    .func-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+    .func-card p { color: var(--text-secondary); font-size: 0.85rem; }
+    .cta-sistema { text-align: center; margin-top: 48px; }
+    .btn-whatsapp-lg { display: inline-flex; align-items: center; gap: 10px; background: #25d366; color: #fff; padding: 16px 32px; border-radius: var(--radius-sm); font-weight: 700; font-size: 1.1rem; text-decoration: none; transition: var(--transition); }
+    .btn-whatsapp-lg:hover { background: #1ebe5d; transform: translateY(-2px); }
     @media (max-width: 768px) { .contact-page { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -35,24 +47,37 @@
 
   <section class="page-header">
     <h1>Contato</h1>
-    <p class="text-muted">Fale com a gente pelo WhatsApp, email ou venha nos visitar.</p>
+    <p class="text-muted">Fale com a gente pelo WhatsApp, email ou venha nos visitar. Quer este sistema para sua barbearia? Também desenvolvemos!</p>
   </section>
 
   <div class="contact-page">
     <div class="contact-info-box">
       <h3 style="margin-bottom:20px;"><i class="fas fa-address-card" style="color:var(--accent);"></i> Informações</h3>
       <div class="contact-info-item"><i class="fas fa-map-marker-alt"></i><div><strong>Endereço</strong><div class="text-muted" id="endereco">Brasília - DF</div></div></div>
-      <div class="contact-info-item"><i class="fab fa-whatsapp"></i><div><strong>WhatsApp</strong><div class="text-muted"><a href="https://wa.me/5561982976481" target="_blank" style="color:var(--accent);">(61) 98297-6481</a></div></div></div>
+      <div class="contact-info-item"><i class="fab fa-whatsapp"></i><div><strong>WhatsApp Barbearia</strong><div class="text-muted"><a href="https://wa.me/5561982976481?text=Olá! Gostaria de agendar um horário." target="_blank" style="color:var(--accent);">(61) 98297-6481</a></div></div></div>
       <div class="contact-info-item"><i class="fas fa-envelope"></i><div><strong>Email</strong><div class="text-muted"><a href="mailto:hugo.leonardo.jobs@gmail.com" style="color:var(--accent);">hugo.leonardo.jobs@gmail.com</a></div></div></div>
       <div class="contact-info-item"><i class="fab fa-instagram"></i><div><strong>Instagram</strong><div class="text-muted" id="instagram">@hugoleonardo</div></div></div>
       <div class="contact-info-item"><i class="fas fa-clock"></i><div><strong>Horário</strong><div class="text-muted">Seg a Sex: 09h às 18h | Sáb: 09h às 14h</div></div></div>
+
+      <hr style="border-color:var(--border);margin:24px 0;">
+
+      <h3 style="margin-bottom:14px;color:var(--accent);"><i class="fas fa-laptop-code"></i> Quer este sistema?</h3>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:14px;">Desenvolvemos este sistema completo de gestão para barbearias. Quer um igual para o seu negócio?</p>
+      <a href="https://wa.me/5561982976481?text=Olá Hugo! Vi o sistema da sua barbearia e quero um igual para a minha. Pode me passar mais informações?" target="_blank" class="btn-whatsapp-lg" style="padding:12px 20px;font-size:0.95rem;"><i class="fab fa-whatsapp"></i> Quero o sistema para minha barbearia</a>
     </div>
     <div class="contact-form-box">
       <h3 style="margin-bottom:20px;"><i class="fas fa-paper-plane" style="color:var(--accent);"></i> Envie uma mensagem</h3>
       <form id="formContato">
         <div class="form-group"><label>Nome</label><input type="text" id="cNome" required placeholder="Seu nome"></div>
         <div class="form-group"><label>Email</label><input type="email" id="cEmail" required placeholder="seu@email.com"></div>
-        <div class="form-group"><label>Assunto</label><input type="text" id="cAssunto" placeholder="Ex: Dúvida sobre planos"></div>
+        <div class="form-group"><label>Assunto</label>
+          <select id="cAssunto">
+            <option value="agendamento">Agendamento / Dúvida</option>
+            <option value="planos">Planos de Assinatura</option>
+            <option value="sistema">Quero o sistema para minha barbearia</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
         <div class="form-group"><label>Mensagem</label><textarea id="cMsg" rows="4" required placeholder="Sua mensagem..."></textarea></div>
         <button type="submit" class="btn btn-primary w-full"><i class="fas fa-paper-plane"></i> Enviar Mensagem</button>
       </form>
@@ -63,9 +88,32 @@
     <div><i class="fas fa-map-marked-alt" style="font-size:2rem;color:var(--accent);margin-bottom:10px;display:block;text-align:center;"></i>Mapa será integrado aqui (Google Maps embed)</div>
   </div>
 
+  <section class="sistema-section" id="sistema">
+    <h2>Sistema Completo para Barbearias</h2>
+    <p>Este site é um sistema real de gestão. Veja tudo o que ele faz e fale comigo se quiser um para sua barbearia.</p>
+    <div class="func-grid">
+      <div class="func-card"><i class="fas fa-id-card"></i><h3>Planos de Assinatura</h3><p>Crie planos mensais com cortes ilimitados, combos e benefícios. Controle renovação, cobranças e status de pagamento.</p></div>
+      <div class="func-card"><i class="fas fa-users"></i><h3>Cadastro de Clientes</h3><p>Base completa de clientes com histórico de atendimentos, assinatura ativa e dados de contato.</p></div>
+      <div class="func-card"><i class="fas fa-calendar-alt"></i><h3>Agendamentos</h3><p>Controle de horários por barbeiro, disponibilidade em tempo real, confirmação e cancelamento.</p></div>
+      <div class="func-card"><i class="fas fa-scissors"></i><h3>Serviços</h3><p>Cadastro de todos os serviços com preço, duração e categoria (cortes, barba, química).</p></div>
+      <div class="func-card"><i class="fas fa-user-tie"></i><h3>Colaboradores</h3><p>Cadastro da equipe com especialidade, contato e vinculação a agendamentos.</p></div>
+      <div class="func-card"><i class="fas fa-boxes"></i><h3>Controle de Estoque</h3><p>Produtos, entrada e saída, movimentações, alertas de reposição e contagem em tempo real.</p></div>
+      <div class="func-card"><i class="fas fa-dollar-sign"></i><h3>Fluxo de Caixa</h3><p>Lançamento de receitas e despesas, acompanhamento de lucro, ticket médio e categorização.</p></div>
+      <div class="func-card"><i class="fas fa-chart-line"></i><h3>Relatórios</h3><p>Dashboard com faturamento, taxa de ocupação, serviço mais popular, clientes recorrentes e alertas.</p></div>
+      <div class="func-card"><i class="fas fa-file-invoice-dollar"></i><h3>Cobranças</h3><p>Histórico de faturas por assinatura, controle de pagamento, atrasos e geração automática.</p></div>
+      <div class="func-card"><i class="fas fa-cut"></i><h3>Cortes Usados</h3><p>Controle de cortes consumidos por plano, com barra de progresso e histórico detalhado.</p></div>
+      <div class="func-card"><i class="fas fa-mobile-alt"></i><h3>Área do Cliente</h3><p>Portal exclusivo onde o cliente vê sua assinatura, histórico e agenda novos horários.</p></div>
+      <div class="func-card"><i class="fas fa-store"></i><h3>Site Público</h3><p>Site completo da barbearia com serviços, planos, galeria, equipe e agendamento online.</p></div>
+    </div>
+    <div class="cta-sistema">
+      <a href="https://wa.me/5561982976481?text=Olá Hugo! Vi o sistema da sua barbearia e quero um igual para a minha. Pode me passar mais informações?" target="_blank" class="btn-whatsapp-lg"><i class="fab fa-whatsapp"></i> Falar no WhatsApp sobre o sistema</a>
+    </div>
+  </section>
+
   <footer class="landing-footer">
     <p>Hugo Barbearia — Brasília - DF</p>
     <p class="mt-4 text-muted">WhatsApp: (61) 98297-6481 | hugo.leonardo.jobs@gmail.com</p>
+    <p class="mt-4 text-muted">Sistema desenvolvido por Hugo Leonardo</p>
   </footer>
 
   <script>
