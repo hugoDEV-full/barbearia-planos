@@ -3,23 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Barbearia Planos — Sistema de Assinaturas para Barbearias</title>
+  <title>Barbearia Vintage — Planos de Assinatura</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    .hero-with-image { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 40px; }
-    .hero-image { border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-lg); border: 1px solid var(--border); }
-    .hero-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; max-width: 1200px; margin: 0 auto; }
+    .hero-barber { position: relative; padding: 140px 40px; text-align: center; background: linear-gradient(rgba(10,10,15,0.75), rgba(10,10,15,0.9)), url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1400&q=80') center/cover no-repeat; }
+    .hero-barber h1 { font-size: 3.5rem; margin-bottom: 10px; text-shadow: 0 2px 20px rgba(0,0,0,0.6); }
+    .hero-barber .slogan { color: var(--accent); font-size: 1.3rem; margin-bottom: 20px; font-weight: 600; }
+    .hero-barber p { color: var(--text-secondary); max-width: 620px; margin: 0 auto 36px; font-size: 1.1rem; }
+    .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    .about-section { padding: 80px 40px; max-width: 1000px; margin: 0 auto; text-align: center; }
+    .about-section h2 { font-size: 2.2rem; margin-bottom: 16px; }
+    .about-section p { color: var(--text-secondary); font-size: 1.05rem; line-height: 1.8; }
+
+    .service-category { margin-bottom: 40px; }
+    .service-category h3 { font-size: 1.2rem; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+    .service-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: var(--transition); }
+    .service-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: var(--shadow); }
+    .service-card img { width: 100%; height: 170px; object-fit: cover; border-bottom: 1px solid var(--border); }
+    .service-card-body { padding: 20px; text-align: center; }
+    .service-card h3 { margin: 0 0 4px; font-size: 1.05rem; }
+    .service-card .price { font-size: 1.4rem; color: var(--accent); font-weight: 700; margin: 10px 0; }
+    .service-card .duracao { font-size: 0.75rem; color: var(--text-muted); }
+
+    .plans-section { padding: 80px 40px; background: var(--bg-secondary); }
+    .plans-section h2 { text-align: center; font-size: 2.2rem; margin-bottom: 12px; }
+    .plans-section > p { text-align: center; color: var(--text-secondary); margin-bottom: 48px; }
+    .plans-grid-barber { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; max-width: 1100px; margin: 0 auto; }
+    .plan-card-barber { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px 28px; text-align: center; position: relative; transition: var(--transition); }
+    .plan-card-barber:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+    .plan-card-barber.featured { border-color: var(--accent); transform: scale(1.03); }
+    .plan-badge-barber { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #0a0a0f; padding: 5px 18px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+    .plan-card-barber h3 { font-size: 1.4rem; margin-bottom: 8px; }
+    .plan-card-barber .price { font-size: 2.8rem; color: var(--accent); font-weight: 800; font-family: 'Playfair Display', serif; margin: 16px 0; }
+    .plan-card-barber .price span { font-size: 1rem; color: var(--text-muted); font-weight: 400; }
+    .plan-card-barber ul { list-style: none; margin: 24px 0; text-align: left; }
+    .plan-card-barber li { padding: 8px 0; color: var(--text-secondary); font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+    .plan-card-barber li::before { content: '✓'; color: var(--success); font-weight: 700; }
+
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; max-width: 1100px; margin: 0 auto; }
     .gallery-item { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); aspect-ratio: 4/3; position: relative; }
     .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
     .gallery-item:hover img { transform: scale(1.08); }
-    .gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); padding: 20px; font-size: 0.9rem; font-weight: 600; }
-    .feature-img { width: 100%; height: 160px; object-fit: cover; border-radius: var(--radius-sm); margin-bottom: 16px; border: 1px solid var(--border); }
-    @media (max-width: 768px) {
-      .hero-with-image { grid-template-columns: 1fr; }
-      .hero-image { order: -1; height: 280px; }
-    }
+    .gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); padding: 18px; font-size: 0.9rem; font-weight: 600; }
+
+    .team-grid-barber { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; max-width: 900px; margin: 0 auto; }
+    .team-card-barber { text-align: center; }
+    .team-card-barber img { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); margin-bottom: 14px; }
+    .team-card-barber h4 { font-size: 1.1rem; }
+    .team-card-barber p { color: var(--text-muted); font-size: 0.85rem; }
+
+    .agendar-section { padding: 80px 40px; }
+    .agendar-section h2 { text-align: center; font-size: 2.2rem; margin-bottom: 36px; }
+    .agendar-box { max-width: 520px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px; }
+
+    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; max-width: 900px; margin: 0 auto; text-align: center; }
+    .contact-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
+    .contact-item i { font-size: 1.6rem; color: var(--accent); margin-bottom: 12px; }
+
+    .horarios-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; max-width: 900px; margin: 28px auto 0; }
+    .horario-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; text-align: center; font-size: 0.85rem; }
+    .horario-item.fechado { opacity: 0.5; }
+
+    .admin-link { position: fixed; bottom: 20px; right: 20px; z-index: 100; }
   </style>
 </head>
 <body>
@@ -27,160 +75,216 @@
     <div class="public-logo">
       <div class="sidebar-brand-icon"><i class="fas fa-cut"></i></div>
       <div>
-        <div class="sidebar-brand-text">Barbearia Planos</div>
+        <div class="sidebar-brand-text" id="navNome">Barbearia Vintage</div>
       </div>
     </div>
     <div class="public-nav">
-      <a href="#recursos" data-tooltip="Conheça os recursos">Recursos</a>
-      <a href="#galeria" data-tooltip="Veja fotos">Galeria</a>
-      <a href="#planos" data-tooltip="Planos da plataforma">Planos</a>
-      <a href="login.html" data-tooltip="Acessar painel administrativo">Entrar</a>
-      <a href="setup.html" class="btn btn-primary btn-sm" data-tooltip="Criar sua barbearia grátis">Começar Grátis</a>
+      <a href="#servicos">Serviços</a>
+      <a href="#planos">Planos</a>
+      <a href="#equipe">Equipe</a>
+      <a href="#galeria">Galeria</a>
+      <a href="#agendar">Agendar</a>
+      <a href="login.html">Área do Cliente</a>
     </div>
   </nav>
 
-  <section class="landing-hero">
-    <div class="hero-with-image">
-      <div class="landing-hero-content" style="padding:0;">
-        <h1>Assinaturas para sua <span>Barbearia</span></h1>
-        <p>Gerencie clientes, agendamentos, estoque, finanças e crie planos de assinatura recorrente. Tudo em uma plataforma profissional e gratuita para hospedar no Netlify.</p>
-        <div class="landing-hero-buttons">
-          <a href="setup.html" class="btn btn-primary" data-tooltip="Crie sua barbearia em segundos"><i class="fas fa-rocket"></i> Criar Minha Barbearia</a>
-          <a href="login.html" class="btn btn-secondary" data-tooltip="Acesse o painel administrativo"><i class="fas fa-sign-in-alt"></i> Acessar Painel</a>
-        </div>
-      </div>
-      <div class="hero-image">
-        <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=800&q=80" alt="Barbearia" data-tooltip="Ambiente profissional de barbearia">
-      </div>
+  <section class="hero-barber">
+    <h1>Barbearia Vintage</h1>
+    <div class="slogan">Estilo clássico, atitude moderna</div>
+    <p>A melhor experiência em cuidados masculinos desde 2015. Corte, barba, química e muito mais com os melhores profissionais.</p>
+    <div class="hero-buttons">
+      <a href="#planos" class="btn btn-primary"><i class="fas fa-id-card"></i> Ver Planos de Assinatura</a>
+      <a href="#agendar" class="btn btn-secondary"><i class="fas fa-calendar-check"></i> Agendar Horário</a>
     </div>
   </section>
 
-  <section class="landing-features" id="recursos">
-    <div class="section-header">
-      <h2>Tudo que sua barbearia precisa</h2>
-      <p>Controle total do seu negócio em um só lugar. Simule, gerencie e escale.</p>
-    </div>
-    <div class="features-grid">
-      <div class="feature-card">
-        <img src="https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=400&q=80" class="feature-img" alt="Planos">
-        <h3>Planos de Assinatura</h3>
-        <p>Crie planos personalizados com cortes ilimitados, combos e benefícios exclusivos para seus clientes.</p>
-      </div>
-      <div class="feature-card">
-        <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=400&q=80" class="feature-img" alt="Agendamentos">
-        <h3>Agendamentos Inteligentes</h3>
-        <p>Controle de horários, disponibilidade de barbeiros e confirmação automática de atendimentos.</p>
-      </div>
-      <div class="feature-card">
-        <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=400&q=80" class="feature-img" alt="Estoque">
-        <h3>Controle de Estoque</h3>
-        <p>Gerencie produtos, entrada e saída de mercadoria, alertas de reposição e contagem em tempo real.</p>
-      </div>
-      <div class="feature-card">
-        <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&q=80" class="feature-img" alt="Finanças">
-        <h3>Finanças & Fluxo de Caixa</h3>
-        <p>Lance receitas e despesas, acompanhe o lucro diário e visualize gráficos de desempenho financeiro.</p>
-      </div>
-      <div class="feature-card">
-        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80" class="feature-img" alt="Relatórios">
-        <h3>Relatórios Completos</h3>
-        <p>Dashboard com métricas de faturamento, clientes ativos, taxa de ocupação e produtos mais vendidos.</p>
-      </div>
-      <div class="feature-card">
-        <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400&q=80" class="feature-img" alt="Site">
-        <h3>Site Personalizado</h3>
-        <p>Cada barbearia tem sua página pública com marca, serviços, equipe e link direto para agendamento.</p>
-      </div>
-    </div>
+  <section class="about-section" id="sobre">
+    <h2>Sobre a Barbearia</h2>
+    <p>Na Barbearia Vintage, cada cliente é tratado como rei. Nosso ambiente foi pensado para oferecer conforto, estilo e aquele papo de barbearia que só quem é da área conhece. Trabalhamos com produtos premium, técnicas modernas e um atendimento que faz você querer voltar sempre.</p>
   </section>
 
-  <section class="public-section" id="galeria" style="background: var(--bg-secondary);">
-    <div class="section-header">
-      <h2>Galeria</h2>
-      <p>Veja como sua barbearia pode ficar com um site profissional.</p>
-    </div>
+  <section class="public-section" id="servicos" style="padding-top:40px;">
+    <h2 style="text-align:center;margin-bottom:40px;font-size:2rem;">Nossos Serviços</h2>
+    <div id="servicosCategorias"></div>
+  </section>
+
+  <section class="plans-section" id="planos">
+    <h2>Planos de Assinatura</h2>
+    <p>Assine e tenha prioridade, descontos e serviços inclusos todo mês.</p>
+    <div class="plans-grid-barber" id="pubPlanos"></div>
+  </section>
+
+  <section class="public-section" id="galeria">
+    <h2 style="text-align:center;margin-bottom:40px;font-size:2rem;">Galeria</h2>
     <div class="gallery-grid">
-      <div class="gallery-item" data-tooltip="Ambiente de barbearia vintage">
-        <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&q=80" alt="Barbearia">
-        <div class="gallery-overlay">Ambiente Premium</div>
-      </div>
-      <div class="gallery-item" data-tooltip="Corte degradê profissional">
-        <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&q=80" alt="Corte">
-        <div class="gallery-overlay">Corte Degradê</div>
-      </div>
-      <div class="gallery-item" data-tooltip="Barba terapia com toalha quente">
-        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&q=80" alt="Barba">
-        <div class="gallery-overlay">Barba Terapia</div>
-      </div>
-      <div class="gallery-item" data-tooltip="Profissional em ação">
-        <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&q=80" alt="Barbeiro">
-        <div class="gallery-overlay">Equipe Especializada</div>
-      </div>
-      <div class="gallery-item" data-tooltip="Descoloração e platinado">
-        <img src="https://images.unsplash.com/photo-1582095133179-bfd08e2fc6b3?w=600&q=80" alt="Química">
-        <div class="gallery-overlay">Química Capilar</div>
-      </div>
-      <div class="gallery-item" data-tooltip="Produtos profissionais">
-        <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&q=80" alt="Produtos">
-        <div class="gallery-overlay">Produtos de Qualidade</div>
-      </div>
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&q=80" alt="Ambiente"><div class="gallery-overlay">Ambiente Premium</div></div>
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&q=80" alt="Corte"><div class="gallery-overlay">Corte Degradê</div></div>
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&q=80" alt="Barba"><div class="gallery-overlay">Barba Terapia</div></div>
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1582095133179-bfd08e2fc6b3?w=600&q=80" alt="Química"><div class="gallery-overlay">Descoloração</div></div>
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&q=80" alt="Equipe"><div class="gallery-overlay">Equipe em Ação</div></div>
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&q=80" alt="Produtos"><div class="gallery-overlay">Produtos de Qualidade</div></div>
     </div>
   </section>
 
-  <section class="landing-plans" id="planos">
-    <div class="section-header">
-      <h2>Planos da Plataforma</h2>
-      <p>Escolha o melhor para o tamanho do seu negócio. (Simulado — tudo funciona no Grátis)</p>
+  <section class="public-section" id="equipe">
+    <h2 style="text-align:center;margin-bottom:40px;font-size:2rem;">Nossa Equipe</h2>
+    <div class="team-grid-barber" id="pubEquipe"></div>
+  </section>
+
+  <section class="agendar-section" id="agendar">
+    <h2>Agendar Horário</h2>
+    <div class="agendar-box">
+      <form id="agendarForm">
+        <div class="form-group"><label>Nome</label><input type="text" id="agNome" placeholder="Seu nome" required></div>
+        <div class="form-group"><label>Email</label><input type="email" id="agEmail" placeholder="seu@email.com" required></div>
+        <div class="form-group"><label>Telefone</label><input type="text" id="agTel" placeholder="(11) 99999-9999"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="form-group"><label>Data</label><input type="date" id="agData" required></div>
+          <div class="form-group"><label>Horário</label><input type="time" id="agHora" required></div>
+        </div>
+        <div class="form-group"><label>Serviço</label><select id="agServico" required></select></div>
+        <div class="form-group"><label>Barbeiro (opcional)</label><select id="agBarbeiro"><option value="">Qualquer</option></select></div>
+        <button type="submit" class="btn btn-primary w-full"><i class="fas fa-calendar-check"></i> Confirmar Agendamento</button>
+      </form>
     </div>
-    <div class="plans-grid">
-      <div class="plan-card">
-        <div class="plan-name">Grátis</div>
-        <div class="plan-price">R$ 0 <span>/mês</span></div>
-        <ul class="plan-features">
-          <li>1 barbearia</li>
-          <li>Até 50 clientes</li>
-          <li>Agendamentos</li>
-          <li>Controle de estoque</li>
-          <li>Relatórios básicos</li>
-        </ul>
-        <a href="setup.html" class="btn btn-secondary w-full">Começar</a>
-      </div>
-      <div class="plan-card featured">
-        <div class="plan-badge">MAIS POPULAR</div>
-        <div class="plan-name">Pro</div>
-        <div class="plan-price">R$ 49 <span>/mês</span></div>
-        <ul class="plan-features">
-          <li>Tudo do Grátis</li>
-          <li>Clientes ilimitados</li>
-          <li>Múltiplos barbeiros</li>
-          <li>Relatórios avançados</li>
-          <li>Personalização completa</li>
-        </ul>
-        <a href="setup.html" class="btn btn-primary w-full">Assinar (Simulado)</a>
-      </div>
-      <div class="plan-card">
-        <div class="plan-name">Franquia</div>
-        <div class="plan-price">R$ 149 <span>/mês</span></div>
-        <ul class="plan-features">
-          <li>Tudo do Pro</li>
-          <li>Múltiplas unidades</li>
-          <li>Gestão de franqueados</li>
-          <li>API de integração</li>
-          <li>Suporte prioritário</li>
-        </ul>
-        <a href="setup.html" class="btn btn-secondary w-full">Contato (Simulado)</a>
-      </div>
+  </section>
+
+  <section class="public-section" id="contato" style="padding-bottom:80px;">
+    <h2 style="text-align:center;margin-bottom:40px;font-size:2rem;">Contato & Horários</h2>
+    <div class="contact-grid">
+      <div class="contact-item"><i class="fas fa-map-marker-alt"></i><div id="pubEndereco">-</div></div>
+      <div class="contact-item"><i class="fas fa-phone"></i><div id="pubTelefone">-</div></div>
+      <div class="contact-item"><i class="fas fa-envelope"></i><div id="pubEmail">-</div></div>
+      <div class="contact-item"><i class="fab fa-instagram"></i><div id="pubInstagram">-</div></div>
     </div>
+    <div class="horarios-grid" id="pubHorarios"></div>
   </section>
 
   <footer class="landing-footer">
-    <p>Barbearia Planos — Sistema de Gestão para Barbearias. Criado para rodar no Netlify.</p>
-    <p class="mt-4 text-muted">Dados simulados com localStorage. Nenhum backend necessário.</p>
+    <p>Barbearia Vintage — Rua dos Barbeiros, 123 - Centro</p>
+    <p class="mt-4 text-muted">Assine um plano e tenha prioridade todo mês.</p>
   </footer>
+
+  <a href="login.html" class="btn btn-secondary btn-sm admin-link" data-tooltip="Área Administrativa"><i class="fas fa-lock"></i> Admin</a>
 
   <script src="js/storage.js"></script>
   <script>
     DB.seed();
+    const barbearia = DB.getBarbearias()[0];
+    if (barbearia) {
+      document.title = barbearia.nome;
+      document.getElementById('navNome').textContent = barbearia.nome;
+      document.getElementById('pubEndereco').textContent = barbearia.endereco || '-';
+      document.getElementById('pubTelefone').textContent = barbearia.telefone || '-';
+      document.getElementById('pubEmail').textContent = barbearia.email || '-';
+      document.getElementById('pubInstagram').textContent = barbearia.instagram || '-';
+
+      const imgMap = {
+        'Corte Degradê': 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=400&q=80',
+        'Corte Social': 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400&q=80',
+        'Corte + Barba': 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=400&q=80',
+        'Barba Terapia': 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&q=80',
+        'Sobrancelha': 'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=400&q=80',
+        'Hidratação Capilar': 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=400&q=80',
+        'Descoloração / Platinado': 'https://images.unsplash.com/photo-1582095133179-bfd08e2fc6b3?w=400&q=80',
+        'Coloração / Pintura': 'https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=400&q=80',
+        'Luzes / Mechas': 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&q=80',
+        'Pigmentação em Barba': 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=400&q=80'
+      };
+
+      const servicos = DB.getServicos(barbearia.id);
+      const categorias = { 'Cortes': [], 'Barba': [], 'Química': [], 'Combos': [] };
+      servicos.forEach(s => {
+        const nome = s.nome.toLowerCase();
+        if (nome.includes('corte') && nome.includes('barba')) categorias['Combos'].push(s);
+        else if (nome.includes('corte')) categorias['Cortes'].push(s);
+        else if (nome.includes('barba') || nome.includes('sobrancelha') || nome.includes('pigmentação')) categorias['Barba'].push(s);
+        else categorias['Química'].push(s);
+      });
+
+      const catIcones = { 'Cortes': 'fa-cut', 'Barba': 'fa-user', 'Química': 'fa-flask', 'Combos': 'fa-star' };
+      document.getElementById('servicosCategorias').innerHTML = Object.entries(categorias).map(([cat, lista]) => {
+        if (lista.length === 0) return '';
+        return `
+          <div class="service-category">
+            <h3><i class="fas ${catIcones[cat]} cat-icon"></i> ${cat}</h3>
+            <div class="services-grid">
+              ${lista.map(s => `
+                <div class="service-card">
+                  <img src="${imgMap[s.nome]||'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=400&q=80'}" alt="${s.nome}">
+                  <div class="service-card-body">
+                    <h3>${s.nome}</h3>
+                    <p class="text-muted" style="font-size:0.8rem;">${s.descricao||''}</p>
+                    <div class="price">R$ ${(parseFloat(s.preco)||0).toFixed(2).replace('.',',')}</div>
+                    <div class="duracao">⏱ ${s.duracao||'-'} min</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const planos = DB.getPlanos(barbearia.id);
+      document.getElementById('pubPlanos').innerHTML = planos.map((p, idx) => `
+        <div class="plan-card-barber ${idx===2?'featured':''}">
+          ${idx===2?'<div class="plan-badge-barber">MAIS POPULAR</div>':''}
+          <h3>${p.nome}</h3>
+          <div class="price">R$ ${(parseFloat(p.preco)||0).toFixed(2).replace('.',',')}<span>/mês</span></div>
+          <p class="text-muted" style="font-size:0.85rem;">${p.descricao||''}</p>
+          <ul>${(p.beneficios||[]).map(b => `<li>${b}</li>`).join('')}</ul>
+          <a href="login.html" class="btn btn-${idx===2?'primary':'secondary'} w-full"><i class="fas fa-sign-in-alt"></i> Assinar Agora</a>
+        </div>
+      `).join('');
+
+      const colaboradores = DB.getColaboradores(barbearia.id);
+      const fotosBarbeiros = [
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80',
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&q=80',
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&q=80'
+      ];
+      document.getElementById('pubEquipe').innerHTML = colaboradores.map((c, i) => `
+        <div class="team-card-barber">
+          <img src="${fotosBarbeiros[i]||fotosBarbeiros[0]}" alt="${c.nome}">
+          <h4>${c.nome}</h4>
+          <p>${c.especialidade||''}</p>
+        </div>
+      `).join('');
+
+      const horario = barbearia.horarioFuncionamento || {};
+      const dias = {seg:'Segunda',ter:'Terça',qua:'Quarta',qui:'Quinta',sex:'Sexta',sab:'Sábado',dom:'Domingo'};
+      document.getElementById('pubHorarios').innerHTML = Object.entries(dias).map(([k,label]) => {
+        const h = horario[k] || 'fechado';
+        return `<div class="horario-item ${h==='fechado'?'fechado':''}"><strong>${label}</strong><div>${h==='fechado'?'Fechado':h}</div></div>`;
+      }).join('');
+
+      const selServico = document.getElementById('agServico');
+      servicos.forEach(s => { const o = document.createElement('option'); o.value = s.id; o.textContent = s.nome; selServico.appendChild(o); });
+      const selBarbeiro = document.getElementById('agBarbeiro');
+      colaboradores.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.nome; selBarbeiro.appendChild(o); });
+      document.getElementById('agData').min = new Date().toISOString().split('T')[0];
+
+      document.getElementById('agendarForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const nome = document.getElementById('agNome').value.trim();
+        const email = document.getElementById('agEmail').value.trim();
+        const tel = document.getElementById('agTel').value.trim();
+        let cliente = DB.getUsers().find(u => u.email === email && u.barbeariaId === barbearia.id);
+        if (!cliente) {
+          cliente = DB.saveUser({ barbeariaId: barbearia.id, nome, email, telefone: tel, tipo: 'cliente', senha: '123456', avatar: '' });
+        }
+        DB.saveAgendamento({
+          barbeariaId: barbearia.id, clienteId: cliente.id,
+          data: document.getElementById('agData').value,
+          horario: document.getElementById('agHora').value,
+          servicoId: document.getElementById('agServico').value,
+          colaboradorId: document.getElementById('agBarbeiro').value || null,
+          status: 'agendado'
+        });
+        alert('Agendamento realizado! Faça login na Área do Cliente para acompanhar.');
+        e.target.reset();
+      });
+    }
   </script>
 </body>
 </html>

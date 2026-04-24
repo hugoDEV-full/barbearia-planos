@@ -34,7 +34,7 @@
     $('brandName').textContent = barbearia.nome;
     $('userName').textContent = user.nome;
     $('userAvatar').textContent = user.nome.charAt(0).toUpperCase();
-    $('publicLink').href = 'barbearia.html?slug=' + encodeURIComponent(barbearia.slug);
+    // Site público é index.html (única barbearia)
 
     document.querySelectorAll('.nav-item[data-tab]').forEach(el => {
       el.addEventListener('click', () => mudarAba(el.dataset.tab));
