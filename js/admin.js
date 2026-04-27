@@ -24,7 +24,7 @@
   function toast(msg, tipo='success') {
     const container = $('toastContainer');
     const el = document.createElement('div'); el.className = `toast ${tipo}`;
-    el.innerHTML = `<i class="fas fa-${tipo==='success'?'check-circle':tipo==='error'?'times-circle':'info-circle'}"></i> ${msg}`;
+    el.innerHTML = `<i class="fas fa-${tipo==='success'?'check-circle':tipo==='error'?'times-circle':tipo==='warning'?'exclamation-triangle':'info-circle'}"></i> ${msg}`;
     container.appendChild(el);
     setTimeout(() => el.remove(), 3000);
   }
@@ -34,7 +34,6 @@
     $('brandName').textContent = barbearia.nome;
     $('userName').textContent = user.nome;
     $('userAvatar').textContent = user.nome.charAt(0).toUpperCase();
-    // Site público é index.html (única barbearia)
 
     document.querySelectorAll('.nav-item[data-tab]').forEach(el => {
       el.addEventListener('click', () => mudarAba(el.dataset.tab));
@@ -44,6 +43,7 @@
     $('searchEstoque')?.addEventListener('input', renderEstoque);
     $('dataAgendamentoFiltro')?.addEventListener('change', renderAgendamentos);
     if ($('dataAgendamentoFiltro')) $('dataAgendamentoFiltro').value = hoje();
+    $('pctComissao')?.addEventListener('input', renderComissoes);
 
     $('configForm')?.addEventListener('submit', salvarConfig);
 
@@ -64,6 +64,7 @@
       estoque: ['Estoque','Produtos e movimentações'],
       financas: ['Finanças','Receitas, despesas e fluxo de caixa'],
       relatorios: ['Relatórios','Análises e indicadores'],
+      comissoes: ['Comissões','Remuneração dos barbeiros'],
       config: ['Configurações','Personalize sua barbearia']
     };
     $('pageTitle').textContent = titulos[tab][0];
@@ -81,6 +82,7 @@
     if (tabAtiva === 'estoque') renderEstoque();
     if (tabAtiva === 'financas') renderFinancas();
     if (tabAtiva === 'relatorios') renderRelatorios();
+    if (tabAtiva === 'comissoes') renderComissoes();
     if (tabAtiva === 'config') renderConfig();
   }
 
@@ -128,12 +130,28 @@
       </div>`;
     }).join('');
 
-    // Alertas
-    const produtos = DB.getProdutos(barbearia.id);
-    const alertas = produtos.filter(p => p.quantidade <= p.minimo);
+    // Alertas inteligentes
     const alertEl = $('alertasSistema');
+    const alertas = [];
+
+    // Estoque baixo
+    const produtos = DB.getProdutos(barbearia.id);
+    const estoqueBaixo = produtos.filter(p => p.quantidade <= p.minimo);
+    estoqueBaixo.forEach(p => alertas.push(`<div class="badge badge-warning" data-tooltip="Quantidade atual: ${p.quantidade} unidades | Mínimo: ${p.minimo}"><i class="fas fa-exclamation-triangle"></i> ${p.nome} está com estoque baixo (${p.quantidade} unid.)</div>`));
+
+    // Cobranças vencidas
+    const vencidas = DB.getCobrancasVencidas(barbearia.id);
+    if (vencidas.length > 0) alertas.push(`<div class="badge badge-danger" data-tooltip="${vencidas.length} cobrança(s) vencida(s)"><i class="fas fa-file-invoice-dollar"></i> ${vencidas.length} cobrança(s) vencida(s)</div>`);
+
+    // Agendamentos sem confirmação
+    const pendentes = DB.getAgendamentosPendentesConfirmacao(barbearia.id);
+    if (pendentes.length > 0) alertas.push(`<div class="badge badge-info" data-tooltip="${pendentes.length} agendamento(s) aguardando confirmação"><i class="fas fa-calendar"></i> ${pendentes.length} agendamento(s) sem confirmação</div>`);
+
+    // Aniversários (simulado: verifica se dia/mês do createdAt é hoje, ou podemos adicionar campo aniversário no futuro)
+    // Por enquanto não temos campo de aniversário, então pulamos
+
     if (alertas.length === 0) alertEl.innerHTML = '<div class="badge badge-info" data-tooltip="Todos os sistemas operando normalmente"><i class="fas fa-info-circle"></i> Sistema funcionando normalmente</div>';
-    else alertEl.innerHTML = alertas.map(p => `<div class="badge badge-warning" data-tooltip="Quantidade atual: ${p.quantidade} unidades | Mínimo: ${p.minimo}"><i class="fas fa-exclamation-triangle"></i> ${p.nome} está com estoque baixo (${p.quantidade} unid.)</div>`).join('');
+    else alertEl.innerHTML = alertas.join('');
   }
 
   // ─── Clientes ───
@@ -202,7 +220,6 @@
       return true;
     });
 
-    // Cards de resumo
     const ativas = todas.filter(a => a.status === 'ativa');
     const receitaMensal = ativas.reduce((s, a) => {
       const p = planos.find(pl => pl.id === a.planoId);
@@ -211,7 +228,6 @@
     const vencidas = todas.filter(a => a.status === 'vencida').length;
     const canceladas = todas.filter(a => a.status === 'cancelada').length;
 
-    // Container customizado na aba de assinaturas
     let container = $('assinaturas-stats');
     if (!container) {
       container = document.createElement('div');
@@ -334,10 +350,8 @@
     cobrancas[idx].dataPagamento = hoje();
     cobrancas[idx].updatedAt = new Date().toISOString();
     DB._set('cobrancas', cobrancas);
-    // Lança receita automaticamente
     DB.saveTransacao({ barbeariaId: barbearia.id, tipo: 'receita', categoria: 'Assinaturas', descricao: `Pagamento assinatura - ${DB.getUser(cobrancas[idx].clienteId)?.nome||''}`, valor: parseFloat(cobrancas[idx].valor)||0, data: hoje() });
     toast('Pagamento simulado com sucesso');
-    // Reabre modal
     const assId = cobrancas[idx].assinaturaId;
     fecharModal();
     setTimeout(() => detalhesAssinatura(assId), 200);
@@ -352,7 +366,6 @@
     prox.setMonth(prox.getMonth() + 1);
     const novaData = prox.toISOString().split('T')[0];
     DB.saveAssinatura({ ...ass, proximaCobranca: novaData });
-    // Cria nova cobrança pendente
     const p = DB.getPlanos(barbearia.id).find(pl => pl.id === ass.planoId);
     DB.saveCobranca({ barbeariaId: barbearia.id, assinaturaId: ass.id, clienteId: ass.clienteId, valor: p?.preco||0, dataVencimento: novaData, status: 'pendente', metodo: 'Pix' });
     toast('Renovação simulada: nova cobrança gerada');
@@ -441,7 +454,14 @@
       <div class="form-group"><label>Barbeiro</label><select id="agBarbeiro">${colaboradores.map(b => `<option value="${b.id}" ${b.id===a.colaboradorId?'selected':''}>${b.nome}</option>`).join('')}</select></div>
       <div class="form-group"><label>Status</label><select id="agStatus"><option value="agendado" ${a.status==='agendado'?'selected':''}>Agendado</option><option value="confirmado" ${a.status==='confirmado'?'selected':''}>Confirmado</option><option value="cancelado" ${a.status==='cancelado'?'selected':''}>Cancelado</option><option value="concluido" ${a.status==='concluido'?'selected':''}>Concluído</option></select></div>
     `, () => {
-      DB.saveAgendamento({ ...a, data: $('agData').value, horario: $('agHora').value, clienteId: $('agCliente').value, servicoId: $('agServico').value, colaboradorId: $('agBarbeiro').value, status: $('agStatus').value });
+      const data = $('agData').value;
+      const horario = $('agHora').value;
+      const colaboradorId = $('agBarbeiro').value;
+      if (DB.verificarConflitoAgendamento(barbearia.id, data, horario, colaboradorId, a.id)) {
+        toast('Conflito de horário! Já existe um agendamento neste horário para este barbeiro.', 'error');
+        return;
+      }
+      DB.saveAgendamento({ ...a, data, horario, clienteId: $('agCliente').value, servicoId: $('agServico').value, colaboradorId, status: $('agStatus').value });
       toast('Agendamento atualizado'); fecharModal(); renderAgendamentos(); renderDashboard();
     });
   };
@@ -700,6 +720,23 @@
     }).join('') || '';
   }
 
+  // ─── Comissões ───
+  function renderComissoes() {
+    const colabs = DB.getColaboradores(barbearia.id);
+    const pct = parseFloat($('pctComissao')?.value) || 30;
+    const mes = new Date().getMonth();
+    const ano = new Date().getFullYear();
+    $('tabelaComissoes').innerHTML = colabs.map(c => {
+      const res = DB.calcularComissao(barbearia.id, c.id, mes, ano, pct);
+      return `<tr>
+        <td><strong>${c.nome}</strong><div class="text-muted" style="font-size:0.8rem;">${c.especialidade||''}</div></td>
+        <td>${res.atendimentos}</td>
+        <td>${fmtMoeda(res.total)}</td>
+        <td><strong style="color:var(--accent);">${fmtMoeda(res.comissao)}</strong></td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="4" class="text-center text-muted">Nenhum colaborador.</td></tr>';
+  }
+
   // ─── Configurações ───
   function renderConfig() {
     $('cfgNome').value = barbearia.nome || '';
@@ -710,14 +747,81 @@
     $('cfgEndereco').value = barbearia.endereco || '';
     $('cfgInstagram').value = barbearia.instagram || '';
     $('cfgCor').value = barbearia.corPrimaria || '#d4a853';
+    const h = barbearia.horarioFuncionamento || {};
+    $('cfgSeg').value = h.seg || '';
+    $('cfgTer').value = h.ter || '';
+    $('cfgQua').value = h.qua || '';
+    $('cfgQui').value = h.qui || '';
+    $('cfgSex').value = h.sex || '';
+    $('cfgSab').value = h.sab || '';
+    $('cfgDom').value = h.dom || '';
   }
 
   function salvarConfig(e) {
     e.preventDefault();
-    DB.saveBarbearia({ ...barbearia, nome: $('cfgNome').value.trim(), slogan: $('cfgSlogan').value.trim(), descricao: $('cfgDescricao').value.trim(), telefone: $('cfgTelefone').value.trim(), email: $('cfgEmail').value.trim(), endereco: $('cfgEndereco').value.trim(), instagram: $('cfgInstagram').value.trim(), corPrimaria: $('cfgCor').value });
+    DB.saveBarbearia({
+      ...barbearia,
+      nome: $('cfgNome').value.trim(),
+      slogan: $('cfgSlogan').value.trim(),
+      descricao: $('cfgDescricao').value.trim(),
+      telefone: $('cfgTelefone').value.trim(),
+      email: $('cfgEmail').value.trim(),
+      endereco: $('cfgEndereco').value.trim(),
+      instagram: $('cfgInstagram').value.trim(),
+      corPrimaria: $('cfgCor').value,
+      horarioFuncionamento: {
+        seg: $('cfgSeg').value.trim(),
+        ter: $('cfgTer').value.trim(),
+        qua: $('cfgQua').value.trim(),
+        qui: $('cfgQui').value.trim(),
+        sex: $('cfgSex').value.trim(),
+        sab: $('cfgSab').value.trim(),
+        dom: $('cfgDom').value.trim()
+      }
+    });
     toast('Configurações salvas');
     $('brandName').textContent = $('cfgNome').value.trim();
   }
+
+  // ─── Exportação CSV ───
+  window.exportarCSV = function(tipo) {
+    const hojeStr = new Date().toISOString().split('T')[0];
+    if (tipo === 'clientes') {
+      const clientes = getClientes();
+      const rows = clientes.map(c => [c.nome, c.email, c.telefone||'', c.createdAt?.slice(0,10)||'']);
+      DB.exportarCSV(`clientes-${hojeStr}.csv`, ['Nome','Email','Telefone','Desde'], rows);
+      toast('Clientes exportados');
+    }
+    if (tipo === 'agendamentos') {
+      const ags = DB.getAgendamentos(barbearia.id).sort((a,b)=>(a.data+a.horario).localeCompare(b.data+b.horario));
+      const rows = ags.map(a => {
+        const c = DB.getUser(a.clienteId)?.nome||'';
+        const s = DB.getServicos(barbearia.id).find(sv=>sv.id===a.servicoId)?.nome||'';
+        const b = DB.getColaboradores(barbearia.id).find(co=>co.id===a.colaboradorId)?.nome||'';
+        return [a.data, a.horario, c, s, b, a.status];
+      });
+      DB.exportarCSV(`agendamentos-${hojeStr}.csv`, ['Data','Horário','Cliente','Serviço','Barbeiro','Status'], rows);
+      toast('Agendamentos exportados');
+    }
+    if (tipo === 'financas') {
+      const trs = DB.getTransacoes(barbearia.id).sort((a,b)=>b.data.localeCompare(a.data));
+      const rows = trs.map(t => [t.data, t.tipo, t.categoria||'', t.descricao, (parseFloat(t.valor)||0).toFixed(2).replace('.',',')]);
+      DB.exportarCSV(`financas-${hojeStr}.csv`, ['Data','Tipo','Categoria','Descrição','Valor'], rows);
+      toast('Finanças exportadas');
+    }
+    if (tipo === 'comissoes') {
+      const colabs = DB.getColaboradores(barbearia.id);
+      const pct = parseFloat($('pctComissao')?.value) || 30;
+      const mes = new Date().getMonth();
+      const ano = new Date().getFullYear();
+      const rows = colabs.map(c => {
+        const res = DB.calcularComissao(barbearia.id, c.id, mes, ano, pct);
+        return [c.nome, res.atendimentos, res.total.toFixed(2).replace('.',','), res.comissao.toFixed(2).replace('.',',')];
+      });
+      DB.exportarCSV(`comissoes-${hojeStr}.csv`, ['Barbeiro','Atendimentos','Faturamento','Comissao'], rows);
+      toast('Comissões exportadas');
+    }
+  };
 
   // ─── Modais ───
   window.abrirModal = function(tipo, titulo, corpo, onConfirm) {
@@ -728,8 +832,8 @@
           <div class="form-group"><label>Email</label><input type="email" id="cliEmail" data-tooltip="Email para login e notificações"></div>
           <div class="form-group"><label>Telefone</label><input type="text" id="cliTelefone" data-tooltip="Telefone com DDD"></div>
         `, () => {
-          if (!$('cliNome').value.trim() || !$('cliEmail').value.trim()) { alert('Preencha nome e email.'); return; }
-          DB.saveUser({ barbeariaId: barbearia.id, nome: $('cliNome').value.trim(), email: $('cliEmail').value.trim(), telefone: $('cliTelefone').value.trim(), tipo: 'cliente', senha: '123456', avatar: '' });
+          if (!$('cliNome').value.trim() || !$('cliEmail').value.trim()) { toast('Preencha nome e email.', 'error'); return; }
+          DB.saveUser({ barbeariaId: barbearia.id, nome: $('cliNome').value.trim(), email: $('cliEmail').value.trim(), telefone: $('cliTelefone').value.trim(), tipo: 'cliente', senha: DB.hashSenha('123456'), avatar: '' });
           toast('Cliente adicionado'); fecharModal(); renderClientes(); renderDashboard();
         }),
         assinatura: () => {
@@ -742,7 +846,6 @@
           `, () => {
             const plano = planos.find(p => p.id === $('assPlano').value);
             const ass = DB.saveAssinatura({ barbeariaId: barbearia.id, clienteId: $('assCliente').value, planoId: $('assPlano').value, status: 'ativa', proximaCobranca: $('assProxima').value });
-            // Gera primeira cobrança
             DB.saveCobranca({ barbeariaId: barbearia.id, assinaturaId: ass.id, clienteId: ass.clienteId, valor: plano?.preco||0, dataVencimento: $('assProxima').value, status: 'pendente', metodo: 'Pix' });
             toast('Assinatura criada com cobrança inicial'); fecharModal(); renderAssinaturas(); renderDashboard();
           });
@@ -758,7 +861,14 @@
             <div class="form-group"><label>Serviço</label><select id="agServico">${servicos.map(s => `<option value="${s.id}">${s.nome}</option>`).join('')}</select></div>
             <div class="form-group"><label>Barbeiro</label><select id="agBarbeiro">${colaboradores.map(b => `<option value="${b.id}">${b.nome}</option>`).join('')}</select></div>
           `, () => {
-            DB.saveAgendamento({ barbeariaId: barbearia.id, data: $('agData').value, horario: $('agHora').value, clienteId: $('agCliente').value, servicoId: $('agServico').value, colaboradorId: $('agBarbeiro').value, status: 'agendado' });
+            const data = $('agData').value;
+            const horario = $('agHora').value;
+            const colaboradorId = $('agBarbeiro').value;
+            if (DB.verificarConflitoAgendamento(barbearia.id, data, horario, colaboradorId)) {
+              toast('Conflito de horário! Já existe um agendamento neste horário para este barbeiro.', 'error');
+              return;
+            }
+            DB.saveAgendamento({ barbeariaId: barbearia.id, data, horario, clienteId: $('agCliente').value, servicoId: $('agServico').value, colaboradorId, status: 'agendado' });
             toast('Agendamento criado'); fecharModal(); renderAgendamentos(); renderDashboard();
           });
         },

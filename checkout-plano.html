@@ -63,7 +63,7 @@
       const email = document.getElementById('email').value.trim();
       let cliente = DB.getUsers().find(u => u.email === email && u.barbeariaId === barbearia.id);
       if (!cliente) {
-        cliente = DB.saveUser({ barbeariaId: barbearia.id, nome: document.getElementById('nome').value.trim(), email, telefone: document.getElementById('tel').value.trim(), tipo: 'cliente', senha: '123456', avatar: '' });
+        cliente = DB.saveUser({ barbeariaId: barbearia.id, nome: document.getElementById('nome').value.trim(), email, telefone: document.getElementById('tel').value.trim(), tipo: 'cliente', senha: DB.hashSenha('123456'), avatar: '' });
       }
       const antiga = DB.getAssinaturas(barbearia.id).find(a => a.clienteId === cliente.id);
       if (antiga) DB.cancelarAssinatura(antiga.id);

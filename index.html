@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hugo Barbearia — Planos de Assinatura</title>
+  <title>Barbearia — Planos de Assinatura</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
@@ -90,9 +90,9 @@
   </nav>
 
   <section class="hero-barber">
-    <h1>Hugo Barbearia</h1>
-    <div class="slogan">Estilo clássico, atitude moderna</div>
-    <p>A melhor experiência em cuidados masculinos. Corte, barba, química e muito mais com Hugo Leonardo.</p>
+    <h1 id="heroNome">Barbearia</h1>
+    <div class="slogan" id="heroSlogan">-</div>
+    <p id="heroDescricao">-</p>
     <div class="hero-buttons">
       <a href="#planos" class="btn btn-primary"><i class="fas fa-id-card"></i> Ver Planos de Assinatura</a>
       <a href="#agendar" class="btn btn-secondary"><i class="fas fa-calendar-check"></i> Agendar Horário</a>
@@ -101,7 +101,7 @@
 
   <section class="about-section" id="sobre">
     <h2>Sobre a Barbearia</h2>
-    <p>Na Barbearia Vintage, cada cliente é tratado como rei. Nosso ambiente foi pensado para oferecer conforto, estilo e aquele papo de barbearia que só quem é da área conhece. Trabalhamos com produtos premium, técnicas modernas e um atendimento que faz você querer voltar sempre.</p>
+    <p id="heroSobre">-</p>
   </section>
 
   <section class="public-section" id="servicos" style="padding-top:40px;">
@@ -163,8 +163,8 @@
   </section>
 
   <footer class="landing-footer">
-    <p><strong>Hugo Barbearia</strong> — Brasília - DF</p>
-    <p class="mt-4 text-muted">WhatsApp: (61) 98297-6481 | hugo.leonardo.jobs@gmail.com</p>
+    <p><strong id="footNome">Barbearia</strong> — <span id="footEndereco">-</span></p>
+    <p class="mt-4 text-muted" id="footContato">-</p>
     <p class="mt-4 text-muted">Assine um plano e tenha prioridade todo mês.</p>
   </footer>
 
@@ -175,8 +175,12 @@
     DB.seed();
     const barbearia = DB.getBarbearias()[0];
     if (barbearia) {
-      document.title = barbearia.nome;
+      document.title = barbearia.nome + ' — Planos de Assinatura';
       document.getElementById('navNome').textContent = barbearia.nome;
+      document.getElementById('heroNome').textContent = barbearia.nome;
+      document.getElementById('heroSlogan').textContent = barbearia.slogan || '';
+      document.getElementById('heroDescricao').textContent = barbearia.descricao || '';
+      document.getElementById('heroSobre').textContent = barbearia.descricao ? 'Na ' + barbearia.nome + ', cada cliente é tratado como rei. ' + barbearia.descricao + ' Trabalhamos com produtos premium, técnicas modernas e um atendimento que faz você querer voltar sempre.' : '';
       document.getElementById('pubEndereco').textContent = barbearia.endereco || '-';
       document.getElementById('pubTelefone').textContent = barbearia.telefone || '-';
       document.getElementById('pubEmail').textContent = barbearia.email || '-';
@@ -258,6 +262,9 @@
 
       const horario = barbearia.horarioFuncionamento || {};
       const dias = {seg:'Segunda',ter:'Terça',qua:'Quarta',qui:'Quinta',sex:'Sexta',sab:'Sábado',dom:'Domingo'};
+      document.getElementById('footNome').textContent = barbearia.nome;
+      document.getElementById('footEndereco').textContent = barbearia.endereco || '-';
+      document.getElementById('footContato').textContent = `WhatsApp: ${barbearia.telefone||'-'} | ${barbearia.email||'-'}`;
       document.getElementById('pubHorarios').innerHTML = Object.entries(dias).map(([k,label]) => {
         const h = horario[k] || 'fechado';
         return `<div class="horario-item ${h==='fechado'?'fechado':''}"><strong>${label}</strong><div>${h==='fechado'?'Fechado':h}</div></div>`;
@@ -276,7 +283,7 @@
         const tel = document.getElementById('agTel').value.trim();
         let cliente = DB.getUsers().find(u => u.email === email && u.barbeariaId === barbearia.id);
         if (!cliente) {
-          cliente = DB.saveUser({ barbeariaId: barbearia.id, nome, email, telefone: tel, tipo: 'cliente', senha: '123456', avatar: '' });
+          cliente = DB.saveUser({ barbeariaId: barbearia.id, nome, email, telefone: tel, tipo: 'cliente', senha: DB.hashSenha('123456'), avatar: '' });
         }
         DB.saveAgendamento({
           barbeariaId: barbearia.id, clienteId: cliente.id,

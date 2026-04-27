@@ -65,7 +65,7 @@
       e.preventDefault();
       const dados = { ...user, nome: document.getElementById('pfNome').value.trim(), email: document.getElementById('pfEmail').value.trim(), telefone: document.getElementById('pfTel').value.trim() };
       const novaSenha = document.getElementById('pfSenha').value;
-      if (novaSenha) dados.senha = novaSenha;
+      if (novaSenha) dados.senha = DB.hashSenha(novaSenha);
       DB.saveUser(dados);
       alert('Perfil atualizado com sucesso!');
       window.location.reload();

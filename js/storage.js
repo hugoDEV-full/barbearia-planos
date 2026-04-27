@@ -223,6 +223,68 @@ const DB = {
     sessionStorage.removeItem('session');
   },
 
+  // ─── Segurança básica ───
+  hashSenha(senha) {
+    try { return btoa(senha); } catch { return senha; }
+  },
+  verificarSenha(senha, hashArmazenado) {
+    return this.hashSenha(senha) === hashArmazenado;
+  },
+
+  // ─── Validação de conflito de agendamento ───
+  verificarConflitoAgendamento(barbeariaId, data, horario, colaboradorId, excetoId) {
+    const ags = this.getAgendamentos(barbeariaId).filter(a => a.data === data && a.status !== 'cancelado');
+    return ags.some(a => {
+      if (excetoId && a.id === excetoId) return false;
+      if (colaboradorId && a.colaboradorId !== colaboradorId) return false;
+      return a.horario === horario;
+    });
+  },
+
+  // ─── Comissões dos barbeiros ───
+  getAtendimentosBarbeiro(barbeariaId, colaboradorId, mes, ano) {
+    return this.getAgendamentos(barbeariaId).filter(a => {
+      if (a.colaboradorId !== colaboradorId || a.status !== 'concluido') return false;
+      const d = new Date(a.data);
+      return d.getMonth() === mes && d.getFullYear() === ano;
+    });
+  },
+  calcularComissao(barbeariaId, colaboradorId, mes, ano, percentual) {
+    const atendimentos = this.getAtendimentosBarbeiro(barbeariaId, colaboradorId, mes, ano);
+    const servicos = this.getServicos(barbeariaId);
+    const total = atendimentos.reduce((s, a) => {
+      const srv = servicos.find(sv => sv.id === a.servicoId);
+      return s + (srv ? parseFloat(srv.preco) || 0 : 0);
+    }, 0);
+    return { total, comissao: total * (percentual / 100), atendimentos: atendimentos.length };
+  },
+
+  // ─── Helpers de data/alertas ───
+  getCobrancasVencidas(barbeariaId) {
+    const hojeStr = new Date().toISOString().split('T')[0];
+    return this.getCobrancas(barbeariaId).filter(c => c.dataVencimento < hojeStr && c.status !== 'pago');
+  },
+  getAgendamentosPendentesConfirmacao(barbeariaId) {
+    const hojeStr = new Date().toISOString().split('T')[0];
+    return this.getAgendamentos(barbeariaId).filter(a => a.data >= hojeStr && a.status === 'agendado');
+  },
+
+  // ─── Exportar CSV ───
+  exportarCSV(filename, headers, rows) {
+    const csv = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  },
+
+  // ─── Primeira execução / Setup ───
+  isPrimeiraExecucao() {
+    return this.getBarbearias().length === 0;
+  },
+
   // ─── Seed de dados demo ───
   seed() {
     if (this.getBarbearias().length > 0) return;
@@ -250,7 +312,7 @@ const DB = {
     const adminId = this._uid();
     this._set('users', [{
       id: adminId, barbeariaId, nome: 'Hugo Leonardo', email: 'hugo.leonardo.jobs@gmail.com',
-      senha: 'admin123', telefone: '(61) 98297-6481', tipo: 'admin', avatar: '',
+      senha: this.hashSenha('admin123'), telefone: '(61) 98297-6481', tipo: 'admin', avatar: '',
       createdAt: this._now(), updatedAt: this._now()
     }]);
 
@@ -322,9 +384,9 @@ const DB = {
 
     // Clientes demo
     const clientesDemo = [
-      { id: this._uid(), barbeariaId, nome: 'André Lima', email: 'andre@email.com', telefone: '(11) 97777-1111', tipo: 'cliente', senha: '123456', avatar: '', createdAt: this._now(), updatedAt: this._now() },
-      { id: this._uid(), barbeariaId, nome: 'Bruno Costa', email: 'bruno@email.com', telefone: '(11) 97777-2222', tipo: 'cliente', senha: '123456', avatar: '', createdAt: this._now(), updatedAt: this._now() },
-      { id: this._uid(), barbeariaId, nome: 'Diego Martins', email: 'diego@email.com', telefone: '(11) 97777-3333', tipo: 'cliente', senha: '123456', avatar: '', createdAt: this._now(), updatedAt: this._now() }
+      { id: this._uid(), barbeariaId, nome: 'André Lima', email: 'andre@email.com', telefone: '(11) 97777-1111', tipo: 'cliente', senha: this.hashSenha('123456'), avatar: '', createdAt: this._now(), updatedAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Bruno Costa', email: 'bruno@email.com', telefone: '(11) 97777-2222', tipo: 'cliente', senha: this.hashSenha('123456'), avatar: '', createdAt: this._now(), updatedAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Diego Martins', email: 'diego@email.com', telefone: '(11) 97777-3333', tipo: 'cliente', senha: this.hashSenha('123456'), avatar: '', createdAt: this._now(), updatedAt: this._now() }
     ];
     this._set('users', [...this._get('users'), ...clientesDemo]);
 

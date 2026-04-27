@@ -2,11 +2,216 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=index.html">
-  <title>Redirecionando...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuração Inicial — Barbearia Planos</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .setup-page { display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 40px 20px; }
+    .setup-box { max-width: 600px; width: 100%; }
+    .setup-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px; }
+    .setup-step { display: none; }
+    .setup-step.active { display: block; }
+    .setup-progress { display: flex; gap: 8px; margin-bottom: 24px; }
+    .setup-progress .dot { flex: 1; height: 6px; background: var(--bg-hover); border-radius: 3px; transition: var(--transition); }
+    .setup-progress .dot.active { background: var(--accent); }
+    .setup-nav { display: flex; justify-content: space-between; margin-top: 28px; }
+    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
+    .toast { background: var(--bg-card); border: 1px solid var(--border); border-left: 4px solid var(--success); border-radius: var(--radius-sm); padding: 14px 18px; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 10px; font-size: 0.9rem; animation: toastIn 0.3s ease; }
+    .toast.error { border-left-color: var(--danger); }
+    @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  </style>
 </head>
-<body>
-  <p>Redirecionando para o site da barbearia...</p>
-  <script>window.location.href = 'index.html';</script>
+<body class="setup-page">
+  <div class="setup-box">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div class="sidebar-brand-icon" style="margin:0 auto 12px;width:60px;height:60px;font-size:1.8rem;"><i class="fas fa-cut"></i></div>
+      <h1 style="font-size:1.6rem;">Barbearia Planos</h1>
+      <p class="text-muted">Configuração Inicial do Sistema</p>
+    </div>
+
+    <div class="setup-progress">
+      <div class="dot active" id="dot1"></div>
+      <div class="dot" id="dot2"></div>
+      <div class="dot" id="dot3"></div>
+    </div>
+
+    <div class="setup-card">
+      <!-- Etapa 1: Dados da Barbearia -->
+      <div class="setup-step active" id="step1">
+        <h3 style="margin-bottom:20px;"><i class="fas fa-store" style="color:var(--accent);"></i> Dados da Barbearia</h3>
+        <div style="display:grid;gap:16px;">
+          <div class="form-group"><label>Nome da Barbearia *</label><input type="text" id="sNome" placeholder="Ex: Hugo Barbearia"></div>
+          <div class="form-group"><label>Slogan</label><input type="text" id="sSlogan" placeholder="Ex: Estilo clássico, atitude moderna"></div>
+          <div class="form-group"><label>Descrição</label><textarea id="sDescricao" rows="2" placeholder="Breve descrição da barbearia"></textarea></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group"><label>Telefone *</label><input type="text" id="sTelefone" placeholder="(61) 99999-9999"></div>
+            <div class="form-group"><label>Email *</label><input type="email" id="sEmail" placeholder="contato@barbearia.com"></div>
+          </div>
+          <div class="form-group"><label>Endereço</label><input type="text" id="sEndereco" placeholder="Rua, número, bairro, cidade"></div>
+          <div class="form-group"><label>Instagram</label><input type="text" id="sInstagram" placeholder="@sua_barbearia"></div>
+          <div class="form-group"><label>Cor Primária</label><input type="color" id="sCor" value="#d4a853" style="height:44px;padding:4px;"></div>
+        </div>
+      </div>
+
+      <!-- Etapa 2: Dados do Administrador -->
+      <div class="setup-step" id="step2">
+        <h3 style="margin-bottom:20px;"><i class="fas fa-user-shield" style="color:var(--accent);"></i> Administrador</h3>
+        <div style="display:grid;gap:16px;">
+          <div class="form-group"><label>Nome do Administrador *</label><input type="text" id="sAdminNome" placeholder="Seu nome completo"></div>
+          <div class="form-group"><label>Email do Administrador *</label><input type="email" id="sAdminEmail" placeholder="admin@email.com"></div>
+          <div class="form-group"><label>Senha *</label><input type="password" id="sAdminSenha" placeholder="Mínimo 6 caracteres"></div>
+          <div class="form-group"><label>Confirmar Senha *</label><input type="password" id="sAdminSenha2" placeholder="Repita a senha"></div>
+        </div>
+      </div>
+
+      <!-- Etapa 3: Resumo -->
+      <div class="setup-step" id="step3">
+        <h3 style="margin-bottom:20px;"><i class="fas fa-check-circle" style="color:var(--accent);"></i> Revisar e Concluir</h3>
+        <div id="resumoSetup" style="background:var(--bg-secondary);border-radius:var(--radius-sm);padding:20px;font-size:0.9rem;line-height:1.8;">
+          <!-- Preenchido via JS -->
+        </div>
+      </div>
+
+      <div class="setup-nav">
+        <button class="btn btn-secondary btn-sm" id="btnVoltar" onclick="mudarEtapa(-1)" style="visibility:hidden;"><i class="fas fa-arrow-left"></i> Voltar</button>
+        <button class="btn btn-primary btn-sm" id="btnAvancar" onclick="mudarEtapa(1)">Avançar <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/storage.js"></script>
+  <script>
+    const DB = window.DB;
+    let etapa = 1;
+    const totalEtapas = 3;
+
+    function toast(msg, tipo='success') {
+      const container = document.getElementById('toastContainer');
+      const el = document.createElement('div'); el.className = `toast ${tipo}`;
+      el.innerHTML = `<i class="fas fa-${tipo==='success'?'check-circle':tipo==='error'?'times-circle':'info-circle'}"></i> ${msg}`;
+      container.appendChild(el);
+      setTimeout(() => el.remove(), 3500);
+    }
+
+    function atualizarDots() {
+      for (let i = 1; i <= totalEtapas; i++) {
+        document.getElementById('dot' + i).classList.toggle('active', i <= etapa);
+      }
+      document.querySelectorAll('.setup-step').forEach((el, i) => el.classList.toggle('active', i + 1 === etapa));
+      document.getElementById('btnVoltar').style.visibility = etapa === 1 ? 'hidden' : 'visible';
+      const btnAvancar = document.getElementById('btnAvancar');
+      if (etapa === totalEtapas) {
+        btnAvancar.innerHTML = '<i class="fas fa-check"></i> Concluir Configuração';
+      } else {
+        btnAvancar.innerHTML = 'Avançar <i class="fas fa-arrow-right"></i>';
+      }
+    }
+
+    function validarEtapa1() {
+      if (!document.getElementById('sNome').value.trim()) { toast('Informe o nome da barbearia.', 'error'); return false; }
+      if (!document.getElementById('sTelefone').value.trim()) { toast('Informe o telefone.', 'error'); return false; }
+      if (!document.getElementById('sEmail').value.trim()) { toast('Informe o email.', 'error'); return false; }
+      return true;
+    }
+
+    function validarEtapa2() {
+      if (!document.getElementById('sAdminNome').value.trim()) { toast('Informe o nome do administrador.', 'error'); return false; }
+      if (!document.getElementById('sAdminEmail').value.trim()) { toast('Informe o email do administrador.', 'error'); return false; }
+      const s1 = document.getElementById('sAdminSenha').value;
+      const s2 = document.getElementById('sAdminSenha2').value;
+      if (s1.length < 6) { toast('A senha deve ter pelo menos 6 caracteres.', 'error'); return false; }
+      if (s1 !== s2) { toast('As senhas não coincidem.', 'error'); return false; }
+      return true;
+    }
+
+    function gerarResumo() {
+      document.getElementById('resumoSetup').innerHTML = `
+        <strong style="color:var(--accent);">Barbearia:</strong> ${document.getElementById('sNome').value}<br>
+        <strong>Telefone:</strong> ${document.getElementById('sTelefone').value}<br>
+        <strong>Email:</strong> ${document.getElementById('sEmail').value}<br>
+        <strong>Endereço:</strong> ${document.getElementById('sEndereco').value || '-'}<br>
+        <strong>Instagram:</strong> ${document.getElementById('sInstagram').value || '-'}<br>
+        <hr style="border-color:var(--border);margin:12px 0;">
+        <strong style="color:var(--accent);">Administrador:</strong> ${document.getElementById('sAdminNome').value}<br>
+        <strong>Email:</strong> ${document.getElementById('sAdminEmail').value}<br>
+      `;
+    }
+
+    function concluir() {
+      const barbeariaId = DB._uid();
+      const barbearia = {
+        id: barbeariaId,
+        nome: document.getElementById('sNome').value.trim(),
+        slug: 'barbearia',
+        slogan: document.getElementById('sSlogan').value.trim(),
+        descricao: document.getElementById('sDescricao').value.trim(),
+        telefone: document.getElementById('sTelefone').value.trim(),
+        whatsapp: document.getElementById('sTelefone').value.trim().replace(/\D/g, ''),
+        email: document.getElementById('sEmail').value.trim(),
+        instagram: document.getElementById('sInstagram').value.trim(),
+        endereco: document.getElementById('sEndereco').value.trim(),
+        logo: '',
+        corPrimaria: document.getElementById('sCor').value,
+        horarioFuncionamento: { seg: '09:00-18:00', ter: '09:00-18:00', qua: '09:00-18:00', qui: '09:00-18:00', sex: '09:00-20:00', sab: '09:00-14:00', dom: 'fechado' },
+        createdAt: DB._now(), updatedAt: DB._now()
+      };
+      DB._set('barbearias', [barbearia]);
+
+      const adminId = DB._uid();
+      DB._set('users', [{
+        id: adminId, barbeariaId, nome: document.getElementById('sAdminNome').value.trim(),
+        email: document.getElementById('sAdminEmail').value.trim().toLowerCase(),
+        senha: DB.hashSenha(document.getElementById('sAdminSenha').value),
+        telefone: document.getElementById('sTelefone').value.trim(),
+        tipo: 'admin', avatar: '',
+        createdAt: DB._now(), updatedAt: DB._now()
+      }]);
+
+      // Planos padrão
+      DB._set('planos', [
+        { id: DB._uid(), barbeariaId, nome: 'Corte Mensal', descricao: '1 corte por mês', preco: 49.90, cortesInclusos: 1, beneficios: ['1 corte à escolha', 'Consultoria de estilo'], ativo: true, createdAt: DB._now() },
+        { id: DB._uid(), barbeariaId, nome: 'Corte + Barba', descricao: '4 serviços por mês', preco: 89.90, cortesInclusos: 4, beneficios: ['2 cortes', '2 barbas terapia', 'Sobrancelha inclusa'], ativo: true, createdAt: DB._now() },
+        { id: DB._uid(), barbeariaId, nome: 'Combo Premium', descricao: 'Cortes e barbas ilimitados', preco: 139.90, cortesInclusos: 999, beneficios: ['Cortes ilimitados', 'Barba terapia ilimitada', 'Sobrancelha inclusa', '10% off produtos'], ativo: true, createdAt: DB._now() },
+        { id: DB._uid(), barbeariaId, nome: 'VIP Total', descricao: 'Experiência completa com química', preco: 199.90, cortesInclusos: 999, beneficios: ['Tudo do Premium', 'Descoloração/Pintura 1x/mês', 'Hidratação ilimitada', 'Bebida cortesia', 'Horário prioritário'], ativo: true, createdAt: DB._now() }
+      ]);
+
+      // Arrays vazios para o resto
+      DB._set('servicos', []);
+      DB._set('colaboradores', []);
+      DB._set('agendamentos', []);
+      DB._set('produtos', []);
+      DB._set('movimentacoes', []);
+      DB._set('transacoes', []);
+      DB._set('assinaturas', []);
+      DB._set('cobrancas', []);
+      DB._set('cortesUsados', []);
+
+      toast('Configuração concluída! Redirecionando...');
+      setTimeout(() => window.location.href = 'login.html', 1200);
+    }
+
+    window.mudarEtapa = function(dir) {
+      if (dir === 1 && etapa === 1 && !validarEtapa1()) return;
+      if (dir === 1 && etapa === 2 && !validarEtapa2()) return;
+      if (dir === 1 && etapa === 3) { concluir(); return; }
+
+      etapa += dir;
+      if (etapa < 1) etapa = 1;
+      if (etapa > totalEtapas) etapa = totalEtapas;
+
+      if (etapa === 3) gerarResumo();
+      atualizarDots();
+    };
+
+    // Verifica se já foi configurado
+    if (!DB.isPrimeiraExecucao()) {
+      window.location.href = 'login.html';
+    }
+
+    atualizarDots();
+  </script>
 </body>
 </html>

@@ -28,8 +28,12 @@
     .fab-whatsapp { position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #25d366; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; box-shadow: var(--shadow-lg); z-index: 100; }
     .checkin-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 200; padding: 20px; }
     .checkin-modal.active { display: flex; }
-    .checkin-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; max-width: 360px; width: 100%; text-align: center; }
+    .checkin-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; max-width: 420px; width: 100%; text-align: center; }
     .qr-placeholder { width: 180px; height: 180px; background: #fff; margin: 16px auto; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: #0a0a0f; font-size: 0.8rem; }
+    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 300; display: flex; flex-direction: column; gap: 10px; }
+    .toast { background: var(--bg-card); border: 1px solid var(--border); border-left: 4px solid var(--success); border-radius: var(--radius-sm); padding: 14px 18px; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 10px; font-size: 0.9rem; animation: toastIn 0.3s ease; }
+    .toast.error { border-left-color: var(--danger); }
+    @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
   </style>
 </head>
 <body>
@@ -81,14 +85,17 @@
 
   <div class="checkin-modal" id="checkinModal">
     <div class="checkin-box">
-      <h3>Check-in do Cliente</h3>
-      <p class="text-muted" style="font-size:0.85rem;">Peça para o cliente escanear este QR Code ou informe o email.</p>
+      <h3><i class="fas fa-qrcode" style="color:var(--accent);"></i> Check-in do Cliente</h3>
+      <p class="text-muted" style="font-size:0.85rem;">Informe o email do cliente para confirmar presença no agendamento de hoje.</p>
       <div class="qr-placeholder"><i class="fas fa-qrcode" style="font-size:4rem;color:var(--bg-hover);"></i></div>
       <input type="email" id="checkEmail" placeholder="Email do cliente" style="margin-bottom:12px;">
       <button class="btn btn-primary w-full" onclick="confirmarCheckin()"><i class="fas fa-check"></i> Confirmar Presença</button>
       <button class="btn btn-ghost btn-sm w-full" style="margin-top:8px;" onclick="fecharCheckin()">Fechar</button>
+      <div id="checkinResult" style="margin-top:12px;font-size:0.85rem;"></div>
     </div>
   </div>
+
+  <div class="toast-container" id="toastContainer"></div>
 
   <script src="js/storage.js"></script>
   <script>
@@ -111,6 +118,14 @@
     document.getElementById('qAgenda').textContent = hojeAg.length;
     document.getElementById('qConfirmado').textContent = hojeAg.filter(a => a.status === 'confirmado').length;
     document.getElementById('qConcluido').textContent = hojeAg.filter(a => a.status === 'concluido').length;
+
+    function toast(msg, tipo='success') {
+      const container = document.getElementById('toastContainer');
+      const el = document.createElement('div'); el.className = `toast ${tipo}`;
+      el.innerHTML = `<i class="fas fa-${tipo==='success'?'check-circle':tipo==='error'?'times-circle':'info-circle'}"></i> ${msg}`;
+      container.appendChild(el);
+      setTimeout(() => el.remove(), 3500);
+    }
 
     function renderAgenda(lista, elId, allowActions) {
       const el = document.getElementById(elId);
@@ -154,26 +169,50 @@
       const list = DB._get('agendamentos');
       const idx = list.findIndex(a => a.id === id);
       if (idx >= 0) { list[idx].status = 'confirmado'; list[idx].updatedAt = new Date().toISOString(); DB._set('agendamentos', list); }
-      window.location.reload();
+      toast('Agendamento confirmado');
+      setTimeout(() => window.location.reload(), 600);
     };
     window.marcarConcluido = function(id) {
       const list = DB._get('agendamentos');
       const idx = list.findIndex(a => a.id === id);
       if (idx >= 0) { list[idx].status = 'concluido'; list[idx].updatedAt = new Date().toISOString(); DB._set('agendamentos', list); }
-      window.location.reload();
+      toast('Agendamento concluído');
+      setTimeout(() => window.location.reload(), 600);
     };
     window.cancelarAg = function(id) {
       if (!confirm('Cancelar agendamento?')) return;
       DB.deleteAgendamento(id);
-      window.location.reload();
+      toast('Agendamento cancelado', 'warning');
+      setTimeout(() => window.location.reload(), 600);
     };
-    window.abrirCheckin = function() { document.getElementById('checkinModal').classList.add('active'); };
+    window.abrirCheckin = function() {
+      document.getElementById('checkinModal').classList.add('active');
+      document.getElementById('checkinResult').innerHTML = '';
+      document.getElementById('checkEmail').value = '';
+    };
     window.fecharCheckin = function() { document.getElementById('checkinModal').classList.remove('active'); };
     window.confirmarCheckin = function() {
-      const email = document.getElementById('checkEmail').value.trim();
-      if (!email) { alert('Informe o email do cliente.'); return; }
-      alert('Check-in de ' + email + ' confirmado!');
-      fecharCheckin();
+      const email = document.getElementById('checkEmail').value.trim().toLowerCase();
+      const resultEl = document.getElementById('checkinResult');
+      if (!email) { resultEl.innerHTML = '<span style="color:var(--danger)">Informe o email do cliente.</span>'; return; }
+
+      const cliente = clientes.find(u => u.email.toLowerCase() === email && u.tipo === 'cliente');
+      if (!cliente) { resultEl.innerHTML = '<span style="color:var(--danger)">Cliente não encontrado.</span>'; return; }
+
+      const ag = hojeAg.find(a => a.clienteId === cliente.id && a.status !== 'cancelado' && a.status !== 'concluido');
+      if (!ag) { resultEl.innerHTML = '<span style="color:var(--warning)">Nenhum agendamento ativo encontrado para hoje.</span>'; return; }
+
+      // Marca como confirmado (check-in)
+      const list = DB._get('agendamentos');
+      const idx = list.findIndex(a => a.id === ag.id);
+      if (idx >= 0) {
+        list[idx].status = 'confirmado';
+        list[idx].updatedAt = new Date().toISOString();
+        DB._set('agendamentos', list);
+      }
+      resultEl.innerHTML = `<span style="color:var(--success)"><i class="fas fa-check-circle"></i> Check-in de <strong>${cliente.nome}</strong> confirmado!<br><small>${ag.horario} — ${servicos.find(s=>s.id===ag.servicoId)?.nome||'Serviço'}</small></span>`;
+      toast(`Check-in: ${cliente.nome}`);
+      setTimeout(() => { fecharCheckin(); window.location.reload(); }, 1500);
     };
     window.sair = function() { DB.clearSession(); window.location.href = 'login.html'; };
   </script>

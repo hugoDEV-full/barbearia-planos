@@ -44,7 +44,7 @@
       e.preventDefault();
       const email = document.getElementById('email').value.trim();
       const senha = document.getElementById('senha').value;
-      const user = DB.getUsers().find(u => u.email === email && u.senha === senha);
+      const user = DB.getUsers().find(u => u.email === email && DB.verificarSenha(senha, u.senha));
       if (!user) { alert('Email ou senha incorretos.'); return; }
       DB.setSession({ userId: user.id, tipo: user.tipo, barbeariaId: user.barbeariaId });
       window.location.href = user.tipo === 'admin' ? 'portal-admin.html' : 'cliente.html';

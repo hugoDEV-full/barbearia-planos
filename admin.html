@@ -35,6 +35,7 @@
           <div class="nav-item" data-tab="estoque" data-tooltip="Produtos e movimentações"><span class="nav-icon"><i class="fas fa-boxes"></i></span> Estoque</div>
           <div class="nav-item" data-tab="financas" data-tooltip="Receitas e despesas"><span class="nav-icon"><i class="fas fa-dollar-sign"></i></span> Finanças</div>
           <div class="nav-item" data-tab="relatorios" data-tooltip="Análises e métricas"><span class="nav-icon"><i class="fas fa-file-alt"></i></span> Relatórios</div>
+          <div class="nav-item" data-tab="comissoes" data-tooltip="Comissões dos barbeiros"><span class="nav-icon"><i class="fas fa-percentage"></i></span> Comissões</div>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Sistema</div>
@@ -122,7 +123,10 @@
       <div class="tab-content" id="tab-clientes">
         <div class="flex-between mb-4">
           <input type="text" id="searchClientes" placeholder="Buscar clientes..." style="max-width:320px;">
-          <button class="btn btn-primary btn-sm" onclick="abrirModal('cliente')"><i class="fas fa-plus"></i> Adicionar Cliente</button>
+          <div class="flex gap-2">
+            <button class="btn btn-secondary btn-sm" onclick="exportarCSV('clientes')"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+            <button class="btn btn-primary btn-sm" onclick="abrirModal('cliente')"><i class="fas fa-plus"></i> Adicionar Cliente</button>
+          </div>
         </div>
         <div class="card">
           <div class="table-container">
@@ -162,7 +166,10 @@
       <div class="tab-content" id="tab-agendamentos">
         <div class="flex-between mb-4">
           <input type="date" id="dataAgendamentoFiltro" style="max-width:180px;">
-          <button class="btn btn-primary btn-sm" onclick="abrirModal('agendamento')"><i class="fas fa-plus"></i> Novo Agendamento</button>
+          <div class="flex gap-2">
+            <button class="btn btn-secondary btn-sm" onclick="exportarCSV('agendamentos')"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+            <button class="btn btn-primary btn-sm" onclick="abrirModal('agendamento')"><i class="fas fa-plus"></i> Novo Agendamento</button>
+          </div>
         </div>
         <div class="card">
           <div class="table-container">
@@ -240,7 +247,10 @@
             <div class="tab" onclick="filtrarFinancas('receita',this)">Receitas</div>
             <div class="tab" onclick="filtrarFinancas('despesa',this)">Despesas</div>
           </div>
-          <button class="btn btn-primary btn-sm" onclick="abrirModal('transacao')"><i class="fas fa-plus"></i> Lançar</button>
+          <div class="flex gap-2">
+            <button class="btn btn-secondary btn-sm" onclick="exportarCSV('financas')"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+            <button class="btn btn-primary btn-sm" onclick="abrirModal('transacao')"><i class="fas fa-plus"></i> Lançar</button>
+          </div>
         </div>
         <div class="card">
           <div class="table-container">
@@ -270,6 +280,28 @@
           <div class="card">
             <div class="card-header"><div class="card-title">Evolução Mensal</div></div>
             <div class="bar-chart" id="chartMensal" style="height:180px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMISSÕES -->
+      <div class="tab-content" id="tab-comissoes">
+        <div class="flex-between mb-4">
+          <h3 style="font-size:1.1rem;">Comissões dos Barbeiros</h3>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <label style="font-size:0.85rem;color:var(--text-muted);">% Comissão:</label>
+            <input type="number" id="pctComissao" value="30" style="width:70px;text-align:center;">
+            <button class="btn btn-secondary btn-sm" onclick="exportarCSV('comissoes')"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr><th>Barbeiro</th><th>Atendimentos (Mês)</th><th>Faturamento</th><th>Comissão</th></tr>
+              </thead>
+              <tbody id="tabelaComissoes"></tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -307,10 +339,20 @@
               <label>Cor Primária</label>
               <input type="color" id="cfgCor" style="height:44px;padding:4px;">
             </div>
+            <div class="card-header" style="padding-left:0;"><div class="card-title">Horário de Funcionamento</div></div>
+            <div id="horariosConfig" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div class="form-group"><label>Segunda</label><input type="text" id="cfgSeg" placeholder="09:00-18:00"></div>
+              <div class="form-group"><label>Terça</label><input type="text" id="cfgTer" placeholder="09:00-18:00"></div>
+              <div class="form-group"><label>Quarta</label><input type="text" id="cfgQua" placeholder="09:00-18:00"></div>
+              <div class="form-group"><label>Quinta</label><input type="text" id="cfgQui" placeholder="09:00-18:00"></div>
+              <div class="form-group"><label>Sexta</label><input type="text" id="cfgSex" placeholder="09:00-20:00"></div>
+              <div class="form-group"><label>Sábado</label><input type="text" id="cfgSab" placeholder="09:00-14:00"></div>
+              <div class="form-group"><label>Domingo</label><input type="text" id="cfgDom" placeholder="fechado"></div>
+            </div>
             <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Salvar Alterações</button>
           </form>
           <hr style="border-color:var(--border);margin:24px 0;">
-          <button class="btn btn-danger btn-sm" onclick="if(confirm('Isso apagará TODOS os dados. Tem certeza?')){DB.reset();alert('Dados resetados.');window.location.reload();}"><i class="fas fa-trash"></i> Resetar Todos os Dados</button>
+          <button class="btn btn-danger btn-sm" onclick="if(confirm('Isso apagará TODOS os dados. Tem certeza?')){DB.reset();toast('Dados resetados.');window.location.reload();}"><i class="fas fa-trash"></i> Resetar Todos os Dados</button>
         </div>
       </div>
     </main>
