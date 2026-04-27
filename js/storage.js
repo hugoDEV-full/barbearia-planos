@@ -285,6 +285,31 @@ const DB = {
     return this.getBarbearias().length === 0;
   },
 
+  // ─── Garantir usuários demo com senhas corretas ───
+  garantirUsuariosDemo() {
+    const barbearia = this.getBarbearias()[0];
+    if (!barbearia) return;
+    const users = this._get('users');
+    let alterou = false;
+    users.forEach(u => {
+      if (u.barbeariaId === barbearia.id) {
+        if (u.email === 'hugo.leonardo.jobs@gmail.com' && u.senha !== this.hashSenha('admin123')) {
+          u.senha = this.hashSenha('admin123'); alterou = true;
+        }
+        if (u.email === 'andre@email.com' && u.senha !== this.hashSenha('123456')) {
+          u.senha = this.hashSenha('123456'); alterou = true;
+        }
+        if (u.email === 'bruno@email.com' && u.senha !== this.hashSenha('123456')) {
+          u.senha = this.hashSenha('123456'); alterou = true;
+        }
+        if (u.email === 'diego@email.com' && u.senha !== this.hashSenha('123456')) {
+          u.senha = this.hashSenha('123456'); alterou = true;
+        }
+      }
+    });
+    if (alterou) this._set('users', users);
+  },
+
   // ─── Seed de dados demo ───
   seed() {
     if (this.getBarbearias().length > 0) return;

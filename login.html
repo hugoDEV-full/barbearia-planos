@@ -40,6 +40,7 @@
   <script src="js/storage.js"></script>
   <script>
     DB.seed();
+    DB.garantirUsuariosDemo();
     document.getElementById('loginForm').addEventListener('submit', e => {
       e.preventDefault();
       const email = document.getElementById('email').value.trim().toLowerCase();
