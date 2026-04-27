@@ -39,6 +39,7 @@
           <div class="form-group"><label>Nome</label><input type="text" id="pfNome" required></div>
           <div class="form-group"><label>Email</label><input type="email" id="pfEmail" required></div>
           <div class="form-group"><label>Telefone</label><input type="text" id="pfTel"></div>
+          <div class="form-group"><label>Nova Senha</label><input type="password" id="pfSenha" placeholder="Deixe em branco para manter"></div>
 
           <button type="submit" class="btn btn-primary w-full"><i class="fas fa-save"></i> Salvar Alterações</button>
         </form>
@@ -64,7 +65,8 @@
     document.getElementById('perfilForm').addEventListener('submit', e => {
       e.preventDefault();
       const dados = { ...user, nome: document.getElementById('pfNome').value.trim(), email: document.getElementById('pfEmail').value.trim(), telefone: document.getElementById('pfTel').value.trim() };
-
+      const novaSenha = document.getElementById('pfSenha').value;
+      if (novaSenha) dados.senha = DB.hashSenha(novaSenha);
       DB.saveUser(dados);
       alert('Perfil atualizado com sucesso!');
       window.location.reload();

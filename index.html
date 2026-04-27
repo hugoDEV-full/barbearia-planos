@@ -283,7 +283,7 @@
         const tel = document.getElementById('agTel').value.trim();
         let cliente = DB.getUsers().find(u => u.email === email && u.barbeariaId === barbearia.id);
         if (!cliente) {
-          cliente = DB.saveUser({ barbeariaId: barbearia.id, nome, email, telefone: tel, tipo: 'cliente', senha: DB.hashSenha(email), avatar: '' });
+          cliente = DB.saveUser({ barbeariaId: barbearia.id, nome, email, telefone: tel, tipo: 'cliente', senha: DB.hashSenha('123456'), avatar: '' });
         }
         DB.saveAgendamento({
           barbeariaId: barbearia.id, clienteId: cliente.id,

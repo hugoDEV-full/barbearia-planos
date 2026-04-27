@@ -20,12 +20,16 @@
           <label>Email</label>
           <input type="email" id="email" placeholder="seu@email.com" required>
         </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="senha" placeholder="••••••" required>
+        </div>
         <button type="submit" class="btn btn-primary w-full"><i class="fas fa-sign-in-alt"></i> Entrar</button>
       </form>
       <div style="margin-top:16px;text-align:center;">
-        <small class="text-muted">Admin: hugo.leonardo.jobs@gmail.com</small><br>
-        <small class="text-muted">Cliente demo: andre@email.com</small><br>
-        <a href="recuperar-senha.html" style="font-size:0.8rem;">Esqueceu o acesso?</a>
+        <small class="text-muted">Admin: hugo.leonardo.jobs@gmail.com / admin123</small><br>
+        <small class="text-muted">Cliente demo: andre@email.com / 123456</small><br>
+        <a href="recuperar-senha.html" style="font-size:0.8rem;">Esqueceu a senha?</a>
       </div>
     </div>
     <div class="auth-footer">
@@ -39,8 +43,9 @@
     document.getElementById('loginForm').addEventListener('submit', e => {
       e.preventDefault();
       const email = document.getElementById('email').value.trim().toLowerCase();
-      const user = DB.getUsers().find(u => u.email.toLowerCase() === email);
-      if (!user) { alert('Email não encontrado.'); return; }
+      const senha = document.getElementById('senha').value;
+      const user = DB.getUsers().find(u => u.email.toLowerCase() === email && DB.verificarSenha(senha, u.senha));
+      if (!user) { alert('Email ou senha incorretos.'); return; }
       DB.setSession({ userId: user.id, tipo: user.tipo, barbeariaId: user.barbeariaId });
       window.location.href = user.tipo === 'admin' ? 'portal-admin.html' : 'cliente.html';
     });

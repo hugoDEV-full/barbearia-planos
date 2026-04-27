@@ -834,7 +834,7 @@
         `, () => {
           if (!$('cliNome').value.trim() || !$('cliEmail').value.trim()) { toast('Preencha nome e email.', 'error'); return; }
           const novoEmail = $('cliEmail').value.trim().toLowerCase();
-          DB.saveUser({ barbeariaId: barbearia.id, nome: $('cliNome').value.trim(), email: novoEmail, telefone: $('cliTelefone').value.trim(), tipo: 'cliente', senha: DB.hashSenha(novoEmail), avatar: '' });
+          DB.saveUser({ barbeariaId: barbearia.id, nome: $('cliNome').value.trim(), email: novoEmail, telefone: $('cliTelefone').value.trim(), tipo: 'cliente', senha: DB.hashSenha('123456'), avatar: '' });
           toast('Cliente adicionado'); fecharModal(); renderClientes(); renderDashboard();
         }),
         assinatura: () => {
