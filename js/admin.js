@@ -833,7 +833,8 @@
           <div class="form-group"><label>Telefone</label><input type="text" id="cliTelefone" data-tooltip="Telefone com DDD"></div>
         `, () => {
           if (!$('cliNome').value.trim() || !$('cliEmail').value.trim()) { toast('Preencha nome e email.', 'error'); return; }
-          DB.saveUser({ barbeariaId: barbearia.id, nome: $('cliNome').value.trim(), email: $('cliEmail').value.trim(), telefone: $('cliTelefone').value.trim(), tipo: 'cliente', senha: DB.hashSenha('123456'), avatar: '' });
+          const novoEmail = $('cliEmail').value.trim().toLowerCase();
+          DB.saveUser({ barbeariaId: barbearia.id, nome: $('cliNome').value.trim(), email: novoEmail, telefone: $('cliTelefone').value.trim(), tipo: 'cliente', senha: DB.hashSenha(novoEmail), avatar: '' });
           toast('Cliente adicionado'); fecharModal(); renderClientes(); renderDashboard();
         }),
         assinatura: () => {

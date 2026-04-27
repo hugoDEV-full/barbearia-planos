@@ -109,7 +109,7 @@
       if (!horaInput.value) { alert('Selecione um horário.'); return; }
       let cliente = DB.getUsers().find(u => u.email === document.getElementById('email').value.trim() && u.barbeariaId === barbearia.id);
       if (!cliente) {
-        cliente = DB.saveUser({ barbeariaId: barbearia.id, nome: document.getElementById('nome').value.trim(), email: document.getElementById('email').value.trim(), telefone: document.getElementById('tel').value.trim(), tipo: 'cliente', senha: DB.hashSenha('123456'), avatar: '' });
+        cliente = DB.saveUser({ barbeariaId: barbearia.id, nome: document.getElementById('nome').value.trim(), email: document.getElementById('email').value.trim(), telefone: document.getElementById('tel').value.trim(), tipo: 'cliente', senha: DB.hashSenha(document.getElementById('email').value.trim().toLowerCase()), avatar: '' });
       }
       const colaboradorId = document.getElementById('barbeiro').value || null;
       if (DB.verificarConflitoAgendamento(barbearia.id, dataInput.value, horaInput.value, colaboradorId)) {

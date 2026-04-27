@@ -312,7 +312,7 @@ const DB = {
     const adminId = this._uid();
     this._set('users', [{
       id: adminId, barbeariaId, nome: 'Hugo Leonardo', email: 'hugo.leonardo.jobs@gmail.com',
-      senha: this.hashSenha('admin123'), telefone: '(61) 98297-6481', tipo: 'admin', avatar: '',
+      senha: this.hashSenha('hugo.leonardo.jobs@gmail.com'), telefone: '(61) 98297-6481', tipo: 'admin', avatar: '',
       createdAt: this._now(), updatedAt: this._now()
     }]);
 
@@ -384,9 +384,9 @@ const DB = {
 
     // Clientes demo
     const clientesDemo = [
-      { id: this._uid(), barbeariaId, nome: 'André Lima', email: 'andre@email.com', telefone: '(11) 97777-1111', tipo: 'cliente', senha: this.hashSenha('123456'), avatar: '', createdAt: this._now(), updatedAt: this._now() },
-      { id: this._uid(), barbeariaId, nome: 'Bruno Costa', email: 'bruno@email.com', telefone: '(11) 97777-2222', tipo: 'cliente', senha: this.hashSenha('123456'), avatar: '', createdAt: this._now(), updatedAt: this._now() },
-      { id: this._uid(), barbeariaId, nome: 'Diego Martins', email: 'diego@email.com', telefone: '(11) 97777-3333', tipo: 'cliente', senha: this.hashSenha('123456'), avatar: '', createdAt: this._now(), updatedAt: this._now() }
+      { id: this._uid(), barbeariaId, nome: 'André Lima', email: 'andre@email.com', telefone: '(11) 97777-1111', tipo: 'cliente', senha: this.hashSenha('andre@email.com'), avatar: '', createdAt: this._now(), updatedAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Bruno Costa', email: 'bruno@email.com', telefone: '(11) 97777-2222', tipo: 'cliente', senha: this.hashSenha('bruno@email.com'), avatar: '', createdAt: this._now(), updatedAt: this._now() },
+      { id: this._uid(), barbeariaId, nome: 'Diego Martins', email: 'diego@email.com', telefone: '(11) 97777-3333', tipo: 'cliente', senha: this.hashSenha('diego@email.com'), avatar: '', createdAt: this._now(), updatedAt: this._now() }
     ];
     this._set('users', [...this._get('users'), ...clientesDemo]);
 
