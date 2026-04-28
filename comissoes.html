@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Modelos de Comissão — Cash Barber</title>
+  <title>Modelos de Comissão para Barbearias</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
@@ -143,7 +143,7 @@
     .resumo-item .value { font-size: 1.4rem; font-weight: 800; font-family: 'Playfair Display', serif; }
     .resumo-item .sub { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; }
 
-    /* Cash Barber Explicação */
+    /* Modelo Hibrido Explicacao */
     .cash-box {
       background: linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(59,130,246,0.08) 100%);
       border: 1px solid rgba(34,197,94,0.3);
@@ -240,15 +240,15 @@
     <div class="public-logo">
       <div class="sidebar-brand-icon"><i class="fas fa-cut"></i></div>
       <div>
-        <div class="sidebar-brand-text">Cash Barber</div>
-        <div class="sidebar-brand-sub">Sistema de Comissões</div>
+        <div class="sidebar-brand-text">Barbearia Planos</div>
+        <div class="sidebar-brand-sub">Modelos de Comissão</div>
       </div>
     </div>
     <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu"><i class="fas fa-bars"></i></button>
     <div class="public-nav" id="publicNav">
       <a href="index.html">Início</a>
       <a href="#modelos">Modelos</a>
-      <a href="#cashbarber">Cash Barber</a>
+      <a href="#hibrido">Modelo Híbrido</a>
       <a href="#recomendacao">Recomendação</a>
       <a href="login.html" class="btn btn-primary btn-sm"><i class="fas fa-sign-in-alt"></i> Área do Cliente</a>
     </div>
@@ -256,7 +256,7 @@
   <div class="public-nav-mobile" id="publicNavMobile">
     <a href="index.html" onclick="toggleMenu()">Início</a>
     <a href="#modelos" onclick="toggleMenu()">Modelos</a>
-    <a href="#cashbarber" onclick="toggleMenu()">Cash Barber</a>
+    <a href="#hibrido" onclick="toggleMenu()">Modelo Híbrido</a>
     <a href="#recomendacao" onclick="toggleMenu()">Recomendação</a>
     <a href="login.html" class="btn btn-primary btn-sm" style="justify-content:center;" onclick="toggleMenu()"><i class="fas fa-sign-in-alt"></i> Área do Cliente</a>
   </div>
@@ -454,159 +454,193 @@
       </div>
     </div>
 
-    <!-- MODELO 4: CASH BARBER / ASSINATURAS -->
+    <!-- MODELO 4: HÍBRIDO (RECOMENDADO) -->
     <div class="modelo-card m4 animate-in">
       <div class="modelo-header">
         <div class="modelo-numero">4</div>
         <div>
-          <div class="modelo-title">Comissão por Assinaturas (Modelo Cash Barber)</div>
-          <div class="modelo-desc">O barbeiro ganha por cliente do plano que atende + comissão sobre serviços extras e produtos.</div>
+          <div class="modelo-title">Modelo Híbrido — Fixo + Variável com CAP</div>
+          <div class="modelo-desc">Combina segurança (fixo por atendimento), justiça (variável proporcional) e proteção da barbearia (CAP máximo).</div>
         </div>
-        <span class="tag tag-green">Mais Inovador</span>
+        <span class="tag tag-green">Recomendado ⭐</span>
       </div>
       <div class="modelo-body">
         <div class="como-funciona">
           <h4><i class="fas fa-cog" style="color:var(--modelo-4);"></i> Como Funciona</h4>
-          <p>No modelo <strong>Cash Barber</strong>, a barbearia vende planos de assinatura mensal (ex: R$ 99/mês por 2 cortes). O barbeiro recebe um valor fixo por cada atendimento de cliente assinante + comissão sobre cortes avulsos e produtos vendidos.</p>
+          <p>O modelo <strong>híbrido</strong> une o melhor dos dois mundos: o barbeiro tem <strong>segurança</strong> com um valor fixo por atendimento, <strong>justiça</strong> com uma parcela variável proporcional ao que produz, e a barbearia tem <strong>proteção</strong> através de um CAP (teto máximo) que evita prejuízo.</p>
           <ul>
-            <li>Cliente assinante agenda corte → barbeiro ganha <strong>R$ 25</strong> por atendimento (fixo)</li>
-            <li>Cliente avulso faz corte → barbeiro ganha <strong>50%</strong> do valor do serviço</li>
-            <li>Venda de produto → barbeiro ganha <strong>20%</strong> sobre o produto</li>
-            <li>Bônus: se o barbeiro indicar um assinante novo → ganha <strong>R$ 15</strong> de bônus</li>
+            <li>A barbearia define um <strong>percentual de comissão</strong> sobre o faturamento (ex: 40%). Esse é o <strong>CAP</strong>.</li>
+            <li>O barbeiro recebe <strong>R$ 8 fixos</strong> por cada atendimento realizado no mês.</li>
+            <li>O valor restante dentro do CAP é pago como <strong>comissão variável</strong> proporcional.</li>
+            <li>Se o fixo já consome todo o CAP, não há variável — a barbearia <strong>nunca paga acima do teto</strong>.</li>
           </ul>
         </div>
 
-        <div class="sim-title"><i class="fas fa-calculator" style="color:var(--modelo-4);"></i> Simulação do Mês — Fevereiro/2026</div>
+        <div class="sim-title"><i class="fas fa-calculator" style="color:var(--modelo-4);"></i> Simulação do Mês — Fevereiro/2026 (Cenário Normal)</div>
         <div class="table-container">
           <table class="sim-table">
             <thead>
-              <tr><th>Barbeiro</th><th>Assinantes Atendidos</th><th>Avulsos</th><th>Produtos</th><th>Bônus Indicação</th><th>Total a Receber</th><th>Lucro Barbearia</th></tr>
+              <tr><th>Barbeiro</th><th>Faturamento</th><th>Atend.</th><th>Fixo (R$8)</th><th>CAP (40%)</th><th>Variável</th><th>Total</th></tr>
             </thead>
             <tbody>
               <tr>
                 <td><strong>Marcos</strong> <span class="tag tag-green">Sênior</span></td>
-                <td>60 × R$25 = <strong>R$ 1.500</strong></td>
-                <td>25 × R$40 = <strong>R$ 1.000</strong></td>
-                <td>R$ 180</td>
-                <td>4 × R$15 = <strong>R$ 60</strong></td>
-                <td class="valor" style="color:var(--modelo-4);">R$ 2.740</td>
-                <td class="valor">R$ 4.060</td>
+                <td class="valor">R$ 6.800</td>
+                <td>85</td>
+                <td>R$ 680</td>
+                <td class="valor">R$ 2.720</td>
+                <td>R$ 2.040</td>
+                <td class="valor" style="color:var(--modelo-4);">R$ 2.720</td>
               </tr>
               <tr>
                 <td><strong>Thiago</strong> <span class="tag tag-green">Pleno</span></td>
-                <td>45 × R$25 = <strong>R$ 1.125</strong></td>
-                <td>27 × R$40 = <strong>R$ 1.080</strong></td>
-                <td>R$ 120</td>
-                <td>3 × R$15 = <strong>R$ 45</strong></td>
-                <td class="valor" style="color:var(--modelo-4);">R$ 2.370</td>
-                <td class="valor">R$ 3.030</td>
+                <td class="valor">R$ 5.400</td>
+                <td>72</td>
+                <td>R$ 576</td>
+                <td class="valor">R$ 2.160</td>
+                <td>R$ 1.584</td>
+                <td class="valor" style="color:var(--modelo-4);">R$ 2.160</td>
               </tr>
               <tr>
                 <td><strong>Rafael</strong> <span class="tag tag-green">Junior</span></td>
-                <td>30 × R$25 = <strong>R$ 750</strong></td>
-                <td>18 × R$40 = <strong>R$ 720</strong></td>
-                <td>R$ 80</td>
-                <td>1 × R$15 = <strong>R$ 15</strong></td>
-                <td class="valor" style="color:var(--modelo-4);">R$ 1.565</td>
-                <td class="valor">R$ 1.635</td>
+                <td class="valor">R$ 3.200</td>
+                <td>48</td>
+                <td>R$ 384</td>
+                <td class="valor">R$ 1.280</td>
+                <td>R$ 896</td>
+                <td class="valor" style="color:var(--modelo-4);">R$ 1.280</td>
               </tr>
               <tr>
                 <td><strong>Lucas</strong> <span class="tag tag-green">Junior</span></td>
-                <td>22 × R$25 = <strong>R$ 550</strong></td>
-                <td>13 × R$40 = <strong>R$ 520</strong></td>
-                <td>R$ 40</td>
-                <td>—</td>
-                <td class="valor" style="color:var(--modelo-4);">R$ 1.110</td>
-                <td class="valor">R$ 990</td>
+                <td class="valor">R$ 2.100</td>
+                <td>35</td>
+                <td>R$ 280</td>
+                <td class="valor">R$ 840</td>
+                <td>R$ 560</td>
+                <td class="valor" style="color:var(--modelo-4);">R$ 840</td>
               </tr>
               <tr class="total-row">
-                <td colspan="5">TOTAL</td>
-                <td class="valor">R$ 7.785</td>
-                <td class="valor">R$ 9.715</td>
+                <td colspan="2">TOTAL</td>
+                <td>240</td>
+                <td class="valor">R$ 1.920</td>
+                <td class="valor">R$ 7.000</td>
+                <td class="valor">R$ 5.080</td>
+                <td class="valor">R$ 7.000</td>
               </tr>
             </tbody>
           </table>
         </div>
 
+        <div class="comm-bar">
+          <div class="comm-bar-fill" style="width:27%;background:var(--modelo-4);">Fixo 27%</div>
+          <div class="comm-bar-fill" style="width:73%;background:#16a34a;">Variável 73%</div>
+        </div>
+        <div class="comm-bar-legend">
+          <span><span class="dot" style="background:var(--modelo-4);"></span> Fixo (segurança)</span>
+          <span><span class="dot" style="background:#16a34a;"></span> Variável (justiça)</span>
+        </div>
+
+        <div class="sim-title" style="margin-top:32px;"><i class="fas fa-shield-alt" style="color:var(--danger);"></i> Cenário de Proteção — Quando o CAP entra em ação</div>
+        <div class="como-funciona" style="border-left:3px solid var(--danger);">
+          <p>Imagine que a barbearia lança uma <strong>promoção de verão</strong>: corte por apenas <strong>R$ 30</strong>. Lucas atende <strong>120 clientes</strong> nesse plano. Sem proteção, a barbearia poderia ter prejuízo. Veja como o <strong>CAP</strong> protege:</p>
+          <div class="table-container" style="margin-top:16px;">
+            <table class="sim-table">
+              <thead>
+                <tr><th>Cenário</th><th>Faturamento</th><th>Atend.</th><th>Fixo (R$8)</th><th>CAP (40%)</th><th>Sem CAP (50%)</th><th>Proteção</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Lucas — Promoção</strong></td>
+                  <td class="valor">120 × R$30 = <strong>R$ 3.600</strong></td>
+                  <td>120</td>
+                  <td>R$ 960</td>
+                  <td class="valor text-success">R$ 1.440</td>
+                  <td class="valor text-danger">R$ 1.800</td>
+                  <td><span class="badge badge-success">Economia de R$ 360</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top:12px;"><strong>Resultado:</strong> Com o CAP, Lucas recebe <strong>R$ 1.440</strong> (40% do que faturou). Sem o CAP, receberia <strong>R$ 1.800</strong> — a barbearia perderia <strong>R$ 360</strong> em um mês só de um barbeiro.</p>
+        </div>
+
         <div class="resumo-grid">
           <div class="resumo-item">
-            <div class="label">Assinaturas Vendidas</div>
-            <div class="value" style="color:var(--modelo-4);">157</div>
-            <div class="sub">atendimentos no mês</div>
+            <div class="label">Segurança</div>
+            <div class="value" style="color:var(--modelo-4);">R$ 8</div>
+            <div class="sub">por atendimento garantido</div>
           </div>
           <div class="resumo-item">
-            <div class="label">Receita Recorrente</div>
-            <div class="value" style="color:var(--success);">R$ 7.800</div>
-            <div class="sub">garantida no próximo mês</div>
+            <div class="label">Justiça</div>
+            <div class="value" style="color:var(--success);">Variável</div>
+            <div class="sub">proporcional ao desempenho</div>
           </div>
           <div class="resumo-item">
-            <div class="label">Ticket Médio Extras</div>
-            <div class="value" style="color:var(--accent);">R$ 42</div>
-            <div class="sub">por cliente avulso</div>
+            <div class="label">Proteção (CAP)</div>
+            <div class="value" style="color:var(--accent);">40%</div>
+            <div class="sub">teto máximo de comissão</div>
           </div>
           <div class="resumo-item">
-            <div class="label">Retenção de Clientes</div>
-            <div class="value" style="color:var(--info);">92%</div>
-            <div class="sub">renovam o plano</div>
+            <div class="label">Previsibilidade</div>
+            <div class="value" style="color:var(--info);">Alta</div>
+            <div class="sub">custo nunca passa do CAP</div>
           </div>
         </div>
 
         <div class="alert-box">
           <i class="fas fa-lightbulb" style="color:var(--modelo-4);"></i>
-          <p><strong>Quando usar:</strong> O modelo ideal para barbearias que querem crescer com previsibilidade. A assinatura cria receita recorrente, fideliza clientes e reduz a sazonalidade. O barbeiro é incentivado a vender planos e atender bem, pois quanto mais assinantes, mais ele ganha.</p>
+          <p><strong>Quando usar:</strong> Este é o modelo mais equilibrado. O barbeiro tem segurança no fim do mês (fixo por atendimento), é motivado a produzir mais (variável proporcional), e a barbearia nunca corre o risco de pagar mais do que pode (CAP). Usado por academias, salões premium e empresas de SaaS com uso variável.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- COMO O CASH BARBER FUNCIONA -->
-  <section class="comm-section" id="cashbarber" style="background:var(--bg-secondary);border-radius:var(--radius);margin-bottom:40px;">
-    <h2><i class="fas fa-mobile-alt" style="color:var(--success);"></i> Como o Cash Barber Distribui as Comissões</h2>
-    <p class="subtitle">O Cash Barber é uma plataforma completa que automatiza todo o cálculo de comissões para você não se preocupar com planilhas.</p>
+  <!-- COMO O MODELO HÍBRIDO FUNCIONA -->
+  <section class="comm-section" id="hibrido" style="background:var(--bg-secondary);border-radius:var(--radius);margin-bottom:40px;">
+    <h2><i class="fas fa-balance-scale" style="color:var(--success);"></i> Entendendo o Modelo Híbrido na Prática</h2>
+    <p class="subtitle">O modelo híbrido é a fórmula perfeita entre segurança, justiça e proteção. Veja como aplicar na sua barbearia.</p>
 
     <div class="cash-box">
-      <h3><i class="fas fa-sync-alt" style="color:var(--success);"></i> Fluxo Automático de Pagamento</h3>
-      <p>Toda vez que um cliente assinante agenda um corte pelo app, o sistema já vincula aquele atendimento ao barbeiro escolhido. No fim do mês, o relatório de comissões é gerado automaticamente com:</p>
+      <h3><i class="fas fa-layer-group" style="color:var(--success);"></i> Os 3 Pilares do Modelo Híbrido</h3>
+      <p>O segredo do modelo híbrido está em combinar três elementos que cobrem todas as necessidades: o barbeiro, a barbearia e o cliente. Cada pilar resolve um problema específico:</p>
       <ul style="margin-left:18px;color:var(--text-secondary);line-height:2;">
-        <li>Quantos assinantes cada barbeiro atendeu</li>
-        <li>Valor fixo por atendimento de plano</li>
-        <li>Comissão sobre serviços avulsos e produtos</li>
-        <li>Bônus de indicação de novos assinantes</li>
-        <li>Ranking de produtividade da equipe</li>
+        <li><strong>Fixo por atendimento (R$ 8):</strong> Dá segurança ao barbeiro. Mesmo em dias fracos, ele sabe que cada corte vale algo.</li>
+        <li><strong>Variável proporcional:</strong> Dá justiça. Quem produz mais, ganha mais. O barbeiro é motivado a vender serviços extras.</li>
+        <li><strong>CAP (teto máximo de 40%):</strong> Protege a barbearia. O dono sabe exatamente o custo máximo de comissão antes do mês começar.</li>
       </ul>
 
       <div class="cash-steps">
         <div class="cash-step">
-          <i class="fas fa-user-plus"></i>
-          <h5>1. Cliente Assina</h5>
-          <p>Escolhe o plano e paga online. A barbearia recebe na hora.</p>
+          <i class="fas fa-hand-holding-usd"></i>
+          <h5>1. Defina o CAP</h5>
+          <p>Escolha o percentual máximo de comissão (ex: 40% do faturamento do barbeiro).</p>
         </div>
         <div class="cash-step">
-          <i class="fas fa-calendar-check"></i>
-          <h5>2. Agenda o Corte</h5>
-          <p>Seleciona o barbeiro preferido ou o próximo disponível.</p>
+          <i class="fas fa-receipt"></i>
+          <h5>2. Fixo por Atendimento</h5>
+          <p>Defina um valor fixo por corte (ex: R$ 8). Pago independente do valor do serviço.</p>
         </div>
         <div class="cash-step">
-          <i class="fas fa-cut"></i>
-          <h5>3. Barbeiro Atende</h5>
-          <p>Finaliza o serviço e confirma no painel do sistema.</p>
+          <i class="fas fa-chart-pie"></i>
+          <h5>3. Variável Proporcional</h5>
+          <p>O que sobrar do CAP após o fixo vira variável, dividido pelo desempenho.</p>
         </div>
         <div class="cash-step">
-          <i class="fas fa-coins"></i>
-          <h5>4. Comissão Contabilizada</h5>
-          <p>O sistema registra o valor a pagar ao barbeiro automaticamente.</p>
+          <i class="fas fa-shield-alt"></i>
+          <h5>4. Proteção Ativa</h5>
+          <p>Se o fixo ultrapassar o CAP, o barbeiro recebe apenas o CAP. A barbearia nunca perde.</p>
         </div>
         <div class="cash-step">
           <i class="fas fa-file-invoice-dollar"></i>
           <h5>5. Fechamento Mensal</h5>
-          <p>Relatório completo gerado em 1 clique para pagamentos.</p>
+          <p>Relatório claro com fixo, variável, CAP e total para cada barbeiro.</p>
         </div>
       </div>
     </div>
 
     <div class="alert-box">
       <i class="fas fa-info-circle" style="color:var(--info);"></i>
-      <p><strong>Diferencial Cash Barber:</strong> O sistema calcula em tempo real quanto cada barbeiro já faturou no mês. O dono da barbearia acessa o painel administrativo e vê exatamente quanto deve pagar para cada profissional, sem precisar de Excel ou calculadora.</p>
+      <p><strong>Por que funciona:</strong> O modelo híbrido é usado por academias, salões premium e empresas de SaaS porque ele resolve o dilema clássico: como pagar bem o funcionário sem colocar a empresa em risco. O CAP é a peça-chave que torna tudo sustentável.</p>
     </div>
   </section>
 
@@ -623,7 +657,7 @@
             <th style="color:var(--modelo-1);">Porcentagem Fixa</th>
             <th style="color:var(--modelo-2);">Escalonada</th>
             <th style="color:var(--modelo-3);">Salário + Comissão</th>
-            <th style="color:var(--modelo-4);">Cash Barber / Assinaturas</th>
+            <th style="color:var(--modelo-4);">Híbrido (Fixo + Var + CAP)</th>
           </tr>
         </thead>
         <tbody>
@@ -646,7 +680,7 @@
             <td><i class="fas fa-check-circle icon-yes"></i> Muito Fácil</td>
             <td><i class="fas fa-minus-circle icon-warn"></i> Moderado</td>
             <td><i class="fas fa-minus-circle icon-warn"></i> Moderado</td>
-            <td><i class="fas fa-check-circle icon-yes"></i> Automático</td>
+            <td><i class="fas fa-minus-circle icon-warn"></i> Moderado</td>
           </tr>
           <tr>
             <td>Incentiva alta produção</td>
@@ -656,18 +690,18 @@
             <td><i class="fas fa-check-circle icon-yes"></i> Muito</td>
           </tr>
           <tr>
-            <td>Fideliza clientes</td>
+            <td>Protege contra prejuízo</td>
+            <td><i class="fas fa-minus-circle icon-warn"></i> Parcial</td>
             <td><i class="fas fa-times-circle icon-no"></i> Não</td>
             <td><i class="fas fa-times-circle icon-no"></i> Não</td>
-            <td><i class="fas fa-times-circle icon-no"></i> Não</td>
-            <td><i class="fas fa-check-circle icon-yes"></i> Sim (assinaturas)</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Sim (CAP)</td>
           </tr>
           <tr>
-            <td>Receita recorrente garantida</td>
-            <td><i class="fas fa-times-circle icon-no"></i> Não</td>
-            <td><i class="fas fa-times-circle icon-no"></i> Não</td>
-            <td><i class="fas fa-times-circle icon-no"></i> Não</td>
-            <td><i class="fas fa-check-circle icon-yes"></i> Sim</td>
+            <td>Justiça na divisão</td>
+            <td><i class="fas fa-minus-circle icon-warn"></i> Média</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Alta</td>
+            <td><i class="fas fa-minus-circle icon-warn"></i> Média</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Alta</td>
           </tr>
           <tr>
             <td>Retenção de barbeiros</td>
@@ -691,37 +725,37 @@
   <!-- RECOMENDAÇÃO -->
   <section class="comm-section" id="recomendacao">
     <div class="recomendacao">
-      <h2><i class="fas fa-trophy"></i> Recomendação Cash Barber</h2>
-      <p>Após analisar os 4 cenários com números reais, nossa recomendação é clara: o <strong>Modelo 4 — Comissão por Assinaturas (Cash Barber)</strong> é o melhor para a grande maioria das barbearias que querem crescer com saúde financeira.</p>
+      <h2><i class="fas fa-trophy"></i> Recomendação Final</h2>
+      <p>Após analisar os 4 cenários com números reais, nossa recomendação é clara: o <strong>Modelo 4 — Híbrido (Fixo + Variável com CAP)</strong> é o melhor para qualquer barbearia que quer crescer com saúde financeira, reter talentos e proteger o caixa.</p>
       <div class="badge-rec"><i class="fas fa-star"></i> Melhor Custo-Benefício</div>
 
       <div class="motivos-grid">
         <div class="motivo-card">
           <i class="fas fa-shield-alt"></i>
-          <h5>Receita Previsível</h5>
-          <p>Você sabe quanto vai entrar no próximo mês antes dele começar.</p>
+          <h5>Segurança para o Barbeiro</h5>
+          <p>R$ 8 fixos por atendimento garantem renda mesmo em dias fracos.</p>
         </div>
         <div class="motivo-card">
-          <i class="fas fa-user-lock"></i>
-          <h5>Clientes Fidelizados</h5>
-          <p>Assinantes voltam mais e gastam mais em produtos e serviços extras.</p>
+          <i class="fas fa-balance-scale"></i>
+          <h5>Justiça na Divisão</h5>
+          <p>Quem produz mais recebe mais pela parcela variável proporcional.</p>
         </div>
         <div class="motivo-card">
           <i class="fas fa-chart-line"></i>
-          <h5>Barbeiros Motivados</h5>
-          <p>Eles vendem planos, atendem mais e ganham bônus por indicação.</p>
+          <h5>Proteção da Barbearia</h5>
+          <p>O CAP (teto máximo) impede que a comissão ultrapasse o planejado.</p>
         </div>
         <div class="motivo-card">
-          <i class="fas fa-cogs"></i>
-          <h5>Controle Automatizado</h5>
-          <p>O sistema calcula tudo sozinho. Você não perde tempo com planilha.</p>
+          <i class="fas fa-handshake"></i>
+          <h5>Sustentável a Longo Prazo</h5>
+          <p>Usado por academias e salões premium. Funciona em qualquer escala.</p>
         </div>
       </div>
     </div>
 
     <div class="alert-box">
-      <i class="fas fa-handshake" style="color:var(--accent);"></i>
-      <p><strong>Transição suave:</strong> Se sua barbearia já usa um dos outros modelos, você pode fazer a transição gradual. Comece oferecendo um plano básico, mantendo a comissão avulsa normal. Com o tempo, a receita recorrente cresce e você ajusta as comissões para o modelo Cash Barber completo.</p>
+      <i class="fas fa-lightbulb" style="color:var(--accent);"></i>
+      <p><strong>Como implementar:</strong> Comece definindo o CAP (sugerimos 40% do faturamento do barbeiro). Pague R$ 8 fixos por atendimento. No fim do mês, calcule: <em>Variável = CAP − Fixo</em>. Se o fixo já consumir todo o CAP, o barbeiro recebe apenas o CAP. Simples, justo e protegido.</p>
     </div>
   </section>
 
@@ -731,7 +765,7 @@
     }
   </script>
   <footer class="landing-footer">
-    <p><strong>Cash Barber</strong> — Sistema de Planos de Assinatura para Barbearias</p>
+    <p><strong>Barbearia Planos</strong> — Sistema de Gestão Completo</p>
     <p class="mt-4 text-muted">Comissões claras, barbeiros motivados, barbearia crescendo.</p>
   </footer>
 
