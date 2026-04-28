@@ -143,6 +143,45 @@
     .resumo-item .value { font-size: 1.4rem; font-weight: 800; font-family: 'Playfair Display', serif; }
     .resumo-item .sub { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; }
 
+    /* Calculadora */
+    .calc-section { background: var(--bg-secondary); border-radius: var(--radius); padding: 48px 40px; margin-bottom: 48px; }
+    .calc-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 28px; flex-wrap: wrap; }
+    .calc-tab { padding: 12px 20px; cursor: pointer; color: var(--text-secondary); border-bottom: 2px solid transparent; font-weight: 500; transition: var(--transition); background: none; border-top: none; border-left: none; border-right: none; font-size: 0.9rem; }
+    .calc-tab:hover { color: var(--text-primary); }
+    .calc-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .calc-panel { display: none; }
+    .calc-panel.active { display: block; animation: fadeIn 0.3s ease; }
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .calc-input-group { margin-bottom: 16px; }
+    .calc-input-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); }
+    .calc-input-group input, .calc-input-group select { width: 100%; padding: 12px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.95rem; }
+    .calc-input-group input:focus { outline: none; border-color: var(--accent); }
+    .calc-result { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+    .calc-result h4 { font-size: 1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .calc-result-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .calc-result-row:last-child { border-bottom: none; }
+    .calc-result-row .calc-label { color: var(--text-secondary); }
+    .calc-result-row .calc-value { font-weight: 700; font-family: 'Playfair Display', serif; font-size: 1.1rem; }
+    .calc-result-row.highlight { background: var(--bg-secondary); margin: 0 -24px; padding: 14px 24px; }
+    .calc-result-bar { width: 100%; height: 24px; background: var(--bg-secondary); border-radius: 12px; overflow: hidden; display: flex; margin-top: 16px; }
+    .calc-result-bar-fill { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: white; transition: width 0.4s ease; }
+    .calc-comparison { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 24px; }
+    .calc-comp-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; text-align: center; cursor: pointer; transition: var(--transition); }
+    .calc-comp-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .calc-comp-card.active { border-color: var(--accent); background: rgba(212,168,83,0.08); }
+    .calc-comp-card .comp-name { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; }
+    .calc-comp-card .comp-value { font-size: 1.3rem; font-weight: 800; font-family: 'Playfair Display', serif; }
+    .calc-comp-card .comp-sub { font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; }
+    .calc-note { background: rgba(59,130,246,0.08); border-left: 3px solid var(--modelo-1); padding: 12px 16px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; margin-top: 16px; font-size: 0.85rem; color: var(--text-secondary); }
+
+    @media (max-width: 768px) {
+      .calc-grid { grid-template-columns: 1fr; }
+      .calc-comparison { grid-template-columns: repeat(2, 1fr); }
+      .calc-tabs { gap: 0; }
+      .calc-tab { padding: 10px 12px; font-size: 0.8rem; }
+      .calc-section { padding: 28px 20px; }
+    }
+
     /* Modelo Hibrido Explicacao */
     .cash-box {
       background: linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(59,130,246,0.08) 100%);
@@ -248,6 +287,7 @@
     <div class="public-nav" id="publicNav">
       <a href="index.html">Início</a>
       <a href="#modelos">Modelos</a>
+      <a href="#calculadora">Calculadora</a>
       <a href="#hibrido">Modelo Híbrido</a>
       <a href="#recomendacao">Recomendação</a>
       <a href="login.html" class="btn btn-primary btn-sm"><i class="fas fa-sign-in-alt"></i> Área do Cliente</a>
@@ -256,6 +296,7 @@
   <div class="public-nav-mobile" id="publicNavMobile">
     <a href="index.html" onclick="toggleMenu()">Início</a>
     <a href="#modelos" onclick="toggleMenu()">Modelos</a>
+    <a href="#calculadora" onclick="toggleMenu()">Calculadora</a>
     <a href="#hibrido" onclick="toggleMenu()">Modelo Híbrido</a>
     <a href="#recomendacao" onclick="toggleMenu()">Recomendação</a>
     <a href="login.html" class="btn btn-primary btn-sm" style="justify-content:center;" onclick="toggleMenu()"><i class="fas fa-sign-in-alt"></i> Área do Cliente</a>
@@ -595,6 +636,256 @@
     </div>
   </section>
 
+  <!-- CALCULADORA INTERATIVA -->
+  <section class="comm-section" id="calculadora">
+    <h2><i class="fas fa-calculator" style="color:var(--accent);"></i> Calculadora de Comissões</h2>
+    <p class="subtitle">Simule cada modelo com seus próprios números e descubra qual é o melhor para a sua barbearia.</p>
+
+    <div class="calc-section">
+      <div class="calc-tabs">
+        <button class="calc-tab active" onclick="showCalc(0)"><i class="fas fa-percentage"></i> Porcentagem Fixa</button>
+        <button class="calc-tab" onclick="showCalc(1)"><i class="fas fa-chart-line"></i> Escalonada</button>
+        <button class="calc-tab" onclick="showCalc(2)"><i class="fas fa-wallet"></i> Salário + Comissão</button>
+        <button class="calc-tab" onclick="showCalc(3)"><i class="fas fa-star"></i> Híbrido (Recomendado)</button>
+      </div>
+
+      <!-- CALC 1: PORCENTAGEM FIXA -->
+      <div class="calc-panel active" id="calc-0">
+        <div class="calc-grid">
+          <div>
+            <div class="calc-input-group">
+              <label>Faturamento do Barbeiro (R$)</label>
+              <input type="number" id="c1-faturamento" value="5000" oninput="calc1()">
+            </div>
+            <div class="calc-input-group">
+              <label>% de Comissão</label>
+              <input type="number" id="c1-pct" value="50" oninput="calc1()">
+            </div>
+            <div class="calc-note">
+              <i class="fas fa-info-circle"></i> Insira o valor total que o barbeiro faturou no mês e o percentual de comissão acordado.
+            </div>
+          </div>
+          <div class="calc-result">
+            <h4><i class="fas fa-file-invoice-dollar" style="color:var(--modelo-1);"></i> Resultado — Modelo 1</h4>
+            <div class="calc-result-row">
+              <span class="calc-label">Faturamento</span>
+              <span class="calc-value" id="r1-faturamento">R$ 5.000,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Comissão do Barbeiro (<span id="r1-pct">50%</span>)</span>
+              <span class="calc-value" id="r1-comissao" style="color:var(--modelo-1);">R$ 2.500,00</span>
+            </div>
+            <div class="calc-result-row highlight">
+              <span class="calc-label">Lucro da Barbearia</span>
+              <span class="calc-value" id="r1-lucro">R$ 2.500,00</span>
+            </div>
+            <div class="calc-result-bar">
+              <div class="calc-result-bar-fill" id="r1-bar-barbeiro" style="width:50%;background:var(--modelo-1);">Barbeiro</div>
+              <div class="calc-result-bar-fill" id="r1-bar-barbearia" style="width:50%;background:var(--bg-hover);color:var(--text-muted);">Barbearia</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALC 2: ESCALONADA -->
+      <div class="calc-panel" id="calc-1">
+        <div class="calc-grid">
+          <div>
+            <div class="calc-input-group">
+              <label>Faturamento do Barbeiro (R$)</label>
+              <input type="number" id="c2-faturamento" value="5000" oninput="calc2()">
+            </div>
+            <div class="calc-input-group">
+              <label>% Faixa 1 (até R$ 2.500)</label>
+              <input type="number" id="c2-p1" value="40" oninput="calc2()">
+            </div>
+            <div class="calc-input-group">
+              <label>% Faixa 2 (R$ 2.501 a R$ 4.500)</label>
+              <input type="number" id="c2-p2" value="50" oninput="calc2()">
+            </div>
+            <div class="calc-input-group">
+              <label>% Faixa 3 (acima de R$ 4.500)</label>
+              <input type="number" id="c2-p3" value="60" oninput="calc2()">
+            </div>
+            <div class="calc-note">
+              <i class="fas fa-info-circle"></i> O percentual mais alto se aplica ao valor total (sistema global).
+            </div>
+          </div>
+          <div class="calc-result">
+            <h4><i class="fas fa-file-invoice-dollar" style="color:var(--modelo-2);"></i> Resultado — Modelo 2</h4>
+            <div class="calc-result-row">
+              <span class="calc-label">Faturamento</span>
+              <span class="calc-value" id="r2-faturamento">R$ 5.000,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Faixa Atingida</span>
+              <span class="calc-value" id="r2-faixa">Faixa 2</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">% Aplicada</span>
+              <span class="calc-value" id="r2-pct" style="color:var(--modelo-2);">50%</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Comissão do Barbeiro</span>
+              <span class="calc-value" id="r2-comissao" style="color:var(--modelo-2);">R$ 2.500,00</span>
+            </div>
+            <div class="calc-result-row highlight">
+              <span class="calc-label">Lucro da Barbearia</span>
+              <span class="calc-value" id="r2-lucro">R$ 2.500,00</span>
+            </div>
+            <div class="calc-result-bar">
+              <div class="calc-result-bar-fill" id="r2-bar-barbeiro" style="width:50%;background:var(--modelo-2);">Barbeiro</div>
+              <div class="calc-result-bar-fill" id="r2-bar-barbearia" style="width:50%;background:var(--bg-hover);color:var(--text-muted);">Barbearia</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALC 3: SALÁRIO + COMISSÃO -->
+      <div class="calc-panel" id="calc-2">
+        <div class="calc-grid">
+          <div>
+            <div class="calc-input-group">
+              <label>Faturamento do Barbeiro (R$)</label>
+              <input type="number" id="c3-faturamento" value="5000" oninput="calc3()">
+            </div>
+            <div class="calc-input-group">
+              <label>Salário Base (R$)</label>
+              <input type="number" id="c3-salario" value="1500" oninput="calc3()">
+            </div>
+            <div class="calc-input-group">
+              <label>% Comissão sobre Faturamento</label>
+              <input type="number" id="c3-pct" value="30" oninput="calc3()">
+            </div>
+            <div class="calc-note">
+              <i class="fas fa-info-circle"></i> O barbeiro recebe o salário base + comissão sobre o que produziu.
+            </div>
+          </div>
+          <div class="calc-result">
+            <h4><i class="fas fa-file-invoice-dollar" style="color:var(--modelo-3);"></i> Resultado — Modelo 3</h4>
+            <div class="calc-result-row">
+              <span class="calc-label">Faturamento</span>
+              <span class="calc-value" id="r3-faturamento">R$ 5.000,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Salário Base</span>
+              <span class="calc-value" id="r3-salario">R$ 1.500,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Comissão (<span id="r3-pc">30%</span>)</span>
+              <span class="calc-value" id="r3-comissao" style="color:var(--modelo-3);">R$ 1.500,00</span>
+            </div>
+            <div class="calc-result-row highlight">
+              <span class="calc-label">Total do Barbeiro</span>
+              <span class="calc-value" id="r3-total" style="color:var(--modelo-3);">R$ 3.000,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Lucro da Barbearia</span>
+              <span class="calc-value" id="r3-lucro">R$ 2.000,00</span>
+            </div>
+            <div class="calc-result-bar">
+              <div class="calc-result-bar-fill" id="r3-bar-barbeiro" style="width:60%;background:var(--modelo-3);">Barbeiro</div>
+              <div class="calc-result-bar-fill" id="r3-bar-barbearia" style="width:40%;background:var(--bg-hover);color:var(--text-muted);">Barbearia</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALC 4: HÍBRIDO -->
+      <div class="calc-panel" id="calc-3">
+        <div class="calc-grid">
+          <div>
+            <div class="calc-input-group">
+              <label>Faturamento do Barbeiro (R$)</label>
+              <input type="number" id="c4-faturamento" value="5000" oninput="calc4()">
+            </div>
+            <div class="calc-input-group">
+              <label>Quantidade de Atendimentos</label>
+              <input type="number" id="c4-atendimentos" value="65" oninput="calc4()">
+            </div>
+            <div class="calc-input-group">
+              <label>Fixo por Atendimento (R$)</label>
+              <input type="number" id="c4-fixo" value="8" oninput="calc4()">
+            </div>
+            <div class="calc-input-group">
+              <label>CAP — % Máxima do Faturamento</label>
+              <input type="number" id="c4-cap" value="40" oninput="calc4()">
+            </div>
+            <div class="calc-note">
+              <i class="fas fa-info-circle"></i> Fixo = atendimentos × valor fixo. Variável = CAP − Fixo (se positivo).
+            </div>
+          </div>
+          <div class="calc-result">
+            <h4><i class="fas fa-file-invoice-dollar" style="color:var(--modelo-4);"></i> Resultado — Modelo 4</h4>
+            <div class="calc-result-row">
+              <span class="calc-label">Faturamento</span>
+              <span class="calc-value" id="r4-faturamento">R$ 5.000,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Atendimentos</span>
+              <span class="calc-value" id="r4-atend">65</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Fixo Total</span>
+              <span class="calc-value" id="r4-fixo">R$ 520,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">CAP Máximo (<span id="r4-cap-pct">40%</span>)</span>
+              <span class="calc-value" id="r4-cap">R$ 2.000,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Variável</span>
+              <span class="calc-value" id="r4-var" style="color:var(--success);">R$ 1.480,00</span>
+            </div>
+            <div class="calc-result-row highlight">
+              <span class="calc-label">Total do Barbeiro</span>
+              <span class="calc-value" id="r4-total" style="color:var(--modelo-4);">R$ 2.000,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Lucro da Barbearia</span>
+              <span class="calc-value" id="r4-lucro">R$ 3.000,00</span>
+            </div>
+            <div class="calc-result-bar">
+              <div class="calc-result-bar-fill" id="r4-bar-fixo" style="width:26%;background:var(--modelo-4);">Fixo</div>
+              <div class="calc-result-bar-fill" id="r4-bar-var" style="width:74%;background:#16a34a;">Variável</div>
+            </div>
+            <div class="calc-result-row" id="r4-aviso" style="display:none;margin-top:10px;background:rgba(239,68,68,0.1);border-radius:var(--radius-sm);padding:10px 14px;">
+              <span style="color:var(--danger);font-size:0.85rem;"><i class="fas fa-exclamation-triangle"></i> O fixo ultrapassou o CAP! O barbeiro recebe apenas o CAP.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPARAÇÃO RÁPIDA -->
+      <h4 style="margin-top:32px;margin-bottom:16px;font-size:1rem;"><i class="fas fa-balance-scale-right" style="color:var(--accent);"></i> Compare os 4 modelos com estes números</h4>
+      <div class="calc-comparison">
+        <div class="calc-comp-card" id="comp-0" onclick="showCalc(0)">
+          <div class="comp-name">Porcentagem Fixa</div>
+          <div class="comp-value" id="comp-v0" style="color:var(--modelo-1);">R$ 2.500</div>
+          <div class="comp-sub">pro barbeiro</div>
+        </div>
+        <div class="calc-comp-card" id="comp-1" onclick="showCalc(1)">
+          <div class="comp-name">Escalonada</div>
+          <div class="comp-value" id="comp-v1" style="color:var(--modelo-2);">R$ 2.500</div>
+          <div class="comp-sub">pro barbeiro</div>
+        </div>
+        <div class="calc-comp-card" id="comp-2" onclick="showCalc(2)">
+          <div class="comp-name">Salário + Comissão</div>
+          <div class="comp-value" id="comp-v2" style="color:var(--modelo-3);">R$ 3.000</div>
+          <div class="comp-sub">pro barbeiro</div>
+        </div>
+        <div class="calc-comp-card active" id="comp-3" onclick="showCalc(3)">
+          <div class="comp-name">Híbrido ⭐</div>
+          <div class="comp-value" id="comp-v3" style="color:var(--modelo-4);">R$ 2.000</div>
+          <div class="comp-sub">pro barbeiro</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:12px;">
+        <span style="font-size:0.8rem;color:var(--text-muted);"><i class="fas fa-mouse-pointer"></i> Clique em qualquer modelo acima para ver os detalhes</span>
+      </div>
+    </div>
+  </section>
+
   <!-- COMO O MODELO HÍBRIDO FUNCIONA -->
   <section class="comm-section" id="hibrido" style="background:var(--bg-secondary);border-radius:var(--radius);margin-bottom:40px;">
     <h2><i class="fas fa-balance-scale" style="color:var(--success);"></i> Entendendo o Modelo Híbrido na Prática</h2>
@@ -760,6 +1051,107 @@
   </section>
 
   <script>
+    // ===== CALCULADORA =====
+    const fmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+    const fmtN = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0 });
+
+    function showCalc(idx) {
+      document.querySelectorAll('.calc-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+      document.querySelectorAll('.calc-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+      document.querySelectorAll('.calc-comp-card').forEach((c, i) => c.classList.toggle('active', i === idx));
+    }
+
+    function calc1() {
+      const fat = parseFloat(document.getElementById('c1-faturamento').value) || 0;
+      const pct = parseFloat(document.getElementById('c1-pct').value) || 0;
+      const com = fat * (pct / 100);
+      const luc = fat - com;
+      document.getElementById('r1-faturamento').textContent = fmt.format(fat);
+      document.getElementById('r1-pct').textContent = pct + '%';
+      document.getElementById('r1-comissao').textContent = fmt.format(com);
+      document.getElementById('r1-lucro').textContent = fmt.format(luc);
+      const pBarb = fat > 0 ? (com / fat) * 100 : 0;
+      const pBB = 100 - pBarb;
+      document.getElementById('r1-bar-barbeiro').style.width = pBarb + '%';
+      document.getElementById('r1-bar-barbearia').style.width = pBB + '%';
+      document.getElementById('comp-v0').textContent = fmt.format(com);
+    }
+
+    function calc2() {
+      const fat = parseFloat(document.getElementById('c2-faturamento').value) || 0;
+      const p1 = parseFloat(document.getElementById('c2-p1').value) || 0;
+      const p2 = parseFloat(document.getElementById('c2-p2').value) || 0;
+      const p3 = parseFloat(document.getElementById('c2-p3').value) || 0;
+      let pct = p1, faixa = 'Faixa 1';
+      if (fat > 4500) { pct = p3; faixa = 'Faixa 3 (Teto)'; }
+      else if (fat > 2500) { pct = p2; faixa = 'Faixa 2'; }
+      const com = fat * (pct / 100);
+      const luc = fat - com;
+      document.getElementById('r2-faturamento').textContent = fmt.format(fat);
+      document.getElementById('r2-faixa').textContent = faixa;
+      document.getElementById('r2-pct').textContent = pct + '%';
+      document.getElementById('r2-comissao').textContent = fmt.format(com);
+      document.getElementById('r2-lucro').textContent = fmt.format(luc);
+      const pBarb = fat > 0 ? (com / fat) * 100 : 0;
+      const pBB = 100 - pBarb;
+      document.getElementById('r2-bar-barbeiro').style.width = pBarb + '%';
+      document.getElementById('r2-bar-barbearia').style.width = pBB + '%';
+      document.getElementById('comp-v1').textContent = fmt.format(com);
+    }
+
+    function calc3() {
+      const fat = parseFloat(document.getElementById('c3-faturamento').value) || 0;
+      const sal = parseFloat(document.getElementById('c3-salario').value) || 0;
+      const pct = parseFloat(document.getElementById('c3-pct').value) || 0;
+      const com = fat * (pct / 100);
+      const total = sal + com;
+      const luc = fat - total;
+      document.getElementById('r3-faturamento').textContent = fmt.format(fat);
+      document.getElementById('r3-salario').textContent = fmt.format(sal);
+      document.getElementById('r3-pc').textContent = pct + '%';
+      document.getElementById('r3-comissao').textContent = fmt.format(com);
+      document.getElementById('r3-total').textContent = fmt.format(total);
+      document.getElementById('r3-lucro').textContent = fmt.format(luc);
+      const pBarb = fat > 0 ? (total / fat) * 100 : 0;
+      const pBB = 100 - pBarb;
+      document.getElementById('r3-bar-barbeiro').style.width = Math.max(0, Math.min(100, pBarb)) + '%';
+      document.getElementById('r3-bar-barbearia').style.width = Math.max(0, Math.min(100, pBB)) + '%';
+      document.getElementById('comp-v2').textContent = fmt.format(total);
+    }
+
+    function calc4() {
+      const fat = parseFloat(document.getElementById('c4-faturamento').value) || 0;
+      const atd = parseInt(document.getElementById('c4-atendimentos').value) || 0;
+      const fixoUnit = parseFloat(document.getElementById('c4-fixo').value) || 0;
+      const capPct = parseFloat(document.getElementById('c4-cap').value) || 0;
+      const fixoTotal = atd * fixoUnit;
+      const cap = fat * (capPct / 100);
+      let variavel = cap - fixoTotal;
+      let aviso = false;
+      if (variavel < 0) { variavel = 0; aviso = true; }
+      const total = fixoTotal + variavel;
+      // se fixo > cap, total = cap
+      const totalFinal = total > cap ? cap : total;
+      const lucro = fat - totalFinal;
+      document.getElementById('r4-faturamento').textContent = fmt.format(fat);
+      document.getElementById('r4-atend').textContent = atd;
+      document.getElementById('r4-fixo').textContent = fmt.format(fixoTotal);
+      document.getElementById('r4-cap-pct').textContent = capPct + '%';
+      document.getElementById('r4-cap').textContent = fmt.format(cap);
+      document.getElementById('r4-var').textContent = fmt.format(variavel);
+      document.getElementById('r4-total').textContent = fmt.format(totalFinal);
+      document.getElementById('r4-lucro').textContent = fmt.format(lucro);
+      const pFixo = totalFinal > 0 ? (Math.min(fixoTotal, totalFinal) / totalFinal) * 100 : 0;
+      const pVar = 100 - pFixo;
+      document.getElementById('r4-bar-fixo').style.width = pFixo + '%';
+      document.getElementById('r4-bar-var').style.width = pVar + '%';
+      document.getElementById('r4-aviso').style.display = aviso ? 'flex' : 'none';
+      document.getElementById('comp-v3').textContent = fmt.format(totalFinal);
+    }
+
+    // Inicializar
+    calc1(); calc2(); calc3(); calc4();
+
     function toggleMenu() {
       document.getElementById('publicNavMobile').classList.toggle('active');
     }
