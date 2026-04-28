@@ -36,7 +36,8 @@
       <div class="sidebar-brand-icon"><i class="fas fa-cut"></i></div>
       <div><div class="sidebar-brand-text">Hugo Barbearia</div></div>
     </div>
-    <div class="public-nav">
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu"><i class="fas fa-bars"></i></button>
+    <div class="public-nav" id="publicNav">
       <a href="index.html">Início</a>
       <a href="servicos.html">Serviços</a>
       <a href="planos.html">Planos</a>
@@ -44,6 +45,13 @@
       <a href="login.html">Área do Cliente</a>
     </div>
   </nav>
+  <div class="public-nav-mobile" id="publicNavMobile">
+    <a href="index.html" onclick="toggleMenu()">Início</a>
+    <a href="servicos.html" onclick="toggleMenu()">Serviços</a>
+    <a href="planos.html" onclick="toggleMenu()">Planos</a>
+    <a href="agendar.html" onclick="toggleMenu()">Agendar</a>
+    <a href="login.html" onclick="toggleMenu()">Área do Cliente</a>
+  </div>
 
   <section class="page-header">
     <h1>Contato</h1>
@@ -117,6 +125,9 @@
   </footer>
 
   <script>
+    function toggleMenu() {
+      document.getElementById('publicNavMobile').classList.toggle('active');
+    }
     document.getElementById('formContato').addEventListener('submit', e => {
       e.preventDefault();
       alert('Mensagem enviada! Responderemos em breve pelo email ou WhatsApp.');

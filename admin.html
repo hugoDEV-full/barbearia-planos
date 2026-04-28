@@ -9,9 +9,11 @@
 </head>
 <body>
   <div class="admin-layout">
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
+        <button class="menu-toggle" onclick="toggleSidebar()" style="position:absolute;right:12px;top:12px;display:none;" id="sidebarClose"><i class="fas fa-times"></i></button>
         <div class="sidebar-brand">
           <div class="sidebar-brand-icon"><i class="fas fa-cut"></i></div>
           <div>
@@ -57,9 +59,12 @@
     <!-- Main Content -->
     <main class="main-content">
       <div class="topbar">
-        <div class="page-title">
-          <h1 id="pageTitle">Visão Geral</h1>
-          <p id="pageSubtitle">Acompanhe os principais indicadores da sua barbearia</p>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="menu-toggle" onclick="toggleSidebar()" id="sidebarToggle" style="display:none;"><i class="fas fa-bars"></i></button>
+          <div class="page-title">
+            <h1 id="pageTitle">Visão Geral</h1>
+            <p id="pageSubtitle">Acompanhe os principais indicadores da sua barbearia</p>
+          </div>
         </div>
         <div class="topbar-actions">
           <a href="index.html" target="_blank" class="btn btn-secondary btn-sm" data-tooltip="Ver site público da barbearia"><i class="fas fa-external-link-alt"></i> Ver Site</a>
@@ -92,7 +97,7 @@
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;">
+        <div class="resp-grid-2">
           <div class="card">
             <div class="card-header">
               <div class="card-title">Faturamento dos Últimos 7 Dias</div>
@@ -272,7 +277,7 @@
           <div class="stat-card"><div class="stat-label">Serviço Mais Popular</div><div class="stat-value" style="font-size:1.4rem;" id="relTopServico">-</div></div>
           <div class="stat-card"><div class="stat-label">Produtos em Alerta</div><div class="stat-value text-warning" id="relAlertas">0</div></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div class="resp-grid-2">
           <div class="card">
             <div class="card-header"><div class="card-title">Faturamento por Categoria</div></div>
             <div id="chartCategorias" style="display:flex;flex-direction:column;gap:10px;padding:10px 0;"></div>
@@ -323,7 +328,7 @@
               <label>Descrição</label>
               <textarea id="cfgDescricao" rows="3"></textarea>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="resp-grid-2">
               <div class="form-group"><label>Telefone</label><input type="text" id="cfgTelefone"></div>
               <div class="form-group"><label>Email</label><input type="email" id="cfgEmail"></div>
             </div>
@@ -340,7 +345,7 @@
               <input type="color" id="cfgCor" style="height:44px;padding:4px;">
             </div>
             <div class="card-header" style="padding-left:0;"><div class="card-title">Horário de Funcionamento</div></div>
-            <div id="horariosConfig" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div id="horariosConfig" class="resp-grid-2">
               <div class="form-group"><label>Segunda</label><input type="text" id="cfgSeg" placeholder="09:00-18:00"></div>
               <div class="form-group"><label>Terça</label><input type="text" id="cfgTer" placeholder="09:00-18:00"></div>
               <div class="form-group"><label>Quarta</label><input type="text" id="cfgQua" placeholder="09:00-18:00"></div>
@@ -376,6 +381,23 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <script src="js/storage.js"></script>
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+    function checkMobile() {
+      const isMobile = window.innerWidth <= 768;
+      document.getElementById('sidebarToggle').style.display = isMobile ? 'block' : 'none';
+      document.getElementById('sidebarClose').style.display = isMobile ? 'block' : 'none';
+      if (!isMobile) {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('active');
+      }
+    }
+    window.addEventListener('resize', checkMobile);
+    checkMobile();
+  </script>
   <script src="js/admin.js"></script>
 </body>
 </html>

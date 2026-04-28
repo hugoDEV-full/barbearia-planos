@@ -18,8 +18,9 @@
   </style>
 </head>
 <body>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <div class="perfil-layout">
-    <aside class="perfil-sidebar">
+    <aside class="perfil-sidebar" id="perfilSidebar">
       <div class="perfil-avatar" id="pAvatar">C</div>
       <div style="font-weight:700;" id="pNome">Cliente</div>
       <div class="text-muted" style="font-size:0.8rem;" id="pEmail">email</div>
@@ -32,7 +33,10 @@
     </aside>
     <main class="perfil-main">
       <div class="topbar" style="margin-bottom:24px;">
-        <div class="page-title"><h1>Meu Perfil</h1><p>Atualize seus dados pessoais</p></div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="menu-toggle" onclick="toggleSidebar()" id="sidebarToggle" style="display:none;"><i class="fas fa-bars"></i></button>
+          <div class="page-title"><h1>Meu Perfil</h1><p>Atualize seus dados pessoais</p></div>
+        </div>
       </div>
       <div class="perfil-card">
         <form id="perfilForm">
@@ -71,6 +75,21 @@
       alert('Perfil atualizado com sucesso!');
       window.location.reload();
     });
+
+    window.toggleSidebar = function() {
+      document.getElementById('perfilSidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('active');
+    };
+    function checkMobile() {
+      const isMobile = window.innerWidth <= 768;
+      document.getElementById('sidebarToggle').style.display = isMobile ? 'block' : 'none';
+      if (!isMobile) {
+        document.getElementById('perfilSidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('active');
+      }
+    }
+    window.addEventListener('resize', checkMobile);
+    checkMobile();
 
     function sair() { DB.clearSession(); window.location.href = 'login.html'; }
   </script>

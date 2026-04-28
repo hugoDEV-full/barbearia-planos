@@ -47,8 +47,9 @@
   </style>
 </head>
 <body>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <div class="cliente-layout">
-    <aside class="cliente-sidebar">
+    <aside class="cliente-sidebar" id="clienteSidebar">
       <div class="cliente-avatar" id="cliAvatar">C</div>
       <div style="font-weight:700;" id="cliNome">Cliente</div>
       <div class="text-muted" style="font-size:0.8rem;" id="cliEmail">email</div>
@@ -64,11 +65,14 @@
     </aside>
     <main class="cliente-main">
       <div class="topbar" style="margin-bottom:24px;">
-        <div class="page-title"><h1>Área do Cliente</h1><p>Seus agendamentos e assinatura</p></div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="menu-toggle" onclick="toggleSidebar()" id="sidebarToggle" style="display:none;"><i class="fas fa-bars"></i></button>
+          <div class="page-title"><h1>Área do Cliente</h1><p>Seus agendamentos e assinatura</p></div>
+        </div>
       </div>
 
       <section id="sec-visao">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div class="resp-grid-2">
           <div class="cliente-card">
             <h3 style="margin-bottom:12px;"><i class="fas fa-id-card" style="color:var(--accent);"></i> Sua Assinatura</h3>
             <div id="boxAssinatura">
@@ -101,7 +105,7 @@
         <div class="cliente-card" style="max-width:560px;margin:0 auto;">
           <h3 style="margin-bottom:16px;">Novo Agendamento</h3>
           <form id="formAgendarCliente">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="resp-grid-2">
               <div class="form-group"><label>Data</label><input type="date" id="acData" required data-tooltip="Escolha uma data a partir de hoje"></div>
               <div class="form-group"><label>Horário</label><input type="time" id="acHora" required data-tooltip="Horário do atendimento"></div>
             </div>
@@ -362,6 +366,21 @@
       document.getElementById('sec-cobrancas').style.display = sec==='cobrancas'?'block':'none';
       document.querySelectorAll('.cliente-menu a').forEach(a => a.classList.toggle('active', a.getAttribute('onclick')?.includes(sec)));
     };
+
+    window.toggleSidebar = function() {
+      document.getElementById('clienteSidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('active');
+    };
+    function checkMobile() {
+      const isMobile = window.innerWidth <= 768;
+      document.getElementById('sidebarToggle').style.display = isMobile ? 'block' : 'none';
+      if (!isMobile) {
+        document.getElementById('clienteSidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('active');
+      }
+    }
+    window.addEventListener('resize', checkMobile);
+    checkMobile();
 
     window.sair = function() { DB.clearSession(); window.location.href = 'login.html'; };
 

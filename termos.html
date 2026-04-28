@@ -19,11 +19,16 @@
       <div class="sidebar-brand-icon"><i class="fas fa-cut"></i></div>
       <div><div class="sidebar-brand-text">Hugo Barbearia</div></div>
     </div>
-    <div class="public-nav">
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu"><i class="fas fa-bars"></i></button>
+    <div class="public-nav" id="publicNav">
       <a href="index.html">Início</a>
       <a href="login.html">Área do Cliente</a>
     </div>
   </nav>
+  <div class="public-nav-mobile" id="publicNavMobile">
+    <a href="index.html" onclick="toggleMenu()">Início</a>
+    <a href="login.html" onclick="toggleMenu()">Área do Cliente</a>
+  </div>
 
   <div class="legal-page">
     <h1>Termos de Uso</h1>
@@ -50,6 +55,11 @@
     <p class="text-muted" style="margin-top:40px;"><a href="index.html">← Voltar ao site</a></p>
   </div>
 
+  <script>
+    function toggleMenu() {
+      document.getElementById('publicNavMobile').classList.toggle('active');
+    }
+  </script>
   <footer class="landing-footer">
     <p>Hugo Barbearia — Brasília - DF</p>
   </footer>

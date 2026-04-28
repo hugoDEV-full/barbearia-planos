@@ -78,17 +78,30 @@
         <div class="sidebar-brand-text" id="navNome">Barbearia Vintage</div>
       </div>
     </div>
-    <div class="public-nav">
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu"><i class="fas fa-bars"></i></button>
+    <div class="public-nav" id="publicNav">
       <a href="#servicos">Serviços</a>
       <a href="#planos">Planos</a>
       <a href="#equipe">Equipe</a>
       <a href="#galeria">Galeria</a>
       <a href="#agendar">Agendar</a>
       <a href="material-publicitario.html">Conheça o Sistema</a>
+      <a href="comissoes.html">Comissões</a>
       <a href="login.html">Área do Cliente</a>
       <a href="https://wa.me/5561982976481" target="_blank" class="btn btn-primary btn-sm"><i class="fab fa-whatsapp"></i> WhatsApp</a>
     </div>
   </nav>
+  <div class="public-nav-mobile" id="publicNavMobile">
+    <a href="#servicos" onclick="toggleMenu()">Serviços</a>
+    <a href="#planos" onclick="toggleMenu()">Planos</a>
+    <a href="#equipe" onclick="toggleMenu()">Equipe</a>
+    <a href="#galeria" onclick="toggleMenu()">Galeria</a>
+    <a href="#agendar" onclick="toggleMenu()">Agendar</a>
+    <a href="material-publicitario.html" onclick="toggleMenu()">Conheça o Sistema</a>
+    <a href="comissoes.html" onclick="toggleMenu()">Comissões</a>
+    <a href="login.html" onclick="toggleMenu()">Área do Cliente</a>
+    <a href="https://wa.me/5561982976481" target="_blank" class="btn btn-primary btn-sm" style="justify-content:center;"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+  </div>
 
   <section class="hero-barber">
     <h1 id="heroNome">Barbearia</h1>
@@ -173,6 +186,9 @@
 
   <script src="js/storage.js"></script>
   <script>
+    function toggleMenu() {
+      document.getElementById('publicNavMobile').classList.toggle('active');
+    }
     DB.seed();
     const barbearia = DB.getBarbearias()[0];
     if (barbearia) {
