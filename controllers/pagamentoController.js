@@ -73,7 +73,6 @@ async function criarPix(req, res, next) {
       description: descricao || 'Assinatura Barbearia Panos',
       payment_method_id: 'pix',
       payer: { email: email || req.user.email, first_name: nome || req.user.nome },
-      notification_url: process.env.MP_WEBHOOK_URL || `${req.protocol}://${req.get('host')}/api/pagamentos/webhook`,
       external_reference: cobrancaId,
     };
 
@@ -219,18 +218,20 @@ async function criarPreferencia(req, res, next) {
       });
     }
 
+    const isLocal = req.get('host').includes('localhost') || req.get('host').includes('127.0.0.1');
     const body = {
       items: [{ id: cobrancaId, title: descricao || 'Assinatura Barbearia Panos', quantity: 1, unit_price: parseFloat(valor), currency_id: 'BRL' }],
       payer: { email: email || req.user.email },
-      external_reference: cobrancaId,
-      notification_url: process.env.MP_WEBHOOK_URL || `${req.protocol}://${req.get('host')}/api/pagamentos/webhook`,
-      back_urls: {
-        success: `${req.protocol}://${req.get('host')}/cliente.html?pagamento=sucesso`,
-        failure: `${req.protocol}://${req.get('host')}/cliente.html?pagamento=falha`,
-        pending: `${req.protocol}://${req.get('host')}/cliente.html?pagamento=pendente`
-      },
-      auto_return: 'approved'
+      external_reference: cobrancaId
     };
+    if (!isLocal) {
+      body.back_urls = {
+        success: `https://${req.get('host')}/cliente.html?pagamento=sucesso`,
+        failure: `https://${req.get('host')}/cliente.html?pagamento=falha`,
+        pending: `https://${req.get('host')}/cliente.html?pagamento=pendente`
+      };
+      body.auto_return = 'approved';
+    }
 
     const preference = await preferenceClient.create({ body });
     await pool.query('UPDATE cobrancas SET mp_preference_id = $1 WHERE id = $2', [preference.id, cobrancaId]);
