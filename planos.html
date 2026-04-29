@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planos de Assinatura — Hugo Barbearia</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .page-header { background: linear-gradient(rgba(10,10,15,0.85), rgba(10,10,15,0.95)), url('https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=1400&q=80') center/cover; padding: 80px 40px; text-align: center; }
+    .page-header h1 { font-size: 2.4rem; }
+    .compare-table { max-width: 900px; margin: 40px auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .compare-table table { width: 100%; border-collapse: collapse; }
+    .compare-table th { background: var(--bg-secondary); padding: 14px; font-size: 0.8rem; text-transform: uppercase; }
+    .compare-table td { padding: 14px; text-align: center; border-top: 1px solid var(--border); font-size: 0.9rem; }
+    .compare-table td:first-child { text-align: left; font-weight: 500; }
+    .check { color: var(--success); }
+    .times { color: var(--danger); }
+    .faq-box { max-width: 700px; margin: 0 auto; }
+    .faq-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 12px; }
+    .faq-item strong { display: block; margin-bottom: 6px; color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav class="public-header">
+    <div class="public-logo">
+      <div class="sidebar-brand-icon"><i class="fas fa-cut"></i></div>
+      <div><div class="sidebar-brand-text">Hugo Barbearia</div></div>
+    </div>
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu"><i class="fas fa-bars"></i></button>
+    <div class="public-nav" id="publicNav">
+      <a href="index.html">Início</a>
+      <a href="servicos.html">Serviços</a>
+      <a href="agendar.html">Agendar</a>
+      <a href="contato.html">Contato</a>
+      <a href="login.html">Área do Cliente</a>
+    </div>
+  </nav>
+  <div class="public-nav-mobile" id="publicNavMobile">
+    <a href="index.html" onclick="toggleMenu()">Início</a>
+    <a href="servicos.html" onclick="toggleMenu()">Serviços</a>
+    <a href="agendar.html" onclick="toggleMenu()">Agendar</a>
+    <a href="contato.html" onclick="toggleMenu()">Contato</a>
+    <a href="login.html" onclick="toggleMenu()">Área do Cliente</a>
+  </div>
+
+  <section class="page-header">
+    <h1>Planos de Assinatura</h1>
+    <p class="text-muted">Escolha o plano ideal para o seu estilo e economize todo mês.</p>
+  </section>
+
+  <section class="public-section" id="planos" style="padding-top:40px;">
+    <div class="plans-grid" id="pubPlanos" style="max-width:1100px;margin:0 auto;"></div>
+  </section>
+
+  <section class="public-section">
+    <h2 style="text-align:center;margin-bottom:28px;">Compare os Planos</h2>
+    <div class="compare-table">
+      <table>
+        <thead><tr><th>Benefício</th><th>Corte Mensal</th><th>Corte + Barba</th><th>Combo Premium</th><th>VIP Total</th></tr></thead>
+        <tbody>
+          <tr><td>Cortes incluídos</td><td>1/mês</td><td>2/mês</td><td>Ilimitado</td><td>Ilimitado</td></tr>
+          <tr><td>Barba Terapia</td><td class="times"><i class="fas fa-times"></i></td><td>2/mês</td><td>Ilimitado</td><td>Ilimitado</td></tr>
+          <tr><td>Sobrancelha</td><td class="times"><i class="fas fa-times"></i></td><td class="check"><i class="fas fa-check"></i></td><td class="check"><i class="fas fa-check"></i></td><td class="check"><i class="fas fa-check"></i></td></tr>
+          <tr><td>Hidratação</td><td class="times"><i class="fas fa-times"></i></td><td class="times"><i class="fas fa-times"></i></td><td class="check"><i class="fas fa-check"></i></td><td>Ilimitado</td></tr>
+          <tr><td>Química (1x/mês)</td><td class="times"><i class="fas fa-times"></i></td><td class="times"><i class="fas fa-times"></i></td><td class="times"><i class="fas fa-times"></i></td><td class="check"><i class="fas fa-check"></i></td></tr>
+          <tr><td>Desconto em produtos</td><td class="times"><i class="fas fa-times"></i></td><td class="times"><i class="fas fa-times"></i></td><td>10%</td><td>15%</td></tr>
+          <tr><td>Horário prioritário</td><td class="times"><i class="fas fa-times"></i></td><td class="times"><i class="fas fa-times"></i></td><td class="times"><i class="fas fa-times"></i></td><td class="check"><i class="fas fa-check"></i></td></tr>
+          <tr><td>Bebida cortesia</td><td class="times"><i class="fas fa-times"></i></td><td class="times"><i class="fas fa-times"></i></td><td class="times"><i class="fas fa-times"></i></td><td class="check"><i class="fas fa-check"></i></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="public-section" style="padding-bottom:80px;">
+    <h2 style="text-align:center;margin-bottom:28px;">Dúvidas Frequentes</h2>
+    <div class="faq-box">
+      <div class="faq-item"><strong>Como funciona a assinatura?</strong>Você escolhe o plano, paga mensalmente e agenda seus serviços inclusos pelo WhatsApp ou pelo site.</div>
+      <div class="faq-item"><strong>Posso cancelar a qualquer momento?</strong>Sim, a assinatura pode ser cancelada a qualquer momento sem multa.</div>
+      <div class="faq-item"><strong>Os cortes não usados acumulam?</strong>Não, os cortes inclusos no mês são válidos apenas naquele período.</div>
+      <div class="faq-item"><strong>Posso fazer upgrade de plano?</strong>Sim, basta entrar em contato pelo WhatsApp que ajustamos seu plano.</div>
+      <div class="faq-item"><strong>O plano VIP cobre qualquer química?</strong>O VIP inclui uma sessão de descoloração, coloração ou luzes por mês. Mechas adicionais têm desconto de 15%.</div>
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    <p>Hugo Barbearia — Brasília - DF</p>
+    <p class="mt-4 text-muted">WhatsApp: (61) 98297-6481 | hugo.leonardo.jobs@gmail.com</p>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('publicNavMobile').classList.toggle('active');
+    }
+  </script>
+  <script src="js/api.js"></script>
+  <script>
+    DB.seed();
+    const barbearia = DB.getBarbearias()[0];
+    const planos = DB.getPlanos(barbearia.id);
+    document.getElementById('pubPlanos').innerHTML = planos.map((p, idx) => `
+      <div class="plan-card ${idx===2?'featured':''}" style="position:relative;">
+        ${idx===2?'<div class="plan-badge">MAIS POPULAR</div>':''}
+        <div class="plan-name">${p.nome}</div>
+        <div class="plan-price">R$ ${(parseFloat(p.preco)||0).toFixed(2).replace('.',',')} <span>/mês</span></div>
+        <ul class="plan-features">${(p.beneficios||[]).map(b => `<li>${b}</li>`).join('')}</ul>
+        <a href="checkout-plano.html?plano=${p.id}" class="btn btn-${idx===2?'primary':'secondary'} w-full"><i class="fas fa-check"></i> Assinar Agora</a>
+      </div>
+    `).join('');
+  </script>
+</body>
+</html>

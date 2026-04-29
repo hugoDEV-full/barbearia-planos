@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Perfil — Hugo Barbearia</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .perfil-layout { display: flex; min-height: 100vh; }
+    .perfil-sidebar { width: 260px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 24px; position: fixed; height: 100vh; }
+    .perfil-main { flex: 1; margin-left: 260px; padding: 24px 32px; }
+    .perfil-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #0a0a0f; font-weight: 700; margin-bottom: 12px; }
+    .perfil-menu { margin-top: 24px; }
+    .perfil-menu a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); color: var(--text-secondary); margin-bottom: 4px; transition: var(--transition); }
+    .perfil-menu a:hover, .perfil-menu a.active { background: var(--bg-hover); color: var(--text-primary); }
+    .perfil-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; max-width: 560px; }
+  </style>
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <div class="perfil-layout">
+    <aside class="perfil-sidebar" id="perfilSidebar">
+      <div class="perfil-avatar" id="pAvatar">C</div>
+      <div style="font-weight:700;" id="pNome">Cliente</div>
+      <div class="text-muted" style="font-size:0.8rem;" id="pEmail">email</div>
+      <nav class="perfil-menu">
+        <a href="cliente.html"><i class="fas fa-home"></i> Visão Geral</a>
+        <a href="#" class="active"><i class="fas fa-user"></i> Meu Perfil</a>
+        <a href="index.html"><i class="fas fa-store"></i> Site da Barbearia</a>
+        <a href="#" onclick="sair();return false;"><i class="fas fa-sign-out-alt"></i> Sair</a>
+      </nav>
+    </aside>
+    <main class="perfil-main">
+      <div class="topbar" style="margin-bottom:24px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="menu-toggle" onclick="toggleSidebar()" id="sidebarToggle" style="display:none;"><i class="fas fa-bars"></i></button>
+          <div class="page-title"><h1>Meu Perfil</h1><p>Atualize seus dados pessoais</p></div>
+        </div>
+      </div>
+      <div class="perfil-card">
+        <form id="perfilForm">
+          <div class="form-group"><label>Nome</label><input type="text" id="pfNome" required></div>
+          <div class="form-group"><label>Email</label><input type="email" id="pfEmail" required></div>
+          <div class="form-group"><label>Telefone</label><input type="text" id="pfTel"></div>
+          <div class="form-group"><label>Nova Senha</label><input type="password" id="pfSenha" placeholder="Deixe em branco para manter"></div>
+
+          <button type="submit" class="btn btn-primary w-full"><i class="fas fa-save"></i> Salvar Alterações</button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    DB.seed();
+    const sessao = DB.getSession();
+    if (!sessao || sessao.tipo !== 'cliente') { window.location.href = 'login.html'; }
+    const user = DB.getUser(sessao?.userId);
+    if (!user) { window.location.href = 'login.html'; }
+
+    document.getElementById('pNome').textContent = user.nome;
+    document.getElementById('pEmail').textContent = user.email;
+    document.getElementById('pAvatar').textContent = user.nome.charAt(0).toUpperCase();
+    document.getElementById('pfNome').value = user.nome;
+    document.getElementById('pfEmail').value = user.email;
+    document.getElementById('pfTel').value = user.telefone || '';
+
+    document.getElementById('perfilForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const dados = { ...user, nome: document.getElementById('pfNome').value.trim(), email: document.getElementById('pfEmail').value.trim(), telefone: document.getElementById('pfTel').value.trim() };
+      const novaSenha = document.getElementById('pfSenha').value;
+      if (novaSenha) dados.senha = DB.hashSenha(novaSenha);
+      DB.saveUser(dados);
+      alert('Perfil atualizado com sucesso!');
+      window.location.reload();
+    });
+
+    window.toggleSidebar = function() {
+      document.getElementById('perfilSidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('active');
+    };
+    function checkMobile() {
+      const isMobile = window.innerWidth <= 768;
+      document.getElementById('sidebarToggle').style.display = isMobile ? 'block' : 'none';
+      if (!isMobile) {
+        document.getElementById('perfilSidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('active');
+      }
+    }
+    window.addEventListener('resize', checkMobile);
+    checkMobile();
+
+    function sair() { DB.clearSession(); window.location.href = 'login.html'; }
+  </script>
+</body>
+</html>

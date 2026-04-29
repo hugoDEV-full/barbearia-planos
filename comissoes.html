@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modelos de Comissão para Barbearias</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --modelo-1: #3b82f6;
+      --modelo-2: #8b5cf6;
+      --modelo-3: #f59e0b;
+      --modelo-4: #22c55e;
+      --modelo-1-light: rgba(59,130,246,0.12);
+      --modelo-2-light: rgba(139,92,246,0.12);
+      --modelo-3-light: rgba(245,158,11,0.12);
+      --modelo-4-light: rgba(34,197,94,0.12);
+    }
+
+    .comm-header {
+      padding: 100px 40px 60px;
+      text-align: center;
+      background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .comm-header h1 { font-size: 2.8rem; margin-bottom: 12px; }
+    .comm-header h1 span { color: var(--accent); }
+    .comm-header p { color: var(--text-secondary); max-width: 700px; margin: 0 auto; font-size: 1.05rem; }
+
+    .comm-section { padding: 60px 40px; max-width: 1200px; margin: 0 auto; }
+    .comm-section h2 { text-align: center; font-size: 2rem; margin-bottom: 12px; }
+    .comm-section > .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 48px; }
+
+    /* Modelo Card */
+    .modelo-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 48px;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .modelo-card:hover { box-shadow: var(--shadow-lg); }
+    .modelo-header {
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modelo-numero {
+      width: 48px; height: 48px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.2rem; flex-shrink: 0;
+    }
+    .modelo-title { font-size: 1.3rem; margin-bottom: 4px; }
+    .modelo-desc { color: var(--text-secondary); font-size: 0.9rem; }
+    .modelo-body { padding: 32px; }
+
+    .m1 .modelo-numero { background: var(--modelo-1-light); color: var(--modelo-1); }
+    .m1 { border-left: 4px solid var(--modelo-1); }
+    .m2 .modelo-numero { background: var(--modelo-2-light); color: var(--modelo-2); }
+    .m2 { border-left: 4px solid var(--modelo-2); }
+    .m3 .modelo-numero { background: var(--modelo-3-light); color: var(--modelo-3); }
+    .m3 { border-left: 4px solid var(--modelo-3); }
+    .m4 .modelo-numero { background: var(--modelo-4-light); color: var(--modelo-4); }
+    .m4 { border-left: 4px solid var(--modelo-4); }
+
+    /* Como funciona */
+    .como-funciona {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .como-funciona h4 { font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .como-funciona p { color: var(--text-secondary); line-height: 1.8; font-size: 0.95rem; }
+    .como-funciona ul { margin: 12px 0 0 18px; color: var(--text-secondary); line-height: 2; font-size: 0.95rem; }
+    .como-funciona li::marker { color: var(--accent); }
+
+    /* Barbeiros */
+    .barbeiros-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .barbeiro-mini {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .barbeiro-mini img {
+      width: 64px; height: 64px; border-radius: 50%; object-fit: cover;
+      border: 3px solid var(--border); margin-bottom: 10px;
+    }
+    .barbeiro-mini h5 { font-size: 0.95rem; margin-bottom: 2px; }
+    .barbeiro-mini span { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* Tabela Simulação */
+    .sim-title {
+      font-size: 1rem; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .sim-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+    .sim-table th {
+      background: var(--bg-secondary); padding: 12px 14px;
+      text-align: left; font-size: 0.75rem; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600;
+    }
+    .sim-table td {
+      padding: 14px; border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    .sim-table tr:hover td { background: var(--bg-hover); }
+    .sim-table .valor { font-weight: 700; }
+    .sim-table .total-row td { border-top: 2px solid var(--border); border-bottom: none; font-weight: 700; background: var(--bg-secondary); }
+
+    .tag {
+      display: inline-flex; align-items: center; padding: 3px 10px;
+      border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+    }
+    .tag-blue { background: var(--modelo-1-light); color: var(--modelo-1); }
+    .tag-purple { background: var(--modelo-2-light); color: var(--modelo-2); }
+    .tag-orange { background: var(--modelo-3-light); color: var(--modelo-3); }
+    .tag-green { background: var(--modelo-4-light); color: var(--modelo-4); }
+
+    /* Resumo Card */
+    .resumo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .resumo-item {
+      background: var(--bg-secondary); border-radius: var(--radius-sm);
+      padding: 20px; text-align: center; border: 1px solid var(--border);
+    }
+    .resumo-item .label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    .resumo-item .value { font-size: 1.4rem; font-weight: 800; font-family: 'Playfair Display', serif; }
+    .resumo-item .sub { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; }
+
+    /* Calculadora */
+    .calc-section { background: var(--bg-secondary); border-radius: var(--radius); padding: 48px 40px; margin-bottom: 48px; }
+    .calc-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 28px; flex-wrap: wrap; }
+    .calc-tab { padding: 12px 20px; cursor: pointer; color: var(--text-secondary); border-bottom: 2px solid transparent; font-weight: 500; transition: var(--transition); background: none; border-top: none; border-left: none; border-right: none; font-size: 0.9rem; }
+    .calc-tab:hover { color: var(--text-primary); }
+    .calc-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .calc-panel { display: none; }
+    .calc-panel.active { display: block; animation: fadeIn 0.3s ease; }
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .calc-input-group { margin-bottom: 16px; }
+    .calc-input-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); }
+    .calc-input-group input, .calc-input-group select { width: 100%; padding: 12px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.95rem; }
+    .calc-input-group input:focus { outline: none; border-color: var(--accent); }
+    .calc-result { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+    .calc-result h4 { font-size: 1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .calc-result-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .calc-result-row:last-child { border-bottom: none; }
+    .calc-result-row .calc-label { color: var(--text-secondary); }
+    .calc-result-row .calc-value { font-weight: 700; font-family: 'Playfair Display', serif; font-size: 1.1rem; }
+    .calc-result-row.highlight { background: var(--bg-secondary); margin: 0 -24px; padding: 14px 24px; }
+    .calc-result-bar { width: 100%; height: 24px; background: var(--bg-secondary); border-radius: 12px; overflow: hidden; display: flex; margin-top: 16px; }
+    .calc-result-bar-fill { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: white; transition: width 0.4s ease; }
+    .calc-comparison { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 24px; }
+    .calc-comp-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; text-align: center; cursor: pointer; transition: var(--transition); }
+    .calc-comp-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .calc-comp-card.active { border-color: var(--accent); background: rgba(212,168,83,0.08); }
+    .calc-comp-card .comp-name { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; }
+    .calc-comp-card .comp-value { font-size: 1.3rem; font-weight: 800; font-family: 'Playfair Display', serif; }
+    .calc-comp-card .comp-sub { font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; }
+    .calc-note { background: rgba(59,130,246,0.08); border-left: 3px solid var(--modelo-1); padding: 12px 16px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; margin-top: 16px; font-size: 0.85rem; color: var(--text-secondary); }
+
+    @media (max-width: 768px) {
+      .calc-grid { grid-template-columns: 1fr; }
+      .calc-comparison { grid-template-columns: repeat(2, 1fr); }
+      .calc-tabs { gap: 0; }
+      .calc-tab { padding: 10px 12px; font-size: 0.8rem; }
+      .calc-section { padding: 28px 20px; }
+    }
+
+    /* Modelo Hibrido Explicacao */
+    .cash-box {
+      background: linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(59,130,246,0.08) 100%);
+      border: 1px solid rgba(34,197,94,0.3);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 48px;
+    }
+    .cash-box h3 { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; font-size: 1.2rem; }
+    .cash-box p { color: var(--text-secondary); line-height: 1.8; margin-bottom: 12px; }
+    .cash-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 24px; }
+    .cash-step {
+      background: var(--bg-card); border-radius: var(--radius-sm);
+      padding: 20px; text-align: center; border: 1px solid var(--border);
+    }
+    .cash-step i { font-size: 1.6rem; color: var(--success); margin-bottom: 10px; }
+    .cash-step h5 { font-size: 0.9rem; margin-bottom: 6px; }
+    .cash-step p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+
+    /* Recomendação */
+    .recomendacao {
+      background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);
+      border-radius: var(--radius);
+      padding: 48px 40px;
+      text-align: center;
+      color: #0a0a0f;
+      margin-bottom: 40px;
+    }
+    .recomendacao h2 { color: #0a0a0f; font-size: 2rem; margin-bottom: 16px; }
+    .recomendacao p { color: rgba(10,10,15,0.85); max-width: 700px; margin: 0 auto 24px; font-size: 1.05rem; line-height: 1.7; }
+    .recomendacao .badge-rec {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(10,10,15,0.15); padding: 8px 20px;
+      border-radius: 20px; font-weight: 700; font-size: 0.9rem;
+    }
+    .motivos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      max-width: 900px;
+      margin: 32px auto 0;
+    }
+    .motivo-card {
+      background: rgba(255,255,255,0.2); backdrop-filter: blur(4px);
+      border-radius: var(--radius-sm); padding: 20px; text-align: left;
+    }
+    .motivo-card i { margin-bottom: 8px; display: block; font-size: 1.2rem; }
+    .motivo-card h5 { font-size: 0.9rem; margin-bottom: 4px; }
+    .motivo-card p { font-size: 0.8rem; color: rgba(10,10,15,0.8); margin: 0; }
+
+    /* Comparativo */
+    .compare-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    .compare-table th { padding: 14px; text-align: left; background: var(--bg-secondary); font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); }
+    .compare-table td { padding: 14px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .compare-table tr:hover td { background: var(--bg-hover); }
+    .compare-table td:first-child { font-weight: 600; }
+    .icon-yes { color: var(--success); }
+    .icon-no { color: var(--danger); opacity: 0.6; }
+    .icon-warn { color: var(--warning); }
+
+    /* Barra de Comissão Visual */
+    .comm-bar { width: 100%; height: 28px; background: var(--bg-secondary); border-radius: 14px; overflow: hidden; display: flex; margin: 8px 0; }
+    .comm-bar-fill { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: white; transition: width 0.6s ease; }
+    .comm-bar-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; font-size: 0.8rem; color: var(--text-muted); }
+    .comm-bar-legend span { display: flex; align-items: center; gap: 6px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* Alertas */
+    .alert-box {
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 16px 20px;
+      display: flex; align-items: flex-start; gap: 12px; margin: 20px 0;
+    }
+    .alert-box i { margin-top: 2px; }
+    .alert-box p { margin: 0; font-size: 0.9rem; color: var(--text-secondary); }
+
+    /* Animations */
+    @keyframes countUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-in { animation: countUp 0.5s ease forwards; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .comm-header { padding: 80px 20px 40px; }
+      .comm-header h1 { font-size: 2rem; }
+      .comm-section { padding: 40px 20px; }
+      .modelo-header { padding: 20px; flex-direction: column; text-align: center; }
+      .modelo-body { padding: 20px; }
+      .recomendacao { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="public-header">
+    <div class="public-logo">
+      <div class="sidebar-brand-icon"><i class="fas fa-cut"></i></div>
+      <div>
+        <div class="sidebar-brand-text">Barbearia Planos</div>
+        <div class="sidebar-brand-sub">Modelos de Comissão</div>
+      </div>
+    </div>
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu"><i class="fas fa-bars"></i></button>
+    <div class="public-nav" id="publicNav">
+      <a href="index.html">Início</a>
+      <a href="#modelos">Modelos</a>
+      <a href="#calculadora">Calculadora</a>
+      <a href="#hibrido">Modelo Híbrido</a>
+      <a href="#recomendacao">Recomendação</a>
+      <a href="login.html" class="btn btn-primary btn-sm"><i class="fas fa-sign-in-alt"></i> Área do Cliente</a>
+    </div>
+  </nav>
+  <div class="public-nav-mobile" id="publicNavMobile">
+    <a href="index.html" onclick="toggleMenu()">Início</a>
+    <a href="#modelos" onclick="toggleMenu()">Modelos</a>
+    <a href="#calculadora" onclick="toggleMenu()">Calculadora</a>
+    <a href="#hibrido" onclick="toggleMenu()">Modelo Híbrido</a>
+    <a href="#recomendacao" onclick="toggleMenu()">Recomendação</a>
+    <a href="login.html" class="btn btn-primary btn-sm" style="justify-content:center;" onclick="toggleMenu()"><i class="fas fa-sign-in-alt"></i> Área do Cliente</a>
+  </div>
+
+  <header class="comm-header">
+    <h1>Modelos de <span>Distribuição de Comissão</span></h1>
+    <p>Material explicativo do sistema de gestão da barbearia. Apresente estes 4 cenários ao seu cliente e ajude-o a escolher o melhor modelo de comissão para o negócio dele.</p>
+  </header>
+
+  <!-- SOBRE ESTA PÁGINA -->
+  <section class="comm-section" id="sobre" style="padding-bottom:20px;">
+    <div class="como-funciona" style="border-left:4px solid var(--accent);margin-bottom:0;">
+      <h4><i class="fas fa-info-circle" style="color:var(--accent);"></i> Como usar esta página</h4>
+      <p>Esta página foi criada como <strong>material de apoio para barbeiros e gestores de barbearia</strong> entenderem como funciona a distribuição de comissões dentro do sistema. Aqui você encontra:</p>
+      <ul>
+        <li><strong>4 cenários completos</strong> explicados com exemplos reais usando nomes de barbeiros</li>
+        <li><strong>Simulações em tabelas</strong> mostrando exatamente quanto cada profissional recebe</li>
+        <li><strong>Calculadora interativa</strong> para testar seus próprios números e comparar os modelos</li>
+        <li><strong>Recomendação final</strong> baseada em dados, indicando o modelo mais equilibrado</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>Para que serve:</strong> Use esta página para apresentar ao dono da barbearia (ou à sua própria equipe) as opções de remuneração disponíveis no sistema. A calculadora permite simular cenários reais antes de tomar a decisão final.</p>
+    </div>
+  </section>
+
+  <!-- BARRBEIROS DA SIMULAÇÃO -->
+  <section class="comm-section" id="equipe">
+    <h2><i class="fas fa-users" style="color:var(--accent);"></i> Nossa Equipe de Exemplo</h2>
+    <p class="subtitle">Conheça os barbeiros que vamos usar nas simulações práticas de cada modelo.</p>
+    <div class="barbeiros-row">
+      <div class="barbeiro-mini">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" alt="Marcos">
+        <h5>Marcos</h5>
+        <span>Barbeiro Sênior — 5 anos</span>
+      </div>
+      <div class="barbeiro-mini">
+        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80" alt="Thiago">
+        <h5>Thiago</h5>
+        <span>Barbeiro Pleno — 3 anos</span>
+      </div>
+      <div class="barbeiro-mini">
+        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80" alt="Rafael">
+        <h5>Rafael</h5>
+        <span>Barbeiro Junior — 1 ano</span>
+      </div>
+      <div class="barbeiro-mini">
+        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&q=80" alt="Lucas">
+        <h5>Lucas</h5>
+        <span>Barbeiro Junior — 8 meses</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODELOS -->
+  <section class="comm-section" id="modelos">
+    <h2>Os 4 Cenários de Comissão</h2>
+    <p class="subtitle">Clique em cada card para entender em detalhes como funciona, com números reais.</p>
+
+    <!-- MODELO 1: PORCENTAGEM FIXA -->
+    <div class="modelo-card m1 animate-in">
+      <div class="modelo-header">
+        <div class="modelo-numero">1</div>
+        <div>
+          <div class="modelo-title">Comissão por Porcentagem Fixa</div>
+          <div class="modelo-desc">O barbeiro recebe um percentual fixo sobre tudo o que produzir no mês.</div>
+        </div>
+        <span class="tag tag-blue">Mais Simples</span>
+      </div>
+      <div class="modelo-body">
+        <div class="como-funciona">
+          <h4><i class="fas fa-cog" style="color:var(--modelo-1);"></i> Como Funciona</h4>
+          <p>A barbearia define um percentual único (ex: <strong>50%</strong>) que é aplicado sobre o valor total de serviços executados pelo barbeiro no mês. Não existe salário base — a remuneração é 100% variável, proporcional ao esforço.</p>
+          <ul>
+            <li>O barbeiro Marcos fez R$ 6.000 em serviços → recebe 50% = <strong>R$ 3.000</strong></li>
+            <li>O barbeiro Lucas fez R$ 2.500 em serviços → recebe 50% = <strong>R$ 1.250</strong></li>
+            <li>Produtos vendidos podem ter comissão diferenciada (ex: 20%)</li>
+            <li>Faltas ou folgas não impactam o cálculo (só importa o que produziu)</li>
+          </ul>
+        </div>
+
+        <div class="sim-title"><i class="fas fa-calculator" style="color:var(--modelo-1);"></i> Simulação do Mês — Fevereiro/2026</div>
+        <div class="table-container">
+          <table class="sim-table">
+            <thead>
+              <tr><th>Barbeiro</th><th>Serviços Feitos</th><th>Valor Total</th><th>% Comissão</th><th>Recebe</th><th>Lucro Barbearia</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Marcos</strong> <span class="tag tag-blue">Sênior</span></td><td>85 cortes</td><td class="valor">R$ 6.800</td><td>50%</td><td class="valor" style="color:var(--modelo-1);">R$ 3.400</td><td class="valor">R$ 3.400</td></tr>
+              <tr><td><strong>Thiago</strong> <span class="tag tag-blue">Pleno</span></td><td>72 cortes</td><td class="valor">R$ 5.400</td><td>50%</td><td class="valor" style="color:var(--modelo-1);">R$ 2.700</td><td class="valor">R$ 2.700</td></tr>
+              <tr><td><strong>Rafael</strong> <span class="tag tag-blue">Junior</span></td><td>48 cortes</td><td class="valor">R$ 3.200</td><td>50%</td><td class="valor" style="color:var(--modelo-1);">R$ 1.600</td><td class="valor">R$ 1.600</td></tr>
+              <tr><td><strong>Lucas</strong> <span class="tag tag-blue">Junior</span></td><td>35 cortes</td><td class="valor">R$ 2.100</td><td>50%</td><td class="valor" style="color:var(--modelo-1);">R$ 1.050</td><td class="valor">R$ 1.050</td></tr>
+              <tr class="total-row"><td colspan="2">TOTAL</td><td class="valor">R$ 17.500</td><td>—</td><td class="valor">R$ 8.750</td><td class="valor">R$ 8.750</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="comm-bar">
+          <div class="comm-bar-fill" style="width:50%;background:var(--modelo-1);">Barbeiro 50%</div>
+          <div class="comm-bar-fill" style="width:50%;background:var(--bg-hover);color:var(--text-muted);">Barbearia 50%</div>
+        </div>
+        <div class="comm-bar-legend">
+          <span><span class="dot" style="background:var(--modelo-1);"></span> Barbeiro recebe</span>
+          <span><span class="dot" style="background:var(--bg-hover);border:1px solid var(--border);"></span> Barbearia fica com</span>
+        </div>
+
+        <div class="alert-box">
+          <i class="fas fa-lightbulb" style="color:var(--modelo-1);"></i>
+          <p><strong>Quando usar:</strong> Ideal para barbearias pequenas com equipe enxuta, onde todos têm capacidade similar de atender. É o modelo mais transparente e fácil de explicar.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODELO 2: COMISSÃO ESCALONADA -->
+    <div class="modelo-card m2 animate-in">
+      <div class="modelo-header">
+        <div class="modelo-numero">2</div>
+        <div>
+          <div class="modelo-title">Comissão Escalonada por Meta</div>
+          <div class="modelo-desc">Quanto mais o barbeiro produz, maior o percentual que ele recebe. Incentiva alta performance.</div>
+        </div>
+        <span class="tag tag-purple">Mais Motivador</span>
+      </div>
+      <div class="modelo-body">
+        <div class="como-funciona">
+          <h4><i class="fas fa-cog" style="color:var(--modelo-2);"></i> Como Funciona</h4>
+          <p>A barbearia define faixas de faturamento e percentuais crescentes. O barbeiro começa com uma % menor e vai aumentando conforme bate metas mensais. Esse modelo premia quem mais trabalha e atrai barbeiros ambiciosos.</p>
+          <ul>
+            <li>Até R$ 2.500 faturados → comissão de <strong>40%</strong></li>
+            <li>De R$ 2.501 a R$ 4.500 → comissão de <strong>50%</strong></li>
+            <li>Acima de R$ 4.500 → comissão de <strong>60%</strong></li>
+            <li>A faixa mais alta se aplica apenas ao valor excedente (sistema progressivo) ou ao total (sistema global)</li>
+          </ul>
+        </div>
+
+        <div class="sim-title"><i class="fas fa-calculator" style="color:var(--modelo-2);"></i> Simulação do Mês — Fevereiro/2026 (Sistema Global)</div>
+        <div class="table-container">
+          <table class="sim-table">
+            <thead>
+              <tr><th>Barbeiro</th><th>Faturamento</th><th>Faixa Atingida</th><th>% Aplicada</th><th>Recebe</th><th>Lucro Barbearia</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Marcos</strong> <span class="tag tag-purple">Sênior</span></td><td class="valor">R$ 6.800</td><td>Acima de R$ 4.500 <span class="tag tag-purple">Teto</span></td><td>60%</td><td class="valor" style="color:var(--modelo-2);">R$ 4.080</td><td class="valor">R$ 2.720</td></tr>
+              <tr><td><strong>Thiago</strong> <span class="tag tag-purple">Pleno</span></td><td class="valor">R$ 5.400</td><td>Acima de R$ 4.500 <span class="tag tag-purple">Teto</span></td><td>60%</td><td class="valor" style="color:var(--modelo-2);">R$ 3.240</td><td class="valor">R$ 2.160</td></tr>
+              <tr><td><strong>Rafael</strong> <span class="tag tag-purple">Junior</span></td><td class="valor">R$ 3.200</td><td>R$ 2.501 – R$ 4.500 <span class="tag tag-purple">Meio</span></td><td>50%</td><td class="valor" style="color:var(--modelo-2);">R$ 1.600</td><td class="valor">R$ 1.600</td></tr>
+              <tr><td><strong>Lucas</strong> <span class="tag tag-purple">Junior</span></td><td class="valor">R$ 2.100</td><td>Até R$ 2.500 <span class="tag tag-purple">Base</span></td><td>40%</td><td class="valor" style="color:var(--modelo-2);">R$ 840</td><td class="valor">R$ 1.260</td></tr>
+              <tr class="total-row"><td colspan="2">TOTAL</td><td>—</td><td>—</td><td class="valor">R$ 9.760</td><td class="valor">R$ 7.740</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="comm-bar">
+          <div class="comm-bar-fill" style="width:40%;background:var(--modelo-2);">Barbeiro até 60%</div>
+          <div class="comm-bar-fill" style="width:60%;background:var(--bg-hover);color:var(--text-muted);">Barbearia até 60%</div>
+        </div>
+
+        <div class="alert-box">
+          <i class="fas fa-lightbulb" style="color:var(--modelo-2);"></i>
+          <p><strong>Quando usar:</strong> Excelente para barbearias com grande volume de clientes e barbeiros experientes que querem ganhar mais. Cria competição saudável, mas exige controle rigoroso de caixa.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODELO 3: SALÁRIO + COMISSÃO -->
+    <div class="modelo-card m3 animate-in">
+      <div class="modelo-header">
+        <div class="modelo-numero">3</div>
+        <div>
+          <div class="modelo-title">Salário Mínimo + Comissão Reduzida</div>
+          <div class="modelo-desc">O barbeiro tem uma renda garantida no fim do mês, mesmo em períodos fracos.</div>
+        </div>
+        <span class="tag tag-orange">Mais Seguro</span>
+      </div>
+      <div class="modelo-body">
+        <div class="como-funciona">
+          <h4><i class="fas fa-cog" style="color:var(--modelo-3);"></i> Como Funciona</h4>
+          <p>A barbearia paga um <strong>salário base fixo</strong> para todos os barbeiros (ex: R$ 1.500) e uma comissão menor sobre o que produzem (ex: 30%). Esse modelo oferece segurança para o profissional e previsibilidade de custos para o dono.</p>
+          <ul>
+            <li>Salário base: <strong>R$ 1.500</strong> para todos os barbeiros</li>
+            <li>Comissão sobre produção: <strong>30%</strong> do valor de serviços</li>
+            <li>Se o mês for fraco, o barbeiro ainda leva o salário mínimo</li>
+            <li>Em meses fortes, o barbeiro ganha muito bem (salário + comissão alta)</li>
+          </ul>
+        </div>
+
+        <div class="sim-title"><i class="fas fa-calculator" style="color:var(--modelo-3);"></i> Simulação do Mês — Fevereiro/2026</div>
+        <div class="table-container">
+          <table class="sim-table">
+            <thead>
+              <tr><th>Barbeiro</th><th>Faturamento</th><th>Salário Base</th><th>30% Comissão</th><th>Total a Receber</th><th>Custo Barbearia</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Marcos</strong> <span class="tag tag-orange">Sênior</span></td><td class="valor">R$ 6.800</td><td>R$ 1.500</td><td>R$ 2.040</td><td class="valor" style="color:var(--modelo-3);">R$ 3.540</td><td class="valor">R$ 3.260</td></tr>
+              <tr><td><strong>Thiago</strong> <span class="tag tag-orange">Pleno</span></td><td class="valor">R$ 5.400</td><td>R$ 1.500</td><td>R$ 1.620</td><td class="valor" style="color:var(--modelo-3);">R$ 3.120</td><td class="valor">R$ 2.280</td></tr>
+              <tr><td><strong>Rafael</strong> <span class="tag tag-orange">Junior</span></td><td class="valor">R$ 3.200</td><td>R$ 1.500</td><td>R$ 960</td><td class="valor" style="color:var(--modelo-3);">R$ 2.460</td><td class="valor">R$ 740</td></tr>
+              <tr><td><strong>Lucas</strong> <span class="tag tag-orange">Junior</span></td><td class="valor">R$ 2.100</td><td>R$ 1.500</td><td>R$ 630</td><td class="valor" style="color:var(--modelo-3);">R$ 2.130</td><td class="valor">R$ (30)*</td></tr>
+              <tr class="total-row"><td colspan="2">TOTAL</td><td class="valor">R$ 6.000</td><td class="valor">R$ 5.250</td><td class="valor">R$ 11.250</td><td class="valor">R$ 6.250</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">* Lucas produziu menos do que o salário base. A barbearia "perde" R$ 30 neste mês, mas garante retenção do funcionário em meses fracos.</p>
+
+        <div class="comm-bar">
+          <div class="comm-bar-fill" style="width:55%;background:var(--modelo-3);">Barbeiro 55% (média)</div>
+          <div class="comm-bar-fill" style="width:45%;background:var(--bg-hover);color:var(--text-muted);">Barbearia 45% (média)</div>
+        </div>
+
+        <div class="alert-box">
+          <i class="fas fa-lightbulb" style="color:var(--modelo-3);"></i>
+          <p><strong>Quando usar:</strong> Perfeito para barbearias em crescimento ou regiões com sazonalidade forte (praia, interior). O salário base reduz a rotatividade e atrai profissionais que precisam de estabilidade.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODELO 4: HÍBRIDO (RECOMENDADO) -->
+    <div class="modelo-card m4 animate-in">
+      <div class="modelo-header">
+        <div class="modelo-numero">4</div>
+        <div>
+          <div class="modelo-title">Modelo Híbrido — Fixo + Variável com CAP</div>
+          <div class="modelo-desc">Combina segurança (fixo por atendimento), justiça (variável proporcional) e proteção da barbearia (CAP máximo).</div>
+        </div>
+        <span class="tag tag-green">Recomendado ⭐</span>
+      </div>
+      <div class="modelo-body">
+        <div class="como-funciona">
+          <h4><i class="fas fa-cog" style="color:var(--modelo-4);"></i> Como Funciona</h4>
+          <p>O modelo <strong>híbrido</strong> une o melhor dos dois mundos: o barbeiro tem <strong>segurança</strong> com um valor fixo por atendimento, <strong>justiça</strong> com uma parcela variável proporcional ao que produz, e a barbearia tem <strong>proteção</strong> através de um CAP (teto máximo) que evita prejuízo.</p>
+          <ul>
+            <li>A barbearia define um <strong>percentual de comissão</strong> sobre o faturamento (ex: 40%). Esse é o <strong>CAP</strong>.</li>
+            <li>O barbeiro recebe <strong>R$ 8 fixos</strong> por cada atendimento realizado no mês.</li>
+            <li>O valor restante dentro do CAP é pago como <strong>comissão variável</strong> proporcional.</li>
+            <li>Se o fixo já consome todo o CAP, não há variável — a barbearia <strong>nunca paga acima do teto</strong>.</li>
+          </ul>
+        </div>
+
+        <div class="sim-title"><i class="fas fa-calculator" style="color:var(--modelo-4);"></i> Simulação do Mês — Fevereiro/2026 (Cenário Normal)</div>
+        <div class="table-container">
+          <table class="sim-table">
+            <thead>
+              <tr><th>Barbeiro</th><th>Faturamento</th><th>Atend.</th><th>Fixo (R$8)</th><th>CAP (40%)</th><th>Variável</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Marcos</strong> <span class="tag tag-green">Sênior</span></td>
+                <td class="valor">R$ 6.800</td>
+                <td>85</td>
+                <td>R$ 680</td>
+                <td class="valor">R$ 2.720</td>
+                <td>R$ 2.040</td>
+                <td class="valor" style="color:var(--modelo-4);">R$ 2.720</td>
+              </tr>
+              <tr>
+                <td><strong>Thiago</strong> <span class="tag tag-green">Pleno</span></td>
+                <td class="valor">R$ 5.400</td>
+                <td>72</td>
+                <td>R$ 576</td>
+                <td class="valor">R$ 2.160</td>
+                <td>R$ 1.584</td>
+                <td class="valor" style="color:var(--modelo-4);">R$ 2.160</td>
+              </tr>
+              <tr>
+                <td><strong>Rafael</strong> <span class="tag tag-green">Junior</span></td>
+                <td class="valor">R$ 3.200</td>
+                <td>48</td>
+                <td>R$ 384</td>
+                <td class="valor">R$ 1.280</td>
+                <td>R$ 896</td>
+                <td class="valor" style="color:var(--modelo-4);">R$ 1.280</td>
+              </tr>
+              <tr>
+                <td><strong>Lucas</strong> <span class="tag tag-green">Junior</span></td>
+                <td class="valor">R$ 2.100</td>
+                <td>35</td>
+                <td>R$ 280</td>
+                <td class="valor">R$ 840</td>
+                <td>R$ 560</td>
+                <td class="valor" style="color:var(--modelo-4);">R$ 840</td>
+              </tr>
+              <tr class="total-row">
+                <td colspan="2">TOTAL</td>
+                <td>240</td>
+                <td class="valor">R$ 1.920</td>
+                <td class="valor">R$ 7.000</td>
+                <td class="valor">R$ 5.080</td>
+                <td class="valor">R$ 7.000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="comm-bar">
+          <div class="comm-bar-fill" style="width:27%;background:var(--modelo-4);">Fixo 27%</div>
+          <div class="comm-bar-fill" style="width:73%;background:#16a34a;">Variável 73%</div>
+        </div>
+        <div class="comm-bar-legend">
+          <span><span class="dot" style="background:var(--modelo-4);"></span> Fixo (segurança)</span>
+          <span><span class="dot" style="background:#16a34a;"></span> Variável (justiça)</span>
+        </div>
+
+        <div class="sim-title" style="margin-top:32px;"><i class="fas fa-shield-alt" style="color:var(--danger);"></i> Cenário de Proteção — Quando o CAP entra em ação</div>
+        <div class="como-funciona" style="border-left:3px solid var(--danger);">
+          <p>Imagine que a barbearia lança uma <strong>promoção de verão</strong>: corte por apenas <strong>R$ 30</strong>. Lucas atende <strong>120 clientes</strong> nesse plano. Sem proteção, a barbearia poderia ter prejuízo. Veja como o <strong>CAP</strong> protege:</p>
+          <div class="table-container" style="margin-top:16px;">
+            <table class="sim-table">
+              <thead>
+                <tr><th>Cenário</th><th>Faturamento</th><th>Atend.</th><th>Fixo (R$8)</th><th>CAP (40%)</th><th>Sem CAP (50%)</th><th>Proteção</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Lucas — Promoção</strong></td>
+                  <td class="valor">120 × R$30 = <strong>R$ 3.600</strong></td>
+                  <td>120</td>
+                  <td>R$ 960</td>
+                  <td class="valor text-success">R$ 1.440</td>
+                  <td class="valor text-danger">R$ 1.800</td>
+                  <td><span class="badge badge-success">Economia de R$ 360</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top:12px;"><strong>Resultado:</strong> Com o CAP, Lucas recebe <strong>R$ 1.440</strong> (40% do que faturou). Sem o CAP, receberia <strong>R$ 1.800</strong> — a barbearia perderia <strong>R$ 360</strong> em um mês só de um barbeiro.</p>
+        </div>
+
+        <div class="resumo-grid">
+          <div class="resumo-item">
+            <div class="label">Segurança</div>
+            <div class="value" style="color:var(--modelo-4);">R$ 8</div>
+            <div class="sub">por atendimento garantido</div>
+          </div>
+          <div class="resumo-item">
+            <div class="label">Justiça</div>
+            <div class="value" style="color:var(--success);">Variável</div>
+            <div class="sub">proporcional ao desempenho</div>
+          </div>
+          <div class="resumo-item">
+            <div class="label">Proteção (CAP)</div>
+            <div class="value" style="color:var(--accent);">40%</div>
+            <div class="sub">teto máximo de comissão</div>
+          </div>
+          <div class="resumo-item">
+            <div class="label">Previsibilidade</div>
+            <div class="value" style="color:var(--info);">Alta</div>
+            <div class="sub">custo nunca passa do CAP</div>
+          </div>
+        </div>
+
+        <div class="alert-box">
+          <i class="fas fa-lightbulb" style="color:var(--modelo-4);"></i>
+          <p><strong>Quando usar:</strong> Este é o modelo mais equilibrado. O barbeiro tem segurança no fim do mês (fixo por atendimento), é motivado a produzir mais (variável proporcional), e a barbearia nunca corre o risco de pagar mais do que pode (CAP). Usado por academias, salões premium e empresas de SaaS com uso variável.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULADORA INTERATIVA -->
+  <section class="comm-section" id="calculadora">
+    <h2><i class="fas fa-calculator" style="color:var(--accent);"></i> Calculadora de Comissões</h2>
+    <p class="subtitle">Simule cada modelo com seus próprios números e descubra qual é o melhor para a sua barbearia.</p>
+
+    <div class="calc-section">
+      <div class="calc-tabs">
+        <button class="calc-tab active" onclick="showCalc(0)"><i class="fas fa-percentage"></i> Porcentagem Fixa</button>
+        <button class="calc-tab" onclick="showCalc(1)"><i class="fas fa-chart-line"></i> Escalonada</button>
+        <button class="calc-tab" onclick="showCalc(2)"><i class="fas fa-wallet"></i> Salário + Comissão</button>
+        <button class="calc-tab" onclick="showCalc(3)"><i class="fas fa-star"></i> Híbrido (Recomendado)</button>
+      </div>
+
+      <!-- CALC 1: PORCENTAGEM FIXA -->
+      <div class="calc-panel active" id="calc-0">
+        <div class="calc-grid">
+          <div>
+            <div class="calc-input-group">
+              <label>Faturamento do Barbeiro (R$)</label>
+              <input type="number" id="c1-faturamento" value="5000" oninput="calc1()">
+            </div>
+            <div class="calc-input-group">
+              <label>% de Comissão</label>
+              <input type="number" id="c1-pct" value="50" oninput="calc1()">
+            </div>
+            <div class="calc-note">
+              <i class="fas fa-info-circle"></i> Insira o valor total que o barbeiro faturou no mês e o percentual de comissão acordado.
+            </div>
+          </div>
+          <div class="calc-result">
+            <h4><i class="fas fa-file-invoice-dollar" style="color:var(--modelo-1);"></i> Resultado — Modelo 1</h4>
+            <div class="calc-result-row">
+              <span class="calc-label">Faturamento</span>
+              <span class="calc-value" id="r1-faturamento">R$ 5.000,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Comissão do Barbeiro (<span id="r1-pct">50%</span>)</span>
+              <span class="calc-value" id="r1-comissao" style="color:var(--modelo-1);">R$ 2.500,00</span>
+            </div>
+            <div class="calc-result-row highlight">
+              <span class="calc-label">Lucro da Barbearia</span>
+              <span class="calc-value" id="r1-lucro">R$ 2.500,00</span>
+            </div>
+            <div class="calc-result-bar">
+              <div class="calc-result-bar-fill" id="r1-bar-barbeiro" style="width:50%;background:var(--modelo-1);">Barbeiro</div>
+              <div class="calc-result-bar-fill" id="r1-bar-barbearia" style="width:50%;background:var(--bg-hover);color:var(--text-muted);">Barbearia</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALC 2: ESCALONADA -->
+      <div class="calc-panel" id="calc-1">
+        <div class="calc-grid">
+          <div>
+            <div class="calc-input-group">
+              <label>Faturamento do Barbeiro (R$)</label>
+              <input type="number" id="c2-faturamento" value="5000" oninput="calc2()">
+            </div>
+            <div class="calc-input-group">
+              <label>% Faixa 1 (até R$ 2.500)</label>
+              <input type="number" id="c2-p1" value="40" oninput="calc2()">
+            </div>
+            <div class="calc-input-group">
+              <label>% Faixa 2 (R$ 2.501 a R$ 4.500)</label>
+              <input type="number" id="c2-p2" value="50" oninput="calc2()">
+            </div>
+            <div class="calc-input-group">
+              <label>% Faixa 3 (acima de R$ 4.500)</label>
+              <input type="number" id="c2-p3" value="60" oninput="calc2()">
+            </div>
+            <div class="calc-note">
+              <i class="fas fa-info-circle"></i> O percentual mais alto se aplica ao valor total (sistema global).
+            </div>
+          </div>
+          <div class="calc-result">
+            <h4><i class="fas fa-file-invoice-dollar" style="color:var(--modelo-2);"></i> Resultado — Modelo 2</h4>
+            <div class="calc-result-row">
+              <span class="calc-label">Faturamento</span>
+              <span class="calc-value" id="r2-faturamento">R$ 5.000,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Faixa Atingida</span>
+              <span class="calc-value" id="r2-faixa">Faixa 2</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">% Aplicada</span>
+              <span class="calc-value" id="r2-pct" style="color:var(--modelo-2);">50%</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Comissão do Barbeiro</span>
+              <span class="calc-value" id="r2-comissao" style="color:var(--modelo-2);">R$ 2.500,00</span>
+            </div>
+            <div class="calc-result-row highlight">
+              <span class="calc-label">Lucro da Barbearia</span>
+              <span class="calc-value" id="r2-lucro">R$ 2.500,00</span>
+            </div>
+            <div class="calc-result-bar">
+              <div class="calc-result-bar-fill" id="r2-bar-barbeiro" style="width:50%;background:var(--modelo-2);">Barbeiro</div>
+              <div class="calc-result-bar-fill" id="r2-bar-barbearia" style="width:50%;background:var(--bg-hover);color:var(--text-muted);">Barbearia</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALC 3: SALÁRIO + COMISSÃO -->
+      <div class="calc-panel" id="calc-2">
+        <div class="calc-grid">
+          <div>
+            <div class="calc-input-group">
+              <label>Faturamento do Barbeiro (R$)</label>
+              <input type="number" id="c3-faturamento" value="5000" oninput="calc3()">
+            </div>
+            <div class="calc-input-group">
+              <label>Salário Base (R$)</label>
+              <input type="number" id="c3-salario" value="1500" oninput="calc3()">
+            </div>
+            <div class="calc-input-group">
+              <label>% Comissão sobre Faturamento</label>
+              <input type="number" id="c3-pct" value="30" oninput="calc3()">
+            </div>
+            <div class="calc-note">
+              <i class="fas fa-info-circle"></i> O barbeiro recebe o salário base + comissão sobre o que produziu.
+            </div>
+          </div>
+          <div class="calc-result">
+            <h4><i class="fas fa-file-invoice-dollar" style="color:var(--modelo-3);"></i> Resultado — Modelo 3</h4>
+            <div class="calc-result-row">
+              <span class="calc-label">Faturamento</span>
+              <span class="calc-value" id="r3-faturamento">R$ 5.000,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Salário Base</span>
+              <span class="calc-value" id="r3-salario">R$ 1.500,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Comissão (<span id="r3-pc">30%</span>)</span>
+              <span class="calc-value" id="r3-comissao" style="color:var(--modelo-3);">R$ 1.500,00</span>
+            </div>
+            <div class="calc-result-row highlight">
+              <span class="calc-label">Total do Barbeiro</span>
+              <span class="calc-value" id="r3-total" style="color:var(--modelo-3);">R$ 3.000,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Lucro da Barbearia</span>
+              <span class="calc-value" id="r3-lucro">R$ 2.000,00</span>
+            </div>
+            <div class="calc-result-bar">
+              <div class="calc-result-bar-fill" id="r3-bar-barbeiro" style="width:60%;background:var(--modelo-3);">Barbeiro</div>
+              <div class="calc-result-bar-fill" id="r3-bar-barbearia" style="width:40%;background:var(--bg-hover);color:var(--text-muted);">Barbearia</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALC 4: HÍBRIDO -->
+      <div class="calc-panel" id="calc-3">
+        <div class="calc-grid">
+          <div>
+            <div class="calc-input-group">
+              <label>Faturamento do Barbeiro (R$)</label>
+              <input type="number" id="c4-faturamento" value="5000" oninput="calc4()">
+            </div>
+            <div class="calc-input-group">
+              <label>Quantidade de Atendimentos</label>
+              <input type="number" id="c4-atendimentos" value="65" oninput="calc4()">
+            </div>
+            <div class="calc-input-group">
+              <label>Fixo por Atendimento (R$)</label>
+              <input type="number" id="c4-fixo" value="8" oninput="calc4()">
+            </div>
+            <div class="calc-input-group">
+              <label>CAP — % Máxima do Faturamento</label>
+              <input type="number" id="c4-cap" value="40" oninput="calc4()">
+            </div>
+            <div class="calc-note">
+              <i class="fas fa-info-circle"></i> Fixo = atendimentos × valor fixo. Variável = CAP − Fixo (se positivo).
+            </div>
+          </div>
+          <div class="calc-result">
+            <h4><i class="fas fa-file-invoice-dollar" style="color:var(--modelo-4);"></i> Resultado — Modelo 4</h4>
+            <div class="calc-result-row">
+              <span class="calc-label">Faturamento</span>
+              <span class="calc-value" id="r4-faturamento">R$ 5.000,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Atendimentos</span>
+              <span class="calc-value" id="r4-atend">65</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Fixo Total</span>
+              <span class="calc-value" id="r4-fixo">R$ 520,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">CAP Máximo (<span id="r4-cap-pct">40%</span>)</span>
+              <span class="calc-value" id="r4-cap">R$ 2.000,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Variável</span>
+              <span class="calc-value" id="r4-var" style="color:var(--success);">R$ 1.480,00</span>
+            </div>
+            <div class="calc-result-row highlight">
+              <span class="calc-label">Total do Barbeiro</span>
+              <span class="calc-value" id="r4-total" style="color:var(--modelo-4);">R$ 2.000,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-label">Lucro da Barbearia</span>
+              <span class="calc-value" id="r4-lucro">R$ 3.000,00</span>
+            </div>
+            <div class="calc-result-bar">
+              <div class="calc-result-bar-fill" id="r4-bar-fixo" style="width:26%;background:var(--modelo-4);">Fixo</div>
+              <div class="calc-result-bar-fill" id="r4-bar-var" style="width:74%;background:#16a34a;">Variável</div>
+            </div>
+            <div class="calc-result-row" id="r4-aviso" style="display:none;margin-top:10px;background:rgba(239,68,68,0.1);border-radius:var(--radius-sm);padding:10px 14px;">
+              <span style="color:var(--danger);font-size:0.85rem;"><i class="fas fa-exclamation-triangle"></i> O fixo ultrapassou o CAP! O barbeiro recebe apenas o CAP.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPARAÇÃO RÁPIDA -->
+      <h4 style="margin-top:32px;margin-bottom:16px;font-size:1rem;"><i class="fas fa-balance-scale-right" style="color:var(--accent);"></i> Compare os 4 modelos com estes números</h4>
+      <div class="calc-comparison">
+        <div class="calc-comp-card" id="comp-0" onclick="showCalc(0)">
+          <div class="comp-name">Porcentagem Fixa</div>
+          <div class="comp-value" id="comp-v0" style="color:var(--modelo-1);">R$ 2.500</div>
+          <div class="comp-sub">pro barbeiro</div>
+        </div>
+        <div class="calc-comp-card" id="comp-1" onclick="showCalc(1)">
+          <div class="comp-name">Escalonada</div>
+          <div class="comp-value" id="comp-v1" style="color:var(--modelo-2);">R$ 2.500</div>
+          <div class="comp-sub">pro barbeiro</div>
+        </div>
+        <div class="calc-comp-card" id="comp-2" onclick="showCalc(2)">
+          <div class="comp-name">Salário + Comissão</div>
+          <div class="comp-value" id="comp-v2" style="color:var(--modelo-3);">R$ 3.000</div>
+          <div class="comp-sub">pro barbeiro</div>
+        </div>
+        <div class="calc-comp-card active" id="comp-3" onclick="showCalc(3)">
+          <div class="comp-name">Híbrido ⭐</div>
+          <div class="comp-value" id="comp-v3" style="color:var(--modelo-4);">R$ 2.000</div>
+          <div class="comp-sub">pro barbeiro</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:12px;">
+        <span style="font-size:0.8rem;color:var(--text-muted);"><i class="fas fa-mouse-pointer"></i> Clique em qualquer modelo acima para ver os detalhes</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMO O MODELO HÍBRIDO FUNCIONA -->
+  <section class="comm-section" id="hibrido" style="background:var(--bg-secondary);border-radius:var(--radius);margin-bottom:40px;">
+    <h2><i class="fas fa-balance-scale" style="color:var(--success);"></i> Entendendo o Modelo Híbrido na Prática</h2>
+    <p class="subtitle">O modelo híbrido é a fórmula perfeita entre segurança, justiça e proteção. Veja como aplicar na sua barbearia.</p>
+
+    <div class="cash-box">
+      <h3><i class="fas fa-layer-group" style="color:var(--success);"></i> Os 3 Pilares do Modelo Híbrido</h3>
+      <p>O segredo do modelo híbrido está em combinar três elementos que cobrem todas as necessidades: o barbeiro, a barbearia e o cliente. Cada pilar resolve um problema específico:</p>
+      <ul style="margin-left:18px;color:var(--text-secondary);line-height:2;">
+        <li><strong>Fixo por atendimento (R$ 8):</strong> Dá segurança ao barbeiro. Mesmo em dias fracos, ele sabe que cada corte vale algo.</li>
+        <li><strong>Variável proporcional:</strong> Dá justiça. Quem produz mais, ganha mais. O barbeiro é motivado a vender serviços extras.</li>
+        <li><strong>CAP (teto máximo de 40%):</strong> Protege a barbearia. O dono sabe exatamente o custo máximo de comissão antes do mês começar.</li>
+      </ul>
+
+      <div class="cash-steps">
+        <div class="cash-step">
+          <i class="fas fa-hand-holding-usd"></i>
+          <h5>1. Defina o CAP</h5>
+          <p>Escolha o percentual máximo de comissão (ex: 40% do faturamento do barbeiro).</p>
+        </div>
+        <div class="cash-step">
+          <i class="fas fa-receipt"></i>
+          <h5>2. Fixo por Atendimento</h5>
+          <p>Defina um valor fixo por corte (ex: R$ 8). Pago independente do valor do serviço.</p>
+        </div>
+        <div class="cash-step">
+          <i class="fas fa-chart-pie"></i>
+          <h5>3. Variável Proporcional</h5>
+          <p>O que sobrar do CAP após o fixo vira variável, dividido pelo desempenho.</p>
+        </div>
+        <div class="cash-step">
+          <i class="fas fa-shield-alt"></i>
+          <h5>4. Proteção Ativa</h5>
+          <p>Se o fixo ultrapassar o CAP, o barbeiro recebe apenas o CAP. A barbearia nunca perde.</p>
+        </div>
+        <div class="cash-step">
+          <i class="fas fa-file-invoice-dollar"></i>
+          <h5>5. Fechamento Mensal</h5>
+          <p>Relatório claro com fixo, variável, CAP e total para cada barbeiro.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-box">
+      <i class="fas fa-info-circle" style="color:var(--info);"></i>
+      <p><strong>Por que funciona:</strong> O modelo híbrido é usado por academias, salões premium e empresas de SaaS porque ele resolve o dilema clássico: como pagar bem o funcionário sem colocar a empresa em risco. O CAP é a peça-chave que torna tudo sustentável.</p>
+    </div>
+  </section>
+
+  <!-- TABELA COMPARATIVA -->
+  <section class="comm-section">
+    <h2><i class="fas fa-balance-scale" style="color:var(--accent);"></i> Comparativo dos 4 Modelos</h2>
+    <p class="subtitle">Veja lado a lado as vantagens e desvantagens de cada sistema de comissão.</p>
+
+    <div class="table-container">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Critério</th>
+            <th style="color:var(--modelo-1);">Porcentagem Fixa</th>
+            <th style="color:var(--modelo-2);">Escalonada</th>
+            <th style="color:var(--modelo-3);">Salário + Comissão</th>
+            <th style="color:var(--modelo-4);">Híbrido (Fixo + Var + CAP)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Previsibilidade para o dono</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Alta</td>
+            <td><i class="fas fa-minus-circle icon-warn"></i> Média</td>
+            <td><i class="fas fa-times-circle icon-no"></i> Baixa</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Muito Alta</td>
+          </tr>
+          <tr>
+            <td>Segurança para o barbeiro</td>
+            <td><i class="fas fa-times-circle icon-no"></i> Baixa</td>
+            <td><i class="fas fa-minus-circle icon-warn"></i> Média</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Alta</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Alta</td>
+          </tr>
+          <tr>
+            <td>Facilidade de cálculo</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Muito Fácil</td>
+            <td><i class="fas fa-minus-circle icon-warn"></i> Moderado</td>
+            <td><i class="fas fa-minus-circle icon-warn"></i> Moderado</td>
+            <td><i class="fas fa-minus-circle icon-warn"></i> Moderado</td>
+          </tr>
+          <tr>
+            <td>Incentiva alta produção</td>
+            <td><i class="fas fa-minus-circle icon-warn"></i> Parcial</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Muito</td>
+            <td><i class="fas fa-times-circle icon-no"></i> Pouco</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Muito</td>
+          </tr>
+          <tr>
+            <td>Protege contra prejuízo</td>
+            <td><i class="fas fa-minus-circle icon-warn"></i> Parcial</td>
+            <td><i class="fas fa-times-circle icon-no"></i> Não</td>
+            <td><i class="fas fa-times-circle icon-no"></i> Não</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Sim (CAP)</td>
+          </tr>
+          <tr>
+            <td>Justiça na divisão</td>
+            <td><i class="fas fa-minus-circle icon-warn"></i> Média</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Alta</td>
+            <td><i class="fas fa-minus-circle icon-warn"></i> Média</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Alta</td>
+          </tr>
+          <tr>
+            <td>Retenção de barbeiros</td>
+            <td><i class="fas fa-minus-circle icon-warn"></i> Média</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Alta</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Alta</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Alta</td>
+          </tr>
+          <tr>
+            <td>Custo operacional</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Baixo</td>
+            <td><i class="fas fa-minus-circle icon-warn"></i> Médio</td>
+            <td><i class="fas fa-times-circle icon-no"></i> Alto</td>
+            <td><i class="fas fa-check-circle icon-yes"></i> Baixo</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- RECOMENDAÇÃO -->
+  <section class="comm-section" id="recomendacao">
+    <div class="recomendacao">
+      <h2><i class="fas fa-trophy"></i> Recomendação Final</h2>
+      <p>Após analisar os 4 cenários com números reais, nossa recomendação é clara: o <strong>Modelo 4 — Híbrido (Fixo + Variável com CAP)</strong> é o melhor para qualquer barbearia que quer crescer com saúde financeira, reter talentos e proteger o caixa.</p>
+      <div class="badge-rec"><i class="fas fa-star"></i> Melhor Custo-Benefício</div>
+
+      <div class="motivos-grid">
+        <div class="motivo-card">
+          <i class="fas fa-shield-alt"></i>
+          <h5>Segurança para o Barbeiro</h5>
+          <p>R$ 8 fixos por atendimento garantem renda mesmo em dias fracos.</p>
+        </div>
+        <div class="motivo-card">
+          <i class="fas fa-balance-scale"></i>
+          <h5>Justiça na Divisão</h5>
+          <p>Quem produz mais recebe mais pela parcela variável proporcional.</p>
+        </div>
+        <div class="motivo-card">
+          <i class="fas fa-chart-line"></i>
+          <h5>Proteção da Barbearia</h5>
+          <p>O CAP (teto máximo) impede que a comissão ultrapasse o planejado.</p>
+        </div>
+        <div class="motivo-card">
+          <i class="fas fa-handshake"></i>
+          <h5>Sustentável a Longo Prazo</h5>
+          <p>Usado por academias e salões premium. Funciona em qualquer escala.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-box">
+      <i class="fas fa-lightbulb" style="color:var(--accent);"></i>
+      <p><strong>Como implementar:</strong> Comece definindo o CAP (sugerimos 40% do faturamento do barbeiro). Pague R$ 8 fixos por atendimento. No fim do mês, calcule: <em>Variável = CAP − Fixo</em>. Se o fixo já consumir todo o CAP, o barbeiro recebe apenas o CAP. Simples, justo e protegido.</p>
+    </div>
+  </section>
+
+  <script>
+    // ===== CALCULADORA =====
+    const fmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+    const fmtN = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0 });
+
+    function showCalc(idx) {
+      document.querySelectorAll('.calc-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+      document.querySelectorAll('.calc-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+      document.querySelectorAll('.calc-comp-card').forEach((c, i) => c.classList.toggle('active', i === idx));
+    }
+
+    function calc1() {
+      const fat = parseFloat(document.getElementById('c1-faturamento').value) || 0;
+      const pct = parseFloat(document.getElementById('c1-pct').value) || 0;
+      const com = fat * (pct / 100);
+      const luc = fat - com;
+      document.getElementById('r1-faturamento').textContent = fmt.format(fat);
+      document.getElementById('r1-pct').textContent = pct + '%';
+      document.getElementById('r1-comissao').textContent = fmt.format(com);
+      document.getElementById('r1-lucro').textContent = fmt.format(luc);
+      const pBarb = fat > 0 ? (com / fat) * 100 : 0;
+      const pBB = 100 - pBarb;
+      document.getElementById('r1-bar-barbeiro').style.width = pBarb + '%';
+      document.getElementById('r1-bar-barbearia').style.width = pBB + '%';
+      document.getElementById('comp-v0').textContent = fmt.format(com);
+    }
+
+    function calc2() {
+      const fat = parseFloat(document.getElementById('c2-faturamento').value) || 0;
+      const p1 = parseFloat(document.getElementById('c2-p1').value) || 0;
+      const p2 = parseFloat(document.getElementById('c2-p2').value) || 0;
+      const p3 = parseFloat(document.getElementById('c2-p3').value) || 0;
+      let pct = p1, faixa = 'Faixa 1';
+      if (fat > 4500) { pct = p3; faixa = 'Faixa 3 (Teto)'; }
+      else if (fat > 2500) { pct = p2; faixa = 'Faixa 2'; }
+      const com = fat * (pct / 100);
+      const luc = fat - com;
+      document.getElementById('r2-faturamento').textContent = fmt.format(fat);
+      document.getElementById('r2-faixa').textContent = faixa;
+      document.getElementById('r2-pct').textContent = pct + '%';
+      document.getElementById('r2-comissao').textContent = fmt.format(com);
+      document.getElementById('r2-lucro').textContent = fmt.format(luc);
+      const pBarb = fat > 0 ? (com / fat) * 100 : 0;
+      const pBB = 100 - pBarb;
+      document.getElementById('r2-bar-barbeiro').style.width = pBarb + '%';
+      document.getElementById('r2-bar-barbearia').style.width = pBB + '%';
+      document.getElementById('comp-v1').textContent = fmt.format(com);
+    }
+
+    function calc3() {
+      const fat = parseFloat(document.getElementById('c3-faturamento').value) || 0;
+      const sal = parseFloat(document.getElementById('c3-salario').value) || 0;
+      const pct = parseFloat(document.getElementById('c3-pct').value) || 0;
+      const com = fat * (pct / 100);
+      const total = sal + com;
+      const luc = fat - total;
+      document.getElementById('r3-faturamento').textContent = fmt.format(fat);
+      document.getElementById('r3-salario').textContent = fmt.format(sal);
+      document.getElementById('r3-pc').textContent = pct + '%';
+      document.getElementById('r3-comissao').textContent = fmt.format(com);
+      document.getElementById('r3-total').textContent = fmt.format(total);
+      document.getElementById('r3-lucro').textContent = fmt.format(luc);
+      const pBarb = fat > 0 ? (total / fat) * 100 : 0;
+      const pBB = 100 - pBarb;
+      document.getElementById('r3-bar-barbeiro').style.width = Math.max(0, Math.min(100, pBarb)) + '%';
+      document.getElementById('r3-bar-barbearia').style.width = Math.max(0, Math.min(100, pBB)) + '%';
+      document.getElementById('comp-v2').textContent = fmt.format(total);
+    }
+
+    function calc4() {
+      const fat = parseFloat(document.getElementById('c4-faturamento').value) || 0;
+      const atd = parseInt(document.getElementById('c4-atendimentos').value) || 0;
+      const fixoUnit = parseFloat(document.getElementById('c4-fixo').value) || 0;
+      const capPct = parseFloat(document.getElementById('c4-cap').value) || 0;
+      const fixoTotal = atd * fixoUnit;
+      const cap = fat * (capPct / 100);
+      let variavel = cap - fixoTotal;
+      let aviso = false;
+      if (variavel < 0) { variavel = 0; aviso = true; }
+      const total = fixoTotal + variavel;
+      // se fixo > cap, total = cap
+      const totalFinal = total > cap ? cap : total;
+      const lucro = fat - totalFinal;
+      document.getElementById('r4-faturamento').textContent = fmt.format(fat);
+      document.getElementById('r4-atend').textContent = atd;
+      document.getElementById('r4-fixo').textContent = fmt.format(fixoTotal);
+      document.getElementById('r4-cap-pct').textContent = capPct + '%';
+      document.getElementById('r4-cap').textContent = fmt.format(cap);
+      document.getElementById('r4-var').textContent = fmt.format(variavel);
+      document.getElementById('r4-total').textContent = fmt.format(totalFinal);
+      document.getElementById('r4-lucro').textContent = fmt.format(lucro);
+      const pFixo = totalFinal > 0 ? (Math.min(fixoTotal, totalFinal) / totalFinal) * 100 : 0;
+      const pVar = 100 - pFixo;
+      document.getElementById('r4-bar-fixo').style.width = pFixo + '%';
+      document.getElementById('r4-bar-var').style.width = pVar + '%';
+      document.getElementById('r4-aviso').style.display = aviso ? 'flex' : 'none';
+      document.getElementById('comp-v3').textContent = fmt.format(totalFinal);
+    }
+
+    // Inicializar
+    calc1(); calc2(); calc3(); calc4();
+
+    function toggleMenu() {
+      document.getElementById('publicNavMobile').classList.toggle('active');
+    }
+  </script>
+  <footer class="landing-footer">
+    <p><strong>Barbearia Planos</strong> — Sistema de Gestão Completo</p>
+    <p class="mt-4 text-muted">Comissões claras, barbeiros motivados, barbearia crescendo.</p>
+  </footer>
+
+</body>
+</html>

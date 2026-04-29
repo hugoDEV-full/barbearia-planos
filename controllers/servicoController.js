@@ -1,0 +1,55 @@
+const { pool } = require('../config/database');
+
+async function list(req, res, next) {
+  try {
+    const { barbearia_id, categoria, ativo } = req.query;
+    let sql = 'SELECT * FROM servicos WHERE 1=1';
+    const params = [];
+    if (barbearia_id) { params.push(barbearia_id); sql += ` AND barbearia_id = $${params.length}`; }
+    if (categoria) { params.push(categoria); sql += ` AND categoria = $${params.length}`; }
+    if (ativo !== undefined) { params.push(ativo === 'true'); sql += ` AND ativo = $${params.length}`; }
+    sql += ' ORDER BY categoria, nome';
+    const result = await pool.query(sql, params);
+    res.json(result.rows);
+  } catch (err) { next(err); }
+}
+
+async function getOne(req, res, next) {
+  try {
+    const result = await pool.query('SELECT * FROM servicos WHERE id = $1', [req.params.id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Serviço não encontrado' });
+    res.json(result.rows[0]);
+  } catch (err) { next(err); }
+}
+
+async function create(req, res, next) {
+  try {
+    const { barbearia_id, nome, descricao, preco, duracao, categoria } = req.body;
+    const result = await pool.query(
+      'INSERT INTO servicos (barbearia_id, nome, descricao, preco, duracao, categoria) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+      [barbearia_id || req.user.barbearia_id, nome, descricao, preco, duracao || 30, categoria || 'Cortes']
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) { next(err); }
+}
+
+async function update(req, res, next) {
+  try {
+    const { nome, descricao, preco, duracao, categoria, ativo } = req.body;
+    const result = await pool.query(
+      'UPDATE servicos SET nome=$1, descricao=$2, preco=$3, duracao=$4, categoria=$5, ativo=$6 WHERE id=$7 RETURNING *',
+      [nome, descricao, preco, duracao, categoria, ativo, req.params.id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Serviço não encontrado' });
+    res.json(result.rows[0]);
+  } catch (err) { next(err); }
+}
+
+async function remove(req, res, next) {
+  try {
+    await pool.query('DELETE FROM servicos WHERE id = $1', [req.params.id]);
+    res.status(204).send();
+  } catch (err) { next(err); }
+}
+
+module.exports = { list, getOne, create, update, remove };

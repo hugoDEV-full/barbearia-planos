@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barbearia Planos — Material Publicitário</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0a0a0f; color: #e8e8ec; line-height: 1.7; }
+    :root { --accent: #d4a853; --accent-2: #b88d3e; --bg-card: #12121a; --bg-secondary: #1a1a24; --border: #2a2a3a; --text-muted: #8a8a9a; }
+    .mp-container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .mp-hero { text-align: center; padding: 100px 20px 80px; background: linear-gradient(135deg, #0a0a0f 0%, #1a1425 50%, #0a0a0f 100%); position: relative; overflow: hidden; }
+    .mp-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(212,168,83,0.08) 0%, transparent 70%); }
+    .mp-hero h1 { font-size: 3.2rem; font-weight: 800; margin-bottom: 16px; background: linear-gradient(135deg, #fff 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; }
+    .mp-hero p { font-size: 1.25rem; color: var(--text-muted); max-width: 640px; margin: 0 auto 40px; position: relative; }
+    .mp-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(212,168,83,0.12); border: 1px solid rgba(212,168,83,0.3); color: var(--accent); padding: 8px 20px; border-radius: 30px; font-size: 0.85rem; font-weight: 600; position: relative; }
+    .mp-section { padding: 80px 0; }
+    .mp-section-title { font-size: 2rem; font-weight: 700; text-align: center; margin-bottom: 48px; }
+    .mp-section-title span { color: var(--accent); }
+    .problems-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+    .problem-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-align: center; transition: all 0.3s ease; }
+    .problem-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .problem-card i { font-size: 2.5rem; color: var(--accent); margin-bottom: 16px; }
+    .problem-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+    .problem-card p { color: var(--text-muted); font-size: 0.9rem; }
+    .pages-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .page-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; display: flex; gap: 16px; align-items: flex-start; transition: all 0.3s ease; }
+    .page-card:hover { border-color: var(--accent); }
+    .page-icon { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #0a0a0f; flex-shrink: 0; }
+    .page-card h4 { font-size: 1rem; margin-bottom: 4px; }
+    .page-card p { color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; }
+    .features-split { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+    .feature-col { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 36px; }
+    .feature-col h3 { font-size: 1.3rem; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
+    .feature-col h3 i { color: var(--accent); }
+    .feature-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .feature-item:last-child { border-bottom: none; }
+    .feature-item i { color: var(--accent); margin-top: 3px; }
+    .feature-item div { font-size: 0.9rem; }
+    .feature-item div strong { display: block; margin-bottom: 2px; }
+    .feature-item div span { color: var(--text-muted); font-size: 0.8rem; }
+    .flow-section { background: linear-gradient(135deg, #12121a 0%, #1a1425 100%); border-radius: 20px; padding: 60px 40px; text-align: center; }
+    .flow-steps { display: flex; justify-content: center; gap: 32px; margin-top: 40px; flex-wrap: wrap; }
+    .flow-step { max-width: 200px; }
+    .flow-step .num { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: #0a0a0f; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 800; margin: 0 auto 16px; }
+    .flow-step h4 { font-size: 1rem; margin-bottom: 6px; }
+    .flow-step p { color: var(--text-muted); font-size: 0.85rem; }
+    .cta-section { text-align: center; padding: 100px 20px; }
+    .cta-section h2 { font-size: 2.4rem; margin-bottom: 16px; }
+    .cta-section p { color: var(--text-muted); font-size: 1.1rem; max-width: 560px; margin: 0 auto 32px; }
+    .btn-gold { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #0a0a0f; padding: 16px 36px; border-radius: 12px; font-size: 1rem; font-weight: 700; text-decoration: none; transition: all 0.3s ease; border: none; cursor: pointer; }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(212,168,83,0.3); }
+    .tag { display: inline-block; background: rgba(212,168,83,0.1); color: var(--accent); padding: 3px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; margin-left: 6px; text-transform: uppercase; }
+    .tag.blue { background: rgba(100,149,237,0.1); color: #6495ed; }
+    .tag.green { background: rgba(80,200,120,0.1); color: #50c878; }
+    .tag.purple { background: rgba(180,120,220,0.1); color: #b478dc; }
+    @media (max-width: 768px) {
+      .mp-hero h1 { font-size: 2.2rem; }
+      .features-split { grid-template-columns: 1fr; }
+      .flow-steps { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="mp-hero">
+    <div class="mp-container">
+      <div class="mp-badge"><i class="fas fa-cut"></i> Sistema Completo para Barbearias</div>
+      <h1>Barbearia Planos</h1>
+      <p>O único sistema que sua barbearia precisa para vender assinaturas, controlar agendamentos, gerenciar clientes e faturar mais — tudo em uma única plataforma.</p>
+      <a href="#paginas" class="btn-gold" style="margin-top:8px;"><i class="fas fa-rocket"></i> Conheça o Sistema</a>
+    </div>
+  </section>
+
+  <!-- PROBLEMAS -->
+  <section class="mp-section">
+    <div class="mp-container">
+      <h2 class="mp-section-title">O que o <span>sistema resolve</span></h2>
+      <div class="problems-grid">
+        <div class="problem-card">
+          <i class="fas fa-calendar-times"></i>
+          <h3>Agendamentos bagunçados</h3>
+          <p>Chega de caderninho e agenda lotada. O sistema organiza todos os horários com visual claro e alertas automáticos.</p>
+        </div>
+        <div class="problem-card">
+          <i class="fas fa-user-slash"></i>
+          <h3>Clientes que não voltam</h3>
+          <p>Com planos de assinatura, seus clientes têm motivo para voltar todo mês. Recorrência garantida e previsibilidade de faturamento.</p>
+        </div>
+        <div class="problem-card">
+          <i class="fas fa-chart-line"></i>
+          <h3>Não sabe quanto fatura</h3>
+          <p>Dashboard com faturamento, MRR, taxa de ocupação e relatórios em tempo real. Você enxerga tudo o que acontece na barbearia.</p>
+        </div>
+        <div class="problem-card">
+          <i class="fas fa-box-open"></i>
+          <h3>Estoque sem controle</h3>
+          <p>Saiba exatamente o que tem no estoque, receba alertas de produtos acabando e controle movimentações de entrada e saída.</p>
+        </div>
+        <div class="problem-card">
+          <i class="fas fa-users"></i>
+          <h3>Cliente não tem autonomia</h3>
+          <p>Seu cliente assina plano, agenda horário, cancela e acompanha tudo sozinho pela área logada — sem te encher no WhatsApp.</p>
+        </div>
+        <div class="problem-card">
+          <i class="fas fa-hand-holding-usd"></i>
+          <h3>Comissão na "mão grande"</h3>
+          <p>Controle automaticamente os atendimentos de cada barbeiro e calcule comissões em segundos. Justo e transparente.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TODAS AS PÁGINAS -->
+  <section class="mp-section" id="paginas" style="background:#0d0d14;">
+    <div class="mp-container">
+      <h2 class="mp-section-title">Todas as <span>páginas do sistema</span></h2>
+      <div class="pages-grid">
+        <div class="page-card">
+          <div class="page-icon"><i class="fas fa-home"></i></div>
+          <div>
+            <h4>index.html <span class="tag blue">Público</span></h4>
+            <p>Site institucional completo: hero, serviços, planos, galeria, equipe, agendamento rápido e contato. Tudo dinâmico.</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-icon"><i class="fas fa-cut"></i></div>
+          <div>
+            <h4>servicos.html <span class="tag blue">Público</span></h4>
+            <p>Catálogo de serviços por categoria: cortes, barba, química e combos. Preços e duração sempre atualizados pelo admin.</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-icon"><i class="fas fa-id-card"></i></div>
+          <div>
+            <h4>planos.html <span class="tag blue">Público</span></h4>
+            <p>Page de planos de assinatura com tabela comparativa, FAQ e call-to-action para assinar. Planos vêm do painel admin.</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-icon"><i class="fas fa-calendar-plus"></i></div>
+          <div>
+            <h4>agendar.html <span class="tag blue">Público</span></h4>
+            <p>Agendamento público com grid visual de horários (ocupado/liberado), escolha de serviço e barbeiro. Valida conflitos.</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-icon"><i class="fas fa-shopping-cart"></i></div>
+          <div>
+            <h4>checkout-plano.html <span class="tag blue">Público</span></h4>
+            <p>Checkout de assinatura com resumo do plano, dados do cliente e forma de pagamento. Cria cliente e assinatura automaticamente.</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-icon"><i class="fas fa-address-card"></i></div>
+          <div>
+            <h4>contato.html <span class="tag blue">Público</span></h4>
+            <p>Formulário de contato, localização, horários de funcionamento e link direto para WhatsApp da barbearia.</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-icon"><i class="fas fa-user-circle"></i></div>
+          <div>
+            <h4>cliente.html <span class="tag green">Cliente</span></h4>
+            <p>Área logada do cliente: visão geral da assinatura, próximo agendamento, histórico, cobranças, cortes usados e cancelamentos.</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-icon"><i class="fas fa-user-edit"></i></div>
+          <div>
+            <h4>perfil.html <span class="tag green">Cliente</span></h4>
+            <p>Edição de perfil: nome, email, telefone e senha. Sidebar com navegação rápida para a área do cliente.</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-icon"><i class="fas fa-chart-line"></i></div>
+          <div>
+            <h4>admin.html <span class="tag purple">Admin</span></h4>
+            <p>Painel administrativo completo com 11 abas: Dashboard, Clientes, Assinaturas, Agendamentos, Serviços, Colaboradores, Estoque, Finanças, Relatórios, Comissões e Configurações.</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-icon"><i class="fas fa-mobile-alt"></i></div>
+          <div>
+            <h4>portal-admin.html <span class="tag purple">Admin</span></h4>
+            <p>Portal mobile-friendly para o barbeiro: agenda do dia, ações rápidas (confirmar/concluir/cancelar), estoque em alerta e check-in de clientes.</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-icon"><i class="fas fa-sign-in-alt"></i></div>
+          <div>
+            <h4>login.html <span class="tag">Sistema</span></h4>
+            <p>Login unificado: detecta se é admin ou cliente e redireciona automaticamente para o painel correto.</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-icon"><i class="fas fa-cogs"></i></div>
+          <div>
+            <h4>setup.html <span class="tag">Sistema</span></h4>
+            <p>Wizard de configuração inicial em 3 passos: dados da barbearia, administrador e criação dos planos padrão. Roda apenas na primeira execução.</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-icon"><i class="fas fa-check-circle"></i></div>
+          <div>
+            <h4>confirmacao.html <span class="tag blue">Público</span></h4>
+            <p>Página de agradecimento pós-ação (agendamento ou assinatura). Mensagem dinâmica conforme o tipo de confirmação.</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-icon"><i class="fas fa-lock"></i></div>
+          <div>
+            <h4>termos.html / privacidade.html <span class="tag blue">Público</span></h4>
+            <p>Páginas institucionais de Termos de Uso e Política de Privacidade. Essenciais para compliance e confiança do cliente.</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-icon"><i class="fas fa-exclamation-triangle"></i></div>
+          <div>
+            <h4>404.html <span class="tag">Sistema</span></h4>
+            <p>Página de erro amigável para rotas não encontradas. Mantém a identidade visual da marca.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FUNCIONALIDADES -->
+  <section class="mp-section">
+    <div class="mp-container">
+      <h2 class="mp-section-title">Funcionalidades por <span>perfil</span></h2>
+      <div class="features-split">
+        <div class="feature-col">
+          <h3><i class="fas fa-user-circle"></i> Para o Cliente</h3>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Assinar planos de assinatura</strong><span>Escolha entre 4 planos e assine direto pelo site</span></div>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Agendar horários online</strong><span>Veja horários livres e agende sem ligar</span></div>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Cancelar ou editar agendamentos</strong><span>Gerencie seus horários futuros com autonomia</span></div>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Acompanhar assinatura</strong><span>Cortes usados, cobranças e próxima renovação</span></div>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Histórico completo</strong><span>Agendamentos passados, cortes e pagamentos</span></div>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Cancelar assinatura</strong><span>Com confirmação e motivo, sem burocracia</span></div>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Editar perfil</strong><span>Atualize dados pessoais e senha quando quiser</span></div>
+          </div>
+        </div>
+        <div class="feature-col">
+          <h3><i class="fas fa-cog"></i> Para o Barbeiro / Admin</h3>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Dashboard com indicadores</strong><span>Faturamento, clientes, assinaturas e agendamentos do dia</span></div>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Controle de clientes</strong><span>Cadastro, busca, edição e histórico de cada cliente</span></div>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Gestão de assinaturas</strong><span>MRR, renovação, cobranças, cortes usados e cancelamentos</span></div>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Agenda completa</strong><span>CRUD de agendamentos com filtro por data e validação de conflito</span></div>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Estoque e movimentações</strong><span>Produtos, alertas de reposição, entrada/saída de itens</span></div>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Finanças e fluxo de caixa</strong><span>Receitas, despesas, lucro líquido e ticket médio</span></div>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Relatórios e comissões</strong><span>Ocupação, serviços populares, comissão por barbeiro e exportação CSV</span></div>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Check-in de clientes</strong><span>Confirma presença pelo portal do barbeiro com um clique</span></div>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <div><strong>Configurações da barbearia</strong><span>Nome, cores, horários, slogan — tudo personalizável</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLUXO -->
+  <section class="mp-section">
+    <div class="mp-container">
+      <div class="flow-section">
+        <h2 style="font-size: 2rem; margin-bottom: 12px;">Como <span style="color:var(--accent);">funciona</span> na prática</h2>
+        <p style="color: var(--text-muted);">Do primeiro acesso à operação diária em 3 passos simples</p>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="num">1</div>
+            <h4>Configure</h4>
+            <p>Rode o setup inicial, cadastre seus serviços, barbeiros e planos de assinatura.</p>
+          </div>
+          <div class="flow-step">
+            <div class="num">2</div>
+            <h4>Divulgue</h4>
+            <p>Seu site público já está no ar com planos, agendamento e link de WhatsApp.</p>
+          </div>
+          <div class="flow-step">
+            <div class="num">3</div>
+            <h4>Gerencie</h4>
+            <p>Acompanhe tudo pelo painel admin ou pelo portal mobile do barbeiro.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="mp-container">
+      <h2>Transforme sua barbearia <span style="color:var(--accent);">hoje</span></h2>
+      <p>Um sistema completo para barbearias modernas. Assinaturas recorrentes, agenda organizada, clientes fidelizados e controle total do seu negócio.</p>
+      <a href="index.html" class="btn-gold" style="margin-right:12px;"><i class="fas fa-rocket"></i> Acessar o Site</a>
+      <a href="login.html" class="btn-gold" style="background:transparent; color:var(--accent); border:2px solid var(--accent);"><i class="fas fa-lock"></i> Painel Admin</a>
+    </div>
+  </section>
+
+  <footer style="text-align:center; padding: 40px 20px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem;">
+    <p>© Barbearia Planos — Sistema completo para gestão de barbearias</p>
+  </footer>
+
+</body>
+</html>

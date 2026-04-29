@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal do Barbeiro — Hugo Barbearia</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .portal-header { background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); border-bottom: 1px solid var(--border); padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+    .portal-header h1 { font-size: 1.3rem; }
+    .portal-header .sub { font-size: 0.8rem; color: var(--text-muted); }
+    .portal-container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .portal-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+    .portal-card-title { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+    .agenda-item { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 10px; }
+    .agenda-item .hora { font-size: 1.3rem; font-weight: 700; color: var(--accent); min-width: 56px; }
+    .agenda-item .info { flex: 1; }
+    .agenda-item .info strong { display: block; font-size: 0.95rem; }
+    .agenda-item .info span { font-size: 0.8rem; color: var(--text-muted); }
+    .agenda-actions { display: flex; gap: 6px; }
+    .agenda-actions button { padding: 6px 10px; font-size: 0.75rem; }
+    .quick-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .quick-stat { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; text-align: center; }
+    .quick-stat .val { font-size: 1.6rem; font-weight: 800; color: var(--accent); font-family: 'Playfair Display', serif; }
+    .quick-stat .lbl { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+    .btn-icon { width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; border: none; cursor: pointer; font-size: 1rem; }
+    .fab-whatsapp { position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #25d366; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; box-shadow: var(--shadow-lg); z-index: 100; }
+    .checkin-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 200; padding: 20px; }
+    .checkin-modal.active { display: flex; }
+    .checkin-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; max-width: 420px; width: 100%; text-align: center; }
+    .qr-placeholder { width: 180px; height: 180px; background: #fff; margin: 16px auto; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: #0a0a0f; font-size: 0.8rem; }
+    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 300; display: flex; flex-direction: column; gap: 10px; }
+    .toast { background: var(--bg-card); border: 1px solid var(--border); border-left: 4px solid var(--success); border-radius: var(--radius-sm); padding: 14px 18px; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 10px; font-size: 0.9rem; animation: toastIn 0.3s ease; }
+    .toast.error { border-left-color: var(--danger); }
+    @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  </style>
+</head>
+<body>
+  <div class="portal-header">
+    <div>
+      <h1><i class="fas fa-cut" style="color:var(--accent);"></i> Portal do Barbeiro</h1>
+      <div class="sub" id="dataHoje">Hoje</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <a href="admin.html" class="btn btn-secondary btn-sm" title="Painel completo"><i class="fas fa-cog"></i></a>
+      <button class="btn btn-ghost btn-sm" onclick="sair()" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </div>
+
+  <div class="portal-container">
+    <div class="quick-stats">
+      <div class="quick-stat"><div class="val" id="qAgenda">0</div><div class="lbl">Agendados</div></div>
+      <div class="quick-stat"><div class="val" id="qConfirmado">0</div><div class="lbl">Confirmados</div></div>
+      <div class="quick-stat"><div class="val" id="qConcluido">0</div><div class="lbl">Concluídos</div></div>
+    </div>
+
+    <div class="portal-card">
+      <div class="portal-card-title"><i class="fas fa-calendar-day"></i> Agenda de Hoje</div>
+      <div id="listaHoje"><p class="text-muted text-center">Nenhum agendamento hoje.</p></div>
+    </div>
+
+    <div class="portal-card">
+      <div class="portal-card-title"><i class="fas fa-users"></i> Próximos Clientes</div>
+      <div id="listaProximos"><p class="text-muted text-center">Nenhum agendamento próximo.</p></div>
+    </div>
+
+    <div class="portal-card">
+      <div class="portal-card-title"><i class="fas fa-boxes"></i> Estoque em Alerta</div>
+      <div id="listaAlertas"><p class="text-muted text-center">Tudo certo no estoque.</p></div>
+    </div>
+
+    <div class="portal-card">
+      <div class="portal-card-title"><i class="fas fa-bolt"></i> Ações Rápidas</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <a href="admin.html" class="btn btn-secondary"><i class="fas fa-chart-line"></i> Painel Completo</a>
+        <a href="agendar.html" target="_blank" class="btn btn-secondary"><i class="fas fa-calendar-plus"></i> Novo Agendamento</a>
+        <button class="btn btn-secondary" onclick="abrirCheckin()"><i class="fas fa-qrcode"></i> Check-in Cliente</button>
+        <button class="btn btn-secondary" onclick="window.location.reload()"><i class="fas fa-sync"></i> Atualizar</button>
+      </div>
+    </div>
+  </div>
+
+  <a href="https://wa.me/5561982976481" target="_blank" class="fab-whatsapp" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+
+  <div class="checkin-modal" id="checkinModal">
+    <div class="checkin-box">
+      <h3><i class="fas fa-qrcode" style="color:var(--accent);"></i> Check-in do Cliente</h3>
+      <p class="text-muted" style="font-size:0.85rem;">Informe o email do cliente para confirmar presença no agendamento de hoje.</p>
+      <div class="qr-placeholder"><i class="fas fa-qrcode" style="font-size:4rem;color:var(--bg-hover);"></i></div>
+      <input type="email" id="checkEmail" placeholder="Email do cliente" style="margin-bottom:12px;">
+      <button class="btn btn-primary w-full" onclick="confirmarCheckin()"><i class="fas fa-check"></i> Confirmar Presença</button>
+      <button class="btn btn-ghost btn-sm w-full" style="margin-top:8px;" onclick="fecharCheckin()">Fechar</button>
+      <div id="checkinResult" style="margin-top:12px;font-size:0.85rem;"></div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/api.js"></script>
+  <script>
+    DB.seed();
+    const sessao = DB.getSession();
+    if (!sessao) { window.location.href = 'login.html'; }
+    const user = DB.getUser(sessao?.userId);
+    const barbearia = user ? DB.getBarbearia(user.barbeariaId) : null;
+    if (!user || !barbearia) { window.location.href = 'login.html'; }
+
+    const hojeStr = new Date().toISOString().split('T')[0];
+    document.getElementById('dataHoje').textContent = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+    const ags = DB.getAgendamentos(barbearia.id).sort((a,b)=>(a.data+a.horario).localeCompare(b.data+b.horario));
+    const servicos = DB.getServicos(barbearia.id);
+    const clientes = DB.getUsers().filter(u => u.barbeariaId === barbearia.id);
+    const colabs = DB.getColaboradores(barbearia.id);
+
+    const hojeAg = ags.filter(a => a.data === hojeStr);
+    document.getElementById('qAgenda').textContent = hojeAg.length;
+    document.getElementById('qConfirmado').textContent = hojeAg.filter(a => a.status === 'confirmado').length;
+    document.getElementById('qConcluido').textContent = hojeAg.filter(a => a.status === 'concluido').length;
+
+    function toast(msg, tipo='success') {
+      const container = document.getElementById('toastContainer');
+      const el = document.createElement('div'); el.className = `toast ${tipo}`;
+      el.innerHTML = `<i class="fas fa-${tipo==='success'?'check-circle':tipo==='error'?'times-circle':'info-circle'}"></i> ${msg}`;
+      container.appendChild(el);
+      setTimeout(() => el.remove(), 3500);
+    }
+
+    function renderAgenda(lista, elId, allowActions) {
+      const el = document.getElementById(elId);
+      if (lista.length === 0) { el.innerHTML = '<p class="text-muted text-center">Nenhum agendamento.</p>'; return; }
+      el.innerHTML = lista.map(a => {
+        const c = clientes.find(u => u.id === a.clienteId);
+        const s = servicos.find(sv => sv.id === a.servicoId);
+        return `
+          <div class="agenda-item">
+            <div class="hora">${a.horario}</div>
+            <div class="info">
+              <strong>${c?.nome || 'Cliente'}</strong>
+              <span>${s?.nome || 'Serviço'} • ${a.status}</span>
+            </div>
+            ${allowActions ? `
+            <div class="agenda-actions">
+              ${a.status !== 'concluido' ? `<button class="btn btn-success btn-sm" onclick="marcarConcluido('${a.id}')" title="Concluir"><i class="fas fa-check"></i></button>` : ''}
+              ${a.status === 'agendado' ? `<button class="btn btn-primary btn-sm" onclick="marcarConfirmado('${a.id}')" title="Confirmar"><i class="fas fa-thumbs-up"></i></button>` : ''}
+              <button class="btn btn-danger btn-sm" onclick="cancelarAg('${a.id}')" title="Cancelar"><i class="fas fa-times"></i></button>
+            </div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    renderAgenda(hojeAg, 'listaHoje', true);
+    const proximos = ags.filter(a => a.data >= hojeStr && a.status !== 'cancelado').slice(0, 5);
+    renderAgenda(proximos, 'listaProximos', false);
+
+    const produtos = DB.getProdutos(barbearia.id);
+    const alertas = produtos.filter(p => p.quantidade <= p.minimo);
+    if (alertas.length > 0) {
+      document.getElementById('listaAlertas').innerHTML = alertas.map(p => `
+        <div class="agenda-item" style="border-left:3px solid var(--warning);">
+          <div class="info"><strong>${p.nome}</strong><span>Estoque baixo: ${p.quantidade} unid.</span></div>
+        </div>
+      `).join('');
+    }
+
+    window.marcarConfirmado = function(id) {
+      const list = DB._get('agendamentos');
+      const idx = list.findIndex(a => a.id === id);
+      if (idx >= 0) { list[idx].status = 'confirmado'; list[idx].updatedAt = new Date().toISOString(); DB._set('agendamentos', list); }
+      toast('Agendamento confirmado');
+      setTimeout(() => window.location.reload(), 600);
+    };
+    window.marcarConcluido = function(id) {
+      const list = DB._get('agendamentos');
+      const idx = list.findIndex(a => a.id === id);
+      if (idx >= 0) { list[idx].status = 'concluido'; list[idx].updatedAt = new Date().toISOString(); DB._set('agendamentos', list); }
+      toast('Agendamento concluído');
+      setTimeout(() => window.location.reload(), 600);
+    };
+    window.cancelarAg = function(id) {
+      if (!confirm('Cancelar agendamento?')) return;
+      DB.deleteAgendamento(id);
+      toast('Agendamento cancelado', 'warning');
+      setTimeout(() => window.location.reload(), 600);
+    };
+    window.abrirCheckin = function() {
+      document.getElementById('checkinModal').classList.add('active');
+      document.getElementById('checkinResult').innerHTML = '';
+      document.getElementById('checkEmail').value = '';
+    };
+    window.fecharCheckin = function() { document.getElementById('checkinModal').classList.remove('active'); };
+    window.confirmarCheckin = function() {
+      const email = document.getElementById('checkEmail').value.trim().toLowerCase();
+      const resultEl = document.getElementById('checkinResult');
+      if (!email) { resultEl.innerHTML = '<span style="color:var(--danger)">Informe o email do cliente.</span>'; return; }
+
+      const cliente = clientes.find(u => u.email.toLowerCase() === email && u.tipo === 'cliente');
+      if (!cliente) { resultEl.innerHTML = '<span style="color:var(--danger)">Cliente não encontrado.</span>'; return; }
+
+      const ag = hojeAg.find(a => a.clienteId === cliente.id && a.status !== 'cancelado' && a.status !== 'concluido');
+      if (!ag) { resultEl.innerHTML = '<span style="color:var(--warning)">Nenhum agendamento ativo encontrado para hoje.</span>'; return; }
+
+      // Marca como confirmado (check-in)
+      const list = DB._get('agendamentos');
+      const idx = list.findIndex(a => a.id === ag.id);
+      if (idx >= 0) {
+        list[idx].status = 'confirmado';
+        list[idx].updatedAt = new Date().toISOString();
+        DB._set('agendamentos', list);
+      }
+      resultEl.innerHTML = `<span style="color:var(--success)"><i class="fas fa-check-circle"></i> Check-in de <strong>${cliente.nome}</strong> confirmado!<br><small>${ag.horario} — ${servicos.find(s=>s.id===ag.servicoId)?.nome||'Serviço'}</small></span>`;
+      toast(`Check-in: ${cliente.nome}`);
+      setTimeout(() => { fecharCheckin(); window.location.reload(); }, 1500);
+    };
+    window.sair = function() { DB.clearSession(); window.location.href = 'login.html'; };
+  </script>
+</body>
+</html>
