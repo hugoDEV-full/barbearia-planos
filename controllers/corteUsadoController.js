@@ -1,4 +1,5 @@
 const { pool } = require('../config/database');
+const { v4: uuidv4 } = require('uuid');
 
 async function list(req, res, next) {
   try {
@@ -21,6 +22,7 @@ async function list(req, res, next) {
 async function create(req, res, next) {
   try {
     const { barbearia_id, cliente_id, assinatura_id, servico_id, descricao } = req.body;
+    const id = uuidv4();
     // Verifica se assinatura permite mais cortes
     const assResult = await pool.query(
       `SELECT a.*, p.cortes_inclusos FROM assinaturas a JOIN planos p ON p.id = a.plano_id WHERE a.id = $1`,
@@ -39,8 +41,8 @@ async function create(req, res, next) {
       }
     }
     const result = await pool.query(
-      'INSERT INTO cortes_usados (barbearia_id, cliente_id, assinatura_id, servico_id, descricao) VALUES ($1,$2,$3,$4,$5) RETURNING *',
-      [barbearia_id || req.user.barbearia_id, cliente_id, assinatura_id, servico_id, descricao]
+      'INSERT INTO cortes_usados (id, barbearia_id, cliente_id, assinatura_id, servico_id, descricao) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+      [id, barbearia_id || req.user.barbearia_id, cliente_id, assinatura_id, servico_id, descricao]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) { next(err); }

@@ -123,9 +123,9 @@
         const antiga = DB.getAssinaturas(barbearia.id).find(a => a.clienteId === cliente.id);
         if (antiga) await DB.cancelarAssinatura(antiga.id);
 
-        // Cria nova assinatura
+        // Cria nova assinatura como PENDENTE (só ativa após pagamento confirmado)
         const prox = new Date(); prox.setMonth(prox.getMonth() + 1);
-        const ass = await DB.saveAssinatura({ barbeariaId: barbearia.id, clienteId: cliente.id, planoId: plano.id, status: 'ativa', proximaCobranca: prox.toISOString().split('T')[0] });
+        const ass = await DB.saveAssinatura({ barbeariaId: barbearia.id, clienteId: cliente.id, planoId: plano.id, status: 'pendente', proximaCobranca: prox.toISOString().split('T')[0] });
         await DB.sync(barbearia.id);
 
         // Gera pagamento
@@ -168,6 +168,14 @@
           document.getElementById('areaCartao').style.display = 'block';
           document.getElementById('linkCartao').href = data.init_point;
           document.getElementById('checkoutForm').style.display = 'none';
+
+          if (data.simulacao) {
+            // Modo simulação: redireciona direto para página de simulação
+            window.location.href = data.init_point;
+          } else {
+            // Checkout Pro real: abre em nova aba
+            window.open(data.init_point, '_blank');
+          }
         }
       } catch (err) {
         alert('Erro de conexão: ' + err.message);

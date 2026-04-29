@@ -29,9 +29,27 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const tipo = params.get('tipo');
+    const status = params.get('status');
     if (tipo === 'plano') {
-      document.getElementById('titulo').textContent = 'Assinatura confirmada!';
-      document.getElementById('mensagem').textContent = 'Em breve entraremos em contato pelo WhatsApp para ativar seu plano.';
+      if (status === 'aprovado') {
+        document.getElementById('titulo').textContent = 'Pagamento Aprovado!';
+        document.getElementById('mensagem').textContent = 'Sua assinatura está ativa. Acesse a área do cliente para gerenciar seus benefícios.';
+        document.querySelector('.confirm-icon').innerHTML = '<i class="fas fa-check-circle"></i>';
+        document.querySelector('.confirm-icon').style.color = 'var(--success)';
+      } else if (status === 'rejeitado' || window.location.search.includes('erro=1')) {
+        document.getElementById('titulo').textContent = 'Pagamento Não Aprovado';
+        document.getElementById('mensagem').textContent = 'Houve um problema com seu pagamento. Tente novamente ou escolha outra forma de pagamento.';
+        document.querySelector('.confirm-icon').innerHTML = '<i class="fas fa-times-circle"></i>';
+        document.querySelector('.confirm-icon').style.color = 'var(--danger)';
+      } else if (window.location.search.includes('pendente=1')) {
+        document.getElementById('titulo').textContent = 'Pagamento Pendente';
+        document.getElementById('mensagem').textContent = 'Seu pagamento está sendo processado. Assim que for confirmado, sua assinatura será ativada automaticamente.';
+        document.querySelector('.confirm-icon').innerHTML = '<i class="fas fa-clock"></i>';
+        document.querySelector('.confirm-icon').style.color = 'var(--warning)';
+      } else {
+        document.getElementById('titulo').textContent = 'Assinatura confirmada!';
+        document.getElementById('mensagem').textContent = 'Em breve entraremos em contato pelo WhatsApp para ativar seu plano.';
+      }
     } else if (tipo === 'contato') {
       document.getElementById('titulo').textContent = 'Mensagem enviada!';
       document.getElementById('mensagem').textContent = 'Responderemos em breve pelo email ou WhatsApp.';

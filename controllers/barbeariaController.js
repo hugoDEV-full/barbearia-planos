@@ -1,12 +1,14 @@
 const { pool } = require('../config/database');
+const { v4: uuidv4 } = require('uuid');
 
 async function create(req, res, next) {
   try {
     const { nome, slug, slogan, descricao, endereco, telefone, whatsapp, email, instagram, cor_primaria, horario_funcionamento } = req.body;
+    const id = uuidv4();
     const result = await pool.query(
-      `INSERT INTO barbearias (nome, slug, slogan, descricao, endereco, telefone, whatsapp, email, instagram, cor_primaria, horario_funcionamento)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
-      [nome, slug, slogan, descricao, endereco, telefone, whatsapp, email, instagram, cor_primaria || '#d4a853', JSON.stringify(horario_funcionamento || {})]
+      `INSERT INTO barbearias (id, nome, slug, slogan, descricao, endereco, telefone, whatsapp, email, instagram, cor_primaria, horario_funcionamento)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
+      [id, nome, slug, slogan, descricao, endereco, telefone, whatsapp, email, instagram, cor_primaria || '#d4a853', JSON.stringify(horario_funcionamento || {})]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) { next(err); }

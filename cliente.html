@@ -209,6 +209,17 @@
             <button class="btn btn-danger btn-sm mt-4" onclick="cancelarMinhaAssinatura()" data-tooltip="Cancelar assinatura"><i class="fas fa-ban"></i> Cancelar Assinatura</button>
           </div>
         `;
+      } else if (ass && ass.status === 'pendente') {
+        const plano = DB.getPlanos(barbearia.id).find(p => p.id === ass.planoId);
+        boxAss.innerHTML = `
+          <div class="assinatura-box">
+            <div style="font-size:1.1rem;font-weight:600;">${plano?.nome||'Plano'}</div>
+            <div class="price">R$ ${(parseFloat(plano?.preco)||0).toFixed(2).replace('.',',')}<span style="font-size:1rem;color:var(--text-muted);">/mês</span></div>
+            <div class="badge badge-warning mt-4" data-tooltip="Aguardando confirmação do pagamento"><i class="fas fa-clock"></i> Pagamento Pendente</div>
+            <div class="text-muted mt-4" style="font-size:0.85rem;">Complete o pagamento para ativar sua assinatura.</div>
+            <button class="btn btn-primary btn-sm mt-4" onclick="mostrarSecao('cobrancas')" data-tooltip="Ver cobranças pendentes"><i class="fas fa-qrcode"></i> Pagar Agora</button>
+          </div>
+        `;
       } else {
         boxAss.innerHTML = `
           <p class="text-muted">Você não possui uma assinatura ativa.</p>
@@ -290,31 +301,41 @@
     }
 
     window.assinarPlano = function(planoId) {
-      const plano = planos.find(p => p.id === planoId);
-      if (!plano) return;
-      const antiga = DB.getAssinaturas(barbearia.id).find(a => a.clienteId === user.id);
-      if (antiga) DB.cancelarAssinatura(antiga.id);
-      const prox = new Date(); prox.setMonth(prox.getMonth() + 1);
-      const ass = DB.saveAssinatura({ barbeariaId: barbearia.id, clienteId: user.id, planoId, status: 'ativa', proximaCobranca: prox.toISOString().split('T')[0] });
-      DB.saveCobranca({ barbeariaId: barbearia.id, assinaturaId: ass.id, clienteId: user.id, valor: plano.preco, dataVencimento: prox.toISOString().split('T')[0], status: 'pendente', metodo: 'Pix' });
-      toast(`Parabéns! Você assinou o plano ${plano.nome}.`);
-      renderCliente();
-      mostrarSecao('visao');
+      // Redireciona para o checkout de pagamento seguro
+      window.location.href = 'checkout-plano.html?plano=' + encodeURIComponent(planoId);
     };
 
     window.pagarCobranca = async function(cobrancaId, valor) {
       const sess = DB.getSession();
+      // Busca a assinatura associada à cobrança
+      const cobrancas = DB.getCobrancas(barbearia.id);
+      const cobranca = cobrancas.find(c => c.id === cobrancaId);
+      const assinaturaId = cobranca?.assinaturaId || '';
       try {
         const res = await fetch('/api/pagamentos/pix', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sess.token}` },
-          body: JSON.stringify({ assinatura_id: '', cliente_id: user.id, valor, descricao: 'Pagamento de cobrança', email: user.email, nome: user.nome })
+          body: JSON.stringify({ assinatura_id: assinaturaId, cliente_id: user.id, valor, descricao: 'Pagamento de cobrança', email: user.email, nome: user.nome })
         });
         const data = await res.json();
         if (!res.ok) { alert(data.error || 'Erro ao gerar Pix'); return; }
-        alert('Copie o código Pix:\n\n' + data.qr_code);
-        // Atualiza cobrança antiga como cancelada e cria nova lógica no backend via webhook
-        window.open(data.ticket_url, '_blank');
+
+        if (data.simulacao) {
+          alert('Modo demonstração. Use o botão "Confirmar Pagamento" na tela de checkout.');
+          return;
+        }
+
+        // Exibe QR code em modal simples
+        const qrHtml = `<div style="text-align:center;padding:20px;">
+          <h3>Pagamento via Pix</h3>
+          <p>Escaneie o QR Code ou copie o código abaixo:</p>
+          <img src="data:image/png;base64,${data.qr_code_base64}" style="max-width:240px;margin:12px 0;">
+          <div style="background:#f5f5f5;padding:10px;border-radius:8px;font-family:monospace;font-size:0.8rem;word-break:break-all;">${data.qr_code}</div>
+          <button onclick="navigator.clipboard.writeText('${data.qr_code}');alert('Copiado!')" style="margin-top:12px;padding:8px 16px;background:var(--accent);border:none;border-radius:4px;cursor:pointer;">Copiar Código</button>
+        </div>`;
+        const w = window.open('', '_blank', 'width=400,height=500');
+        w.document.write('<html><head><style>body{background:#0a0a0f;color:#fff;font-family:sans-serif;}</style></head><body>' + qrHtml + '</body></html>');
+        if (data.ticket_url) window.open(data.ticket_url, '_blank');
       } catch (err) {
         alert('Erro: ' + err.message);
       }

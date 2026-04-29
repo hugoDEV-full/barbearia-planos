@@ -1,4 +1,5 @@
 const { pool } = require('../config/database');
+const { v4: uuidv4 } = require('uuid');
 
 async function list(req, res, next) {
   try {
@@ -16,12 +17,13 @@ async function list(req, res, next) {
 async function create(req, res, next) {
   try {
     const { barbearia_id, produto_id, tipo, quantidade, motivo } = req.body;
+    const id = uuidv4();
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
       const movResult = await client.query(
-        'INSERT INTO movimentacoes (barbearia_id, produto_id, tipo, quantidade, motivo) VALUES ($1,$2,$3,$4,$5) RETURNING *',
-        [barbearia_id || req.user.barbearia_id, produto_id, tipo, quantidade, motivo]
+        'INSERT INTO movimentacoes (id, barbearia_id, produto_id, tipo, quantidade, motivo) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+        [id, barbearia_id || req.user.barbearia_id, produto_id, tipo, quantidade, motivo]
       );
       // Atualiza estoque
       const delta = tipo === 'entrada' ? quantidade : -quantidade;

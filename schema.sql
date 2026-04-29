@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS assinaturas (
   barbearia_id CHAR(36),
   cliente_id CHAR(36),
   plano_id CHAR(36),
-  status ENUM('ativa', 'vencida', 'cancelada') DEFAULT 'ativa',
+  status ENUM('ativa', 'pendente', 'vencida', 'cancelada') DEFAULT 'ativa',
   proxima_cobranca DATE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

@@ -1,4 +1,5 @@
 const { pool } = require('../config/database');
+const { v4: uuidv4 } = require('uuid');
 
 async function list(req, res, next) {
   try {
@@ -33,14 +34,15 @@ async function getOne(req, res, next) {
 async function create(req, res, next) {
   try {
     const { barbearia_id, cliente_id, plano_id, status, proxima_cobranca } = req.body;
+    const id = uuidv4();
     // Cancela assinatura ativa anterior do mesmo cliente
     await pool.query(
       "UPDATE assinaturas SET status = 'cancelada', updated_at = NOW() WHERE cliente_id = $1 AND status = 'ativa'",
       [cliente_id]
     );
     const result = await pool.query(
-      'INSERT INTO assinaturas (barbearia_id, cliente_id, plano_id, status, proxima_cobranca) VALUES ($1,$2,$3,$4,$5) RETURNING *',
-      [barbearia_id || req.user.barbearia_id, cliente_id, plano_id, status || 'ativa', proxima_cobranca]
+      'INSERT INTO assinaturas (id, barbearia_id, cliente_id, plano_id, status, proxima_cobranca) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+      [id, barbearia_id || req.user.barbearia_id, cliente_id, plano_id, status || 'ativa', proxima_cobranca]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) { next(err); }

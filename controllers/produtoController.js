@@ -1,4 +1,5 @@
 const { pool } = require('../config/database');
+const { v4: uuidv4 } = require('uuid');
 
 async function list(req, res, next) {
   try {
@@ -24,9 +25,10 @@ async function getOne(req, res, next) {
 async function create(req, res, next) {
   try {
     const { barbearia_id, nome, categoria, quantidade, minimo, preco_custo, preco_venda } = req.body;
+    const id = uuidv4();
     const result = await pool.query(
-      'INSERT INTO produtos (barbearia_id, nome, categoria, quantidade, minimo, preco_custo, preco_venda) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
-      [barbearia_id || req.user.barbearia_id, nome, categoria || 'Geral', quantidade || 0, minimo || 0, preco_custo || 0, preco_venda || 0]
+      'INSERT INTO produtos (id, barbearia_id, nome, categoria, quantidade, minimo, preco_custo, preco_venda) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',
+      [id, barbearia_id || req.user.barbearia_id, nome, categoria || 'Geral', quantidade || 0, minimo || 0, preco_custo || 0, preco_venda || 0]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) { next(err); }

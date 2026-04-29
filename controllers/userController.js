@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { pool } = require('../config/database');
+const { v4: uuidv4 } = require('uuid');
 
 async function list(req, res, next) {
   try {
@@ -31,9 +32,10 @@ async function create(req, res, next) {
     const { barbearia_id, nome, email, senha, telefone, tipo } = req.body;
     if (!nome || !email || !senha) return res.status(400).json({ error: 'Nome, email e senha são obrigatórios' });
     const hashed = await bcrypt.hash(senha, 10);
+    const id = uuidv4();
     const result = await pool.query(
-      'INSERT INTO users (barbearia_id, nome, email, senha, telefone, tipo) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id, barbearia_id, nome, email, telefone, tipo, avatar, ativo, created_at',
-      [barbearia_id || req.user.barbearia_id, nome, email, hashed, telefone, tipo || 'cliente']
+      'INSERT INTO users (id, barbearia_id, nome, email, senha, telefone, tipo) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id, barbearia_id, nome, email, telefone, tipo, avatar, ativo, created_at',
+      [id, barbearia_id || req.user.barbearia_id, nome, email, hashed, telefone, tipo || 'cliente']
     );
     res.status(201).json(result.rows[0]);
   } catch (err) { next(err); }
