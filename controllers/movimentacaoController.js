@@ -23,7 +23,7 @@ async function create(req, res, next) {
       await client.query('BEGIN');
       const movResult = await client.query(
         'INSERT INTO movimentacoes (id, barbearia_id, produto_id, tipo, quantidade, motivo) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
-        [id, barbearia_id || req.user.barbearia_id, produto_id, tipo, quantidade, motivo]
+        [id, barbearia_id || req.user.barbearia_id, produto_id, tipo, quantidade, motivo ?? null]
       );
       // Atualiza estoque
       const delta = tipo === 'entrada' ? quantidade : -quantidade;

@@ -277,7 +277,7 @@ async function criarPreferencia(req, res, next) {
 
     await pool.query(
       'INSERT INTO cobrancas (id, barbearia_id, assinatura_id, cliente_id, valor, data_vencimento, status, metodo) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
-      [cobrancaId, barbearia_id, assinatura_id, cliente_id, valor, vencimento.toISOString().split('T')[0], 'pendente', 'cartao']
+      [cobrancaId, barbearia_id, assinatura_id ?? null, cliente_id, valor, vencimento.toISOString().split('T')[0], 'pendente', 'cartao']
     );
 
     if (isSimulacao()) {

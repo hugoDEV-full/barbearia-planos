@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const { v4: uuidv4 } = require('uuid');
 const { pool } = require('../config/database');
 const { generateToken } = require('../middleware/auth');
 
@@ -12,10 +13,11 @@ async function register(req, res, next) {
 
     const hashedPassword = await bcrypt.hash(senha, 10);
 
+    const id = uuidv4();
     const result = await pool.query(
-      `INSERT INTO users (barbearia_id, nome, email, senha, telefone, tipo)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [barbearia_id || null, nome, email, hashedPassword, telefone || null, tipo]
+      `INSERT INTO users (id, barbearia_id, nome, email, senha, telefone, tipo)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [id, barbearia_id || null, nome, email, hashedPassword, telefone ?? null, tipo]
     );
 
     const user = result.rows[0];

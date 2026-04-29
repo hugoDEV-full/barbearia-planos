@@ -42,7 +42,7 @@ async function create(req, res, next) {
     }
     const result = await pool.query(
       'INSERT INTO cortes_usados (id, barbearia_id, cliente_id, assinatura_id, servico_id, descricao) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
-      [id, barbearia_id || req.user.barbearia_id, cliente_id, assinatura_id, servico_id, descricao]
+      [id, barbearia_id || req.user.barbearia_id, cliente_id, assinatura_id, servico_id, descricao ?? null]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) { next(err); }

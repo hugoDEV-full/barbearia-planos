@@ -29,7 +29,7 @@ async function create(req, res, next) {
     const id = uuidv4();
     const result = await pool.query(
       'INSERT INTO servicos (id, barbearia_id, nome, descricao, preco, duracao, categoria) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
-      [id, barbearia_id || req.user.barbearia_id, nome, descricao, preco, duracao || 30, categoria || 'Cortes']
+      [id, barbearia_id || req.user.barbearia_id, nome, descricao ?? null, preco, duracao || 30, categoria || 'Cortes']
     );
     res.status(201).json(result.rows[0]);
   } catch (err) { next(err); }
@@ -40,7 +40,7 @@ async function update(req, res, next) {
     const { nome, descricao, preco, duracao, categoria, ativo } = req.body;
     const result = await pool.query(
       'UPDATE servicos SET nome=$1, descricao=$2, preco=$3, duracao=$4, categoria=$5, ativo=$6 WHERE id=$7 RETURNING *',
-      [nome, descricao, preco, duracao, categoria, ativo, req.params.id]
+      [nome, descricao ?? null, preco, duracao, categoria, ativo, req.params.id]
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Serviço não encontrado' });
     res.json(result.rows[0]);

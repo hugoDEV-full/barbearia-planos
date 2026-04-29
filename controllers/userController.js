@@ -35,7 +35,7 @@ async function create(req, res, next) {
     const id = uuidv4();
     const result = await pool.query(
       'INSERT INTO users (id, barbearia_id, nome, email, senha, telefone, tipo) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id, barbearia_id, nome, email, telefone, tipo, avatar, ativo, created_at',
-      [id, barbearia_id || req.user.barbearia_id, nome, email, hashed, telefone, tipo || 'cliente']
+      [id, barbearia_id || req.user.barbearia_id, nome, email, hashed, telefone ?? null, tipo || 'cliente']
     );
     res.status(201).json(result.rows[0]);
   } catch (err) { next(err); }
@@ -46,7 +46,7 @@ async function update(req, res, next) {
     const { nome, email, telefone, tipo, avatar, ativo } = req.body;
     const result = await pool.query(
       'UPDATE users SET nome=$1, email=$2, telefone=$3, tipo=$4, avatar=$5, ativo=$6, updated_at=NOW() WHERE id=$7 RETURNING id, barbearia_id, nome, email, telefone, tipo, avatar, ativo, created_at',
-      [nome, email, telefone, tipo, avatar, ativo, req.params.id]
+      [nome, email, telefone ?? null, tipo, avatar ?? null, ativo, req.params.id]
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Usuário não encontrado' });
     res.json(result.rows[0]);
@@ -58,7 +58,7 @@ async function updateProfile(req, res, next) {
     const { nome, telefone, senha } = req.body;
     const userId = req.user.id;
     let sql = 'UPDATE users SET nome=$1, telefone=$2';
-    const params = [nome, telefone];
+    const params = [nome, telefone ?? null];
     if (senha) {
       const hashed = await bcrypt.hash(senha, 10);
       params.push(hashed);

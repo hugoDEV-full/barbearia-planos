@@ -46,7 +46,7 @@ async function create(req, res, next) {
     const result = await pool.query(
       `INSERT INTO agendamentos (id, barbearia_id, cliente_id, servico_id, colaborador_id, data, horario, obs, status)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
-      [id, barbearia_id || req.user.barbearia_id, cliente_id, servico_id, colaborador_id, data, horario, obs, status || 'agendado']
+      [id, barbearia_id || req.user.barbearia_id, cliente_id, servico_id, colaborador_id ?? null, data, horario, obs ?? null, status || 'agendado']
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -63,7 +63,7 @@ async function update(req, res, next) {
     const result = await pool.query(
       `UPDATE agendamentos SET cliente_id=$1, servico_id=$2, colaborador_id=$3, data=$4, horario=$5, obs=$6, status=$7, updated_at=NOW()
        WHERE id=$8 RETURNING *`,
-      [cliente_id, servico_id, colaborador_id, data, horario, obs, status, req.params.id]
+      [cliente_id, servico_id, colaborador_id, data, horario, obs ?? null, status, req.params.id]
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Agendamento não encontrado' });
     res.json(result.rows[0]);
