@@ -1,0 +1,7 @@
+node_modules/
+mariadb-10.6.16-winx64/
+mariadb-data/
+mariadb.zip
+mysql.zip
+database.sqlite
+.env

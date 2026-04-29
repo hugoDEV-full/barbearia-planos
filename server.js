@@ -6,7 +6,7 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 
-const { pool, initDB } = require('./config/database');
+const { pool, initDB, initMemoryServer } = require('./config/database');
 const errorHandler = require('./middleware/errorHandler');
 
 // Routes
@@ -25,6 +25,7 @@ const transacaoRoutes = require('./routes/transacoes');
 const corteUsadoRoutes = require('./routes/cortesUsados');
 const relatorioRoutes = require('./routes/relatorios');
 const syncRoutes = require('./routes/sync');
+const pagamentoRoutes = require('./routes/pagamentos');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -82,6 +83,7 @@ app.use('/api/transacoes', transacaoRoutes);
 app.use('/api/cortes-usados', corteUsadoRoutes);
 app.use('/api/relatorios', relatorioRoutes);
 app.use('/api/sync', syncRoutes);
+app.use('/api/pagamentos', pagamentoRoutes);
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname)));
@@ -101,6 +103,33 @@ app.use(errorHandler);
 // Start server
 async function start() {
   try {
+    // Se não houver configuração de MySQL ou a conexão falhar, usa mysql-memory-server
+    let useMemoryServer = false;
+    const hasMySQL = process.env.MYSQLHOST || process.env.MYSQLPORT || process.env.MYSQLDATABASE;
+    if (!hasMySQL) {
+      useMemoryServer = true;
+    } else {
+      // Tenta conectar no MySQL configurado
+      try {
+        const test = require('mysql2/promise');
+        const conn = await test.createConnection({
+          host: process.env.MYSQLHOST || 'localhost',
+          port: process.env.MYSQLPORT || 3306,
+          user: process.env.MYSQLUSER || 'root',
+          password: process.env.MYSQLPASSWORD || '',
+          database: process.env.MYSQLDATABASE || 'barbearia'
+        });
+        await conn.execute('SELECT 1');
+        await conn.end();
+      } catch (e) {
+        console.log('⚠️ MySQL configurado não está acessível. Usando MySQL em memória...');
+        useMemoryServer = true;
+      }
+    }
+    if (useMemoryServer) {
+      await initMemoryServer();
+    }
+
     await initDB();
     console.log('✅ Banco de dados inicializado');
 
@@ -113,6 +142,11 @@ async function start() {
       console.log(`🚀 Servidor rodando na porta ${PORT}`);
       console.log(`📡 Ambiente: ${process.env.NODE_ENV || 'development'}`);
     });
+
+    // Job de renovações automáticas (a cada 1 hora)
+    const { processarRenovacoes } = require('./controllers/pagamentoController');
+    processarRenovacoes(); // executa imediatamente na inicialização
+    setInterval(processarRenovacoes, 60 * 60 * 1000);
   } catch (err) {
     console.error('❌ Falha ao iniciar servidor:', err.message);
     process.exit(1);

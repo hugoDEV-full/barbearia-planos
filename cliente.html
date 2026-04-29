@@ -280,7 +280,10 @@
         listaCob.innerHTML = cobrancas.map(c => `
           <div class="cobranca-item">
             <div><div style="font-size:0.8rem;color:var(--text-muted);">Vencimento: ${c.dataVencimento}</div><div style="font-size:0.9rem;">${c.status==='pago'?'✅ Pago':c.status==='atrasado'?'⚠️ Atrasado':'⏳ Pendente'}</div></div>
-            <strong style="color:var(--accent);">R$ ${(parseFloat(c.valor)||0).toFixed(2).replace('.',',')}</strong>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <strong style="color:var(--accent);">R$ ${(parseFloat(c.valor)||0).toFixed(2).replace('.',',')}</strong>
+              ${c.status !== 'pago' ? `<button class="btn btn-primary btn-sm" onclick="pagarCobranca('${c.id}', ${c.valor})"><i class="fas fa-qrcode"></i> Pagar Pix</button>` : ''}
+            </div>
           </div>
         `).join('');
       }
@@ -297,6 +300,24 @@
       toast(`Parabéns! Você assinou o plano ${plano.nome}.`);
       renderCliente();
       mostrarSecao('visao');
+    };
+
+    window.pagarCobranca = async function(cobrancaId, valor) {
+      const sess = DB.getSession();
+      try {
+        const res = await fetch('/api/pagamentos/pix', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sess.token}` },
+          body: JSON.stringify({ assinatura_id: '', cliente_id: user.id, valor, descricao: 'Pagamento de cobrança', email: user.email, nome: user.nome })
+        });
+        const data = await res.json();
+        if (!res.ok) { alert(data.error || 'Erro ao gerar Pix'); return; }
+        alert('Copie o código Pix:\n\n' + data.qr_code);
+        // Atualiza cobrança antiga como cancelada e cria nova lógica no backend via webhook
+        window.open(data.ticket_url, '_blank');
+      } catch (err) {
+        alert('Erro: ' + err.message);
+      }
     };
 
     window.cancelarMinhaAssinatura = function() {

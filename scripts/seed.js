@@ -1,9 +1,11 @@
 const { pool } = require('../config/database');
 const bcrypt = require('bcryptjs');
+const { v4: uuidv4 } = require('uuid');
+
+function uid() { return uuidv4(); }
 
 async function seed() {
   try {
-    // Verifica se já existe barbearia
     const check = await pool.query('SELECT COUNT(*) as total FROM barbearias');
     if (parseInt(check.rows[0].total) > 0) {
       console.log('Seed já aplicado anteriormente. Pulando...');
@@ -12,11 +14,12 @@ async function seed() {
 
     console.log('🌱 Aplicando seed de dados demo...');
 
-    // Barbearia
+    const barbeariaId = uid();
     const barbResult = await pool.query(
-      `INSERT INTO barbearias (nome, slug, slogan, descricao, endereco, telefone, whatsapp, email, instagram, cor_primaria, horario_funcionamento)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+      `INSERT INTO barbearias (id, nome, slug, slogan, descricao, endereco, telefone, whatsapp, email, instagram, cor_primaria, horario_funcionamento)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
       [
+        barbeariaId,
         'Barbearia Panos',
         'barbearia-panos',
         'Estilo e tradição em cada corte',
@@ -32,30 +35,29 @@ async function seed() {
     );
     const barbearia = barbResult.rows[0];
 
-    // Admin
+    const adminId = uid();
     const adminHash = await bcrypt.hash('admin123', 10);
     const adminResult = await pool.query(
-      'INSERT INTO users (barbearia_id, nome, email, senha, telefone, tipo) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
-      [barbearia.id, 'Hugo Leonardo', 'hugo.leonardo.jobs@gmail.com', adminHash, '(61) 99999-9999', 'admin']
+      'INSERT INTO users (id, barbearia_id, nome, email, senha, telefone, tipo) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
+      [adminId, barbearia.id, 'Hugo Leonardo', 'hugo.leonardo.jobs@gmail.com', adminHash, '(61) 99999-9999', 'admin']
     );
     const admin = adminResult.rows[0];
 
-    // Clientes demo
     const clientes = [];
     for (const c of [
       { nome: 'André Silva', email: 'andre@email.com', telefone: '(61) 98888-1111' },
       { nome: 'Bruno Costa', email: 'bruno@email.com', telefone: '(61) 98888-2222' },
       { nome: 'Carlos Souza', email: 'carlos@email.com', telefone: '(61) 98888-3333' }
     ]) {
+      const cid = uid();
       const hash = await bcrypt.hash('123456', 10);
       const r = await pool.query(
-        'INSERT INTO users (barbearia_id, nome, email, senha, telefone, tipo) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
-        [barbearia.id, c.nome, c.email, hash, c.telefone, 'cliente']
+        'INSERT INTO users (id, barbearia_id, nome, email, senha, telefone, tipo) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
+        [cid, barbearia.id, c.nome, c.email, hash, c.telefone, 'cliente']
       );
       clientes.push(r.rows[0]);
     }
 
-    // Planos
     const planos = [];
     for (const p of [
       { nome: 'Básico', descricao: '2 cortes por mês', preco: 79.90, cortes: 2, beneficios: ['2 cortes', '1 barba'] },
@@ -63,14 +65,14 @@ async function seed() {
       { nome: 'Premium', descricao: 'Cortes ilimitados', preco: 199.90, cortes: 999, beneficios: ['Cortes ilimitados', 'Barbas ilimitadas', '20% desconto produtos', 'Bebida cortesia'] },
       { nome: 'Barba', descricao: 'Barbas ilimitadas', preco: 59.90, cortes: 999, beneficios: ['Barbas ilimitadas'] }
     ]) {
+      const pid = uid();
       const r = await pool.query(
-        'INSERT INTO planos (barbearia_id, nome, descricao, preco, cortes_inclusos, beneficios) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
-        [barbearia.id, p.nome, p.descricao, p.preco, p.cortes, JSON.stringify(p.beneficios)]
+        'INSERT INTO planos (id, barbearia_id, nome, descricao, preco, cortes_inclusos, beneficios) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
+        [pid, barbearia.id, p.nome, p.descricao, p.preco, p.cortes, JSON.stringify(p.beneficios)]
       );
       planos.push(r.rows[0]);
     }
 
-    // Serviços
     const servicos = [];
     for (const s of [
       { nome: 'Corte Clássico', descricao: 'Corte tradicional com tesoura e máquina', preco: 45, duracao: 30, categoria: 'Cortes' },
@@ -84,28 +86,28 @@ async function seed() {
       { nome: 'Corte + Barba', descricao: 'Combo completo', preco: 70, duracao: 50, categoria: 'Combos' },
       { nome: 'Dia do Noivo', descricao: 'Corte, barba e sobrancelha', preco: 120, duracao: 75, categoria: 'Combos' }
     ]) {
+      const sid = uid();
       const r = await pool.query(
-        'INSERT INTO servicos (barbearia_id, nome, descricao, preco, duracao, categoria) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
-        [barbearia.id, s.nome, s.descricao, s.preco, s.duracao, s.categoria]
+        'INSERT INTO servicos (id, barbearia_id, nome, descricao, preco, duracao, categoria) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
+        [sid, barbearia.id, s.nome, s.descricao, s.preco, s.duracao, s.categoria]
       );
       servicos.push(r.rows[0]);
     }
 
-    // Colaboradores
     const colaboradores = [];
     for (const c of [
       { nome: 'João Barber', especialidade: 'Degradê e Desenhos', telefone: '(61) 97777-1111', comissao: 30 },
       { nome: 'Pedro Cuts', especialidade: 'Cortes Clássicos', telefone: '(61) 97777-2222', comissao: 25 },
       { nome: 'Marcio Navalha', especialidade: 'Barba e Navalha', telefone: '(61) 97777-3333', comissao: 35 }
     ]) {
+      const cid = uid();
       const r = await pool.query(
-        'INSERT INTO colaboradores (barbearia_id, nome, especialidade, telefone, percentual_comissao) VALUES ($1,$2,$3,$4,$5) RETURNING *',
-        [barbearia.id, c.nome, c.especialidade, c.telefone, c.comissao]
+        'INSERT INTO colaboradores (id, barbearia_id, nome, especialidade, telefone, percentual_comissao) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+        [cid, barbearia.id, c.nome, c.especialidade, c.telefone, c.comissao]
       );
       colaboradores.push(r.rows[0]);
     }
 
-    // Produtos
     for (const p of [
       { nome: 'Pomada Modeladora', categoria: 'Finalização', qtd: 15, min: 5, custo: 25, venda: 45 },
       { nome: 'Óleo de Barba', categoria: 'Barba', qtd: 8, min: 3, custo: 18, venda: 35 },
@@ -116,37 +118,38 @@ async function seed() {
       { nome: 'Gel Fixador', categoria: 'Finalização', qtd: 25, min: 10, custo: 10, venda: 22 },
       { nome: 'Loção Pós-Barba', categoria: 'Barba', qtd: 12, min: 5, custo: 14, venda: 28 }
     ]) {
+      const pid = uid();
       await pool.query(
-        'INSERT INTO produtos (barbearia_id, nome, categoria, quantidade, minimo, preco_custo, preco_venda) VALUES ($1,$2,$3,$4,$5,$6,$7)',
-        [barbearia.id, p.nome, p.categoria, p.qtd, p.min, p.custo, p.venda]
+        'INSERT INTO produtos (id, barbearia_id, nome, categoria, quantidade, minimo, preco_custo, preco_venda) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+        [pid, barbearia.id, p.nome, p.categoria, p.qtd, p.min, p.custo, p.venda]
       );
     }
 
-    // Assinaturas e cobranças
     const hoje = new Date();
     const proxMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate()).toISOString().split('T')[0];
     
     for (let i = 0; i < clientes.length; i++) {
       const plano = planos[i % planos.length];
+      const assId = uid();
       const assR = await pool.query(
-        'INSERT INTO assinaturas (barbearia_id, cliente_id, plano_id, status, proxima_cobranca) VALUES ($1,$2,$3,$4,$5) RETURNING *',
-        [barbearia.id, clientes[i].id, plano.id, 'ativa', proxMes]
+        'INSERT INTO assinaturas (id, barbearia_id, cliente_id, plano_id, status, proxima_cobranca) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+        [assId, barbearia.id, clientes[i].id, plano.id, 'ativa', proxMes]
       );
       const ass = assR.rows[0];
+      const cobId = uid();
       await pool.query(
-        'INSERT INTO cobrancas (barbearia_id, assinatura_id, cliente_id, valor, data_vencimento, status, metodo) VALUES ($1,$2,$3,$4,$5,$6,$7)',
-        [barbearia.id, ass.id, clientes[i].id, plano.preco, proxMes, 'pendente', 'pix']
+        'INSERT INTO cobrancas (id, barbearia_id, assinatura_id, cliente_id, valor, data_vencimento, status, metodo) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+        [cobId, barbearia.id, ass.id, clientes[i].id, plano.preco, proxMes, 'pendente', 'pix']
       );
-      // Cortes usados
       for (let j = 0; j < 2; j++) {
+        const corteId = uid();
         await pool.query(
-          'INSERT INTO cortes_usados (barbearia_id, cliente_id, assinatura_id, servico_id, descricao) VALUES ($1,$2,$3,$4,$5)',
-          [barbearia.id, clientes[i].id, ass.id, servicos[j].id, servicos[j].nome]
+          'INSERT INTO cortes_usados (id, barbearia_id, cliente_id, assinatura_id, servico_id, descricao) VALUES ($1,$2,$3,$4,$5,$6)',
+          [corteId, barbearia.id, clientes[i].id, ass.id, servicos[j].id, servicos[j].nome]
         );
       }
     }
 
-    // Agendamentos
     const hojeStr = hoje.toISOString().split('T')[0];
     const amanha = new Date(hoje); amanha.setDate(amanha.getDate() + 1);
     const amanhaStr = amanha.toISOString().split('T')[0];
@@ -162,21 +165,22 @@ async function seed() {
     ];
 
     for (const a of agendamentosSeed) {
+      const aid = uid();
       await pool.query(
-        'INSERT INTO agendamentos (barbearia_id, cliente_id, servico_id, colaborador_id, data, horario, status) VALUES ($1,$2,$3,$4,$5,$6,$7)',
-        [barbearia.id, clientes[a.cliente].id, servicos[a.servico].id, colaboradores[a.colab].id, a.data, a.horario, a.status]
+        'INSERT INTO agendamentos (id, barbearia_id, cliente_id, servico_id, colaborador_id, data, horario, status) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+        [aid, barbearia.id, clientes[a.cliente].id, servicos[a.servico].id, colaboradores[a.colab].id, a.data, a.horario, a.status]
       );
     }
 
-    // Transações
     for (let i = 0; i < 30; i++) {
       const dia = new Date(hoje.getFullYear(), hoje.getMonth(), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0];
       const tipo = Math.random() > 0.3 ? 'receita' : 'despesa';
       const valor = tipo === 'receita' ? Math.floor(Math.random() * 100) + 30 : Math.floor(Math.random() * 50) + 10;
       const categoria = tipo === 'receita' ? 'Atendimento' : 'Despesa Operacional';
+      const tid = uid();
       await pool.query(
-        'INSERT INTO transacoes (barbearia_id, tipo, categoria, descricao, valor, data) VALUES ($1,$2,$3,$4,$5,$6)',
-        [barbearia.id, tipo, categoria, tipo === 'receita' ? 'Corte/Barba' : 'Material/Conta', valor, dia]
+        'INSERT INTO transacoes (id, barbearia_id, tipo, categoria, descricao, valor, data) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+        [tid, barbearia.id, tipo, categoria, tipo === 'receita' ? 'Corte/Barba' : 'Material/Conta', valor, dia]
       );
     }
 
