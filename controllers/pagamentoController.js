@@ -3,10 +3,32 @@ const { pool } = require('../config/database');
 const { v4: uuidv4 } = require('uuid');
 
 // Configuração do Mercado Pago
-const mpToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || 'TEST-0000000000000000-000000-00000000000000000000000000000000-000000000';
-const mpConfig = new MercadoPagoConfig({ accessToken: mpToken, options: { timeout: 5000 } });
-const paymentClient = new Payment(mpConfig);
-const preferenceClient = new Preference(mpConfig);
+const mpToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+let paymentClient, preferenceClient;
+let mpAtivo = false;
+
+if (mpToken && !mpToken.startsWith('TEST-00000')) {
+  try {
+    const mpConfig = new MercadoPagoConfig({ accessToken: mpToken, options: { timeout: 5000 } });
+    paymentClient = new Payment(mpConfig);
+    preferenceClient = new Preference(mpConfig);
+    mpAtivo = true;
+    console.log('✅ Mercado Pago configurado');
+  } catch (e) {
+    console.warn('⚠️ Falha ao configurar Mercado Pago:', e.message);
+  }
+} else {
+  console.log('⚠️ Mercado Pago em modo SIMULAÇÃO (configure MERCADO_PAGO_ACCESS_TOKEN para produção)');
+}
+
+function isSimulacao() { return !mpAtivo; }
+
+function gerarQrCodeFake(cobrancaId, valor) {
+  // Gera um QR Code em base64 simples (placeholder visual)
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="200" height="200" fill="white"/><text x="100" y="100" text-anchor="middle" font-size="14" fill="black">PIX SIMULADO</text><text x="100" y="130" text-anchor="middle" font-size="12" fill="black">R$ ${valor}</text></svg>`;
+  const base64 = Buffer.from(svg).toString('base64');
+  return { qr_code: `00020126580014BR.GOV.BCB.PIX0136${cobrancaId}5204000053039865802BR5913Barbearia6008BRASILIA62070503***6304`, qr_code_base64: base64, ticket_url: null };
+}
 
 // Criar pagamento Pix
 async function criarPix(req, res, next) {
@@ -18,37 +40,46 @@ async function criarPix(req, res, next) {
       return res.status(400).json({ error: 'assinatura_id, cliente_id e valor são obrigatórios' });
     }
 
-    // Cria a cobrança no banco (pendente)
     const cobrancaId = uuidv4();
     const vencimento = new Date();
-    vencimento.setDate(vencimento.getDate() + 1); // vence em 24h
+    vencimento.setDate(vencimento.getDate() + 1);
 
     await pool.query(
       'INSERT INTO cobrancas (id, barbearia_id, assinatura_id, cliente_id, valor, data_vencimento, status, metodo) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
       [cobrancaId, barbearia_id, assinatura_id, cliente_id, valor, vencimento.toISOString().split('T')[0], 'pendente', 'pix']
     );
 
-    // Cria o pagamento no Mercado Pago
+    if (isSimulacao()) {
+      // Modo simulação: retorna QR Code fake
+      const fake = gerarQrCodeFake(cobrancaId, valor);
+      await pool.query('UPDATE cobrancas SET mp_payment_id = $1 WHERE id = $2', [`SIM-${cobrancaId}`, cobrancaId]);
+      return res.json({
+        cobranca_id: cobrancaId,
+        mp_payment_id: `SIM-${cobrancaId}`,
+        qr_code: fake.qr_code,
+        qr_code_base64: fake.qr_code_base64,
+        ticket_url: fake.ticket_url,
+        status: 'pending',
+        valor: valor,
+        vencimento: vencimento,
+        simulacao: true
+      });
+    }
+
+    // Mercado Pago real
     const idempotencyKey = uuidv4();
     const body = {
       transaction_amount: parseFloat(valor),
       description: descricao || 'Assinatura Barbearia Panos',
       payment_method_id: 'pix',
-      payer: {
-        email: email || req.user.email,
-        first_name: nome || req.user.nome,
-      },
+      payer: { email: email || req.user.email, first_name: nome || req.user.nome },
       notification_url: process.env.MP_WEBHOOK_URL || `${req.protocol}://${req.get('host')}/api/pagamentos/webhook`,
       external_reference: cobrancaId,
     };
 
     const mpResponse = await paymentClient.create({ body, requestOptions: { idempotencyKey } });
 
-    // Atualiza cobrança com ID do Mercado Pago
-    await pool.query(
-      'UPDATE cobrancas SET mp_payment_id = $1 WHERE id = $2',
-      [mpResponse.id, cobrancaId]
-    );
+    await pool.query('UPDATE cobrancas SET mp_payment_id = $1 WHERE id = $2', [mpResponse.id, cobrancaId]);
 
     res.json({
       cobranca_id: cobrancaId,
@@ -58,7 +89,8 @@ async function criarPix(req, res, next) {
       ticket_url: mpResponse.point_of_interaction?.transaction_data?.ticket_url,
       status: mpResponse.status,
       valor: valor,
-      vencimento: vencimento
+      vencimento: vencimento,
+      simulacao: false
     });
   } catch (err) {
     console.error('Erro ao criar Pix:', err);
@@ -71,7 +103,6 @@ async function webhook(req, res, next) {
   try {
     const { type, data } = req.body;
 
-    // Mercado Pago envia notificações de pagamento
     if (type === 'payment' && data && data.id) {
       const mpPayment = await paymentClient.get({ id: data.id });
       const externalReference = mpPayment.external_reference;
@@ -80,7 +111,6 @@ async function webhook(req, res, next) {
         return res.status(200).json({ message: 'No external reference' });
       }
 
-      // Busca cobrança pelo ID
       const cobResult = await pool.query('SELECT * FROM cobrancas WHERE id = $1 OR mp_payment_id = $2', [externalReference, data.id]);
       if (cobResult.rows.length === 0) {
         return res.status(200).json({ message: 'Cobrança não encontrada' });
@@ -91,28 +121,15 @@ async function webhook(req, res, next) {
 
       if (mpPayment.status === 'approved') {
         novoStatus = 'pago';
-        // Atualiza cobrança como paga
-        await pool.query(
-          'UPDATE cobrancas SET status = $1, data_pagamento = NOW() WHERE id = $2',
-          [novoStatus, cobranca.id]
-        );
-
-        // Cria transação financeira
+        await pool.query('UPDATE cobrancas SET status = $1, data_pagamento = NOW() WHERE id = $2', [novoStatus, cobranca.id]);
         await pool.query(
           'INSERT INTO transacoes (id, barbearia_id, tipo, categoria, descricao, valor, data) VALUES ($1,$2,$3,$4,$5,$6,$7)',
           [uuidv4(), cobranca.barbearia_id, 'receita', 'Assinaturas', 'Pagamento assinatura - Pix', cobranca.valor, new Date().toISOString().split('T')[0]]
         );
-
-        // Atualiza assinatura: renova próxima cobrança
         const assResult = await pool.query('SELECT * FROM assinaturas WHERE id = $1', [cobranca.assinatura_id]);
         if (assResult.rows.length > 0) {
-          const ass = assResult.rows[0];
-          const proxima = new Date();
-          proxima.setMonth(proxima.getMonth() + 1);
-          await pool.query(
-            'UPDATE assinaturas SET status = $1, proxima_cobranca = $2 WHERE id = $3',
-            ['ativa', proxima.toISOString().split('T')[0], ass.id]
-          );
+          const proxima = new Date(); proxima.setMonth(proxima.getMonth() + 1);
+          await pool.query('UPDATE assinaturas SET status = $1, proxima_cobranca = $2 WHERE id = $3', ['ativa', proxima.toISOString().split('T')[0], cobranca.assinatura_id]);
         }
       } else if (mpPayment.status === 'rejected' || mpPayment.status === 'cancelled') {
         novoStatus = 'atrasado';
@@ -125,9 +142,31 @@ async function webhook(req, res, next) {
     res.status(200).json({ message: 'Evento ignorado' });
   } catch (err) {
     console.error('Erro no webhook:', err);
-    // Sempre retorna 200 para o Mercado Pago não reenviar
     res.status(200).json({ message: 'Erro processado' });
   }
+}
+
+// Confirmar pagamento manualmente (modo simulação / admin)
+async function confirmarSimulacao(req, res, next) {
+  try {
+    const { cobranca_id } = req.params;
+    const result = await pool.query('SELECT * FROM cobrancas WHERE id = $1', [cobranca_id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Cobrança não encontrada' });
+
+    const cobranca = result.rows[0];
+    if (cobranca.status === 'pago') return res.status(400).json({ error: 'Cobrança já está paga' });
+
+    await pool.query('UPDATE cobrancas SET status = $1, data_pagamento = NOW() WHERE id = $2', ['pago', cobranca.id]);
+    await pool.query(
+      'INSERT INTO transacoes (id, barbearia_id, tipo, categoria, descricao, valor, data) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+      [uuidv4(), cobranca.barbearia_id, 'receita', 'Assinaturas', 'Pagamento assinatura - Simulação', cobranca.valor, new Date().toISOString().split('T')[0]]
+    );
+
+    const proxima = new Date(); proxima.setMonth(proxima.getMonth() + 1);
+    await pool.query('UPDATE assinaturas SET status = $1, proxima_cobranca = $2 WHERE id = $3', ['ativa', proxima.toISOString().split('T')[0], cobranca.assinatura_id]);
+
+    res.json({ message: 'Pagamento confirmado (simulação)', cobranca_id: cobranca.id });
+  } catch (err) { next(err); }
 }
 
 // Verificar status de um pagamento
@@ -140,22 +179,17 @@ async function verificarStatus(req, res, next) {
     const cobranca = result.rows[0];
     let mpStatus = null;
 
-    if (cobranca.mp_payment_id) {
+    if (cobranca.mp_payment_id && !cobranca.mp_payment_id.startsWith('SIM-')) {
       try {
         const mpPayment = await paymentClient.get({ id: cobranca.mp_payment_id });
         mpStatus = mpPayment.status;
-      } catch (e) {
-        mpStatus = 'unknown';
-      }
+      } catch (e) { mpStatus = 'unknown'; }
+    } else if (cobranca.mp_payment_id && cobranca.mp_payment_id.startsWith('SIM-')) {
+      mpStatus = 'simulacao';
     }
 
-    res.json({
-      cobranca: cobranca,
-      mp_status: mpStatus
-    });
-  } catch (err) {
-    next(err);
-  }
+    res.json({ cobranca: cobranca, mp_status: mpStatus });
+  } catch (err) { next(err); }
 }
 
 // Criar preferência de checkout (para cartão de crédito)
@@ -173,14 +207,20 @@ async function criarPreferencia(req, res, next) {
       [cobrancaId, barbearia_id, assinatura_id, cliente_id, valor, vencimento.toISOString().split('T')[0], 'pendente', 'cartao']
     );
 
+    if (isSimulacao()) {
+      // Modo simulação: retorna link fake
+      await pool.query('UPDATE cobrancas SET mp_preference_id = $1 WHERE id = $2', [`SIM-PREF-${cobrancaId}`, cobrancaId]);
+      return res.json({
+        cobranca_id: cobrancaId,
+        preference_id: `SIM-PREF-${cobrancaId}`,
+        init_point: `http://${req.get('host')}/api/pagamentos/simular-cartao/${cobrancaId}`,
+        sandbox_init_point: `http://${req.get('host')}/api/pagamentos/simular-cartao/${cobrancaId}`,
+        simulacao: true
+      });
+    }
+
     const body = {
-      items: [{
-        id: cobrancaId,
-        title: descricao || 'Assinatura Barbearia Panos',
-        quantity: 1,
-        unit_price: parseFloat(valor),
-        currency_id: 'BRL'
-      }],
+      items: [{ id: cobrancaId, title: descricao || 'Assinatura Barbearia Panos', quantity: 1, unit_price: parseFloat(valor), currency_id: 'BRL' }],
       payer: { email: email || req.user.email },
       external_reference: cobrancaId,
       notification_url: process.env.MP_WEBHOOK_URL || `${req.protocol}://${req.get('host')}/api/pagamentos/webhook`,
@@ -193,17 +233,14 @@ async function criarPreferencia(req, res, next) {
     };
 
     const preference = await preferenceClient.create({ body });
-
-    await pool.query(
-      'UPDATE cobrancas SET mp_preference_id = $1 WHERE id = $2',
-      [preference.id, cobrancaId]
-    );
+    await pool.query('UPDATE cobrancas SET mp_preference_id = $1 WHERE id = $2', [preference.id, cobrancaId]);
 
     res.json({
       cobranca_id: cobrancaId,
       preference_id: preference.id,
       init_point: preference.init_point,
-      sandbox_init_point: preference.sandbox_init_point
+      sandbox_init_point: preference.sandbox_init_point,
+      simulacao: false
     });
   } catch (err) {
     console.error('Erro ao criar preferência:', err);
@@ -211,12 +248,30 @@ async function criarPreferencia(req, res, next) {
   }
 }
 
-// Job: verificar cobranças vencidas e gerar novas (chamar periodicamente)
+// Simular pagamento de cartão (modo simulação)
+async function simularCartao(req, res) {
+  const { cobranca_id } = req.params;
+  try {
+    const result = await pool.query('SELECT * FROM cobrancas WHERE id = $1', [cobranca_id]);
+    if (result.rows.length === 0) return res.status(404).send('Cobrança não encontrada');
+    
+    const cobranca = result.rows[0];
+    await pool.query('UPDATE cobrancas SET status = $1, data_pagamento = NOW() WHERE id = $2', ['pago', cobranca.id]);
+    await pool.query(
+      'INSERT INTO transacoes (id, barbearia_id, tipo, categoria, descricao, valor, data) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+      [uuidv4(), cobranca.barbearia_id, 'receita', 'Assinaturas', 'Pagamento assinatura - Cartão (simulação)', cobranca.valor, new Date().toISOString().split('T')[0]]
+    );
+    const proxima = new Date(); proxima.setMonth(proxima.getMonth() + 1);
+    await pool.query('UPDATE assinaturas SET status = $1, proxima_cobranca = $2 WHERE id = $3', ['ativa', proxima.toISOString().split('T')[0], cobranca.assinatura_id]);
+    
+    res.send(`<html><body style="background:#0a0a0f;color:#fff;text-align:center;padding:50px;font-family:sans-serif;"><h1>✅ Pagamento Simulado!</h1><p>O pagamento da cobrança foi confirmado com sucesso.</p><p><a href="/cliente.html" style="color:#d4a853;">Voltar para área do cliente</a></p></body></html>`);
+  } catch (err) { res.status(500).send('Erro: ' + err.message); }
+}
+
+// Job: verificar cobranças vencidas e gerar novas
 async function processarRenovacoes() {
   try {
     const hoje = new Date().toISOString().split('T')[0];
-
-    // Busca assinaturas ativas com cobrança vencida
     const result = await pool.query(
       `SELECT a.*, p.preco, p.nome as plano_nome, u.email, u.nome
        FROM assinaturas a
@@ -227,35 +282,26 @@ async function processarRenovacoes() {
     );
 
     for (const ass of result.rows) {
-      // Verifica se já existe cobrança pendente para esta assinatura neste mês
       const check = await pool.query(
         'SELECT COUNT(*) as total FROM cobrancas WHERE assinatura_id = $1 AND status = $2 AND data_vencimento >= $3',
         [ass.id, 'pendente', hoje]
       );
-
       if (parseInt(check.rows[0].total) === 0) {
-        const novaData = new Date();
-        novaData.setMonth(novaData.getMonth() + 1);
+        const novaData = new Date(); novaData.setMonth(novaData.getMonth() + 1);
         const cobrancaId = uuidv4();
-
         await pool.query(
           'INSERT INTO cobrancas (id, barbearia_id, assinatura_id, cliente_id, valor, data_vencimento, status, metodo) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
           [cobrancaId, ass.barbearia_id, ass.id, ass.cliente_id, ass.preco, novaData.toISOString().split('T')[0], 'pendente', 'pix']
         );
-
         console.log(`🔄 Nova cobrança gerada para assinatura ${ass.id}: R$ ${ass.preco}`);
       }
     }
 
-    // Atualiza assinaturas vencidas (sem pagamento há mais de 7 dias)
-    const dataLimite = new Date();
-    dataLimite.setDate(dataLimite.getDate() - 7);
+    const dataLimite = new Date(); dataLimite.setDate(dataLimite.getDate() - 7);
     await pool.query(
-      `UPDATE assinaturas SET status = 'vencida' 
-       WHERE status = 'ativa' AND proxima_cobranca < $1`,
+      `UPDATE assinaturas SET status = 'vencida' WHERE status = 'ativa' AND proxima_cobranca < $1`,
       [dataLimite.toISOString().split('T')[0]]
     );
-
   } catch (err) {
     console.error('Erro no job de renovações:', err);
   }
@@ -266,5 +312,7 @@ module.exports = {
   webhook,
   verificarStatus,
   criarPreferencia,
+  confirmarSimulacao,
+  simularCartao,
   processarRenovacoes
 };

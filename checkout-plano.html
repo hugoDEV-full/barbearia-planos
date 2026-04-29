@@ -61,6 +61,10 @@
         <div id="statusPagamento" class="text-center" style="margin-top:12px;">
           <span class="badge badge-warning"><i class="fas fa-clock"></i> Aguardando pagamento...</span>
         </div>
+        <div id="areaSimulacao" style="display:none;margin-top:16px;text-align:center;">
+          <p class="text-muted" style="font-size:0.8rem;">Modo demonstração — sem Mercado Pago configurado</p>
+          <button class="btn btn-success" onclick="confirmarSimulacaoPix()"><i class="fas fa-check"></i> Confirmar Pagamento (Simular)</button>
+        </div>
       </div>
 
       <div id="areaCartao" style="display:none;">
@@ -140,6 +144,7 @@
           document.getElementById('qrImg').src = data.qr_code_base64 ? `data:image/png;base64,${data.qr_code_base64}` : '';
           document.getElementById('qrCodeText').textContent = data.qr_code || '';
           document.getElementById('checkoutForm').style.display = 'none';
+          if (data.simulacao) document.getElementById('areaSimulacao').style.display = 'block';
 
           // Poll status
           checkInterval = setInterval(async () => {
@@ -174,6 +179,27 @@
     function copiarPix() {
       const text = document.getElementById('qrCodeText').textContent;
       navigator.clipboard.writeText(text).then(() => alert('Código Pix copiado!'));
+    }
+
+    async function confirmarSimulacaoPix() {
+      if (!cobrancaId) return;
+      const sess = DB.getSession();
+      try {
+        const res = await fetch(`/api/pagamentos/confirmar/${cobrancaId}`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${sess.token}` }
+        });
+        const data = await res.json();
+        if (res.ok) {
+          document.getElementById('statusPagamento').innerHTML = '<span class="badge badge-success"><i class="fas fa-check"></i> Pagamento confirmado!</span>';
+          document.getElementById('areaSimulacao').style.display = 'none';
+          setTimeout(() => window.location.href = 'confirmacao.html?tipo=plano', 1500);
+        } else {
+          alert(data.error || 'Erro ao confirmar');
+        }
+      } catch (err) {
+        alert('Erro: ' + err.message);
+      }
     }
   </script>
 </body>
