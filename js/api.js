@@ -431,3 +431,26 @@ const DB = {
 };
 
 window.DB = DB;
+
+// Auto-sync ao carregar se houver sessão
+(function() {
+  const sess = DB.getSession();
+  if (sess && sess.barbeariaId && sess.token) {
+    DB.sync(sess.barbeariaId).catch(() => {});
+  } else {
+    // Tenta carregar dados públicos se localStorage estiver vazio
+    if (DB.getBarbearias().length === 0) {
+      fetch('/api/barbearias').then(r => r.ok ? r.json() : []).then(list => {
+        if (list.length) {
+          localStorage.setItem('barbearias', JSON.stringify(list));
+          const bid = list[0].id;
+          Promise.all([
+            fetch('/api/planos?barbearia_id=' + bid).then(r => r.ok ? r.json() : []).then(d => localStorage.setItem('planos', JSON.stringify(d))),
+            fetch('/api/servicos?barbearia_id=' + bid).then(r => r.ok ? r.json() : []).then(d => localStorage.setItem('servicos', JSON.stringify(d))),
+            fetch('/api/colaboradores?barbearia_id=' + bid).then(r => r.ok ? r.json() : []).then(d => localStorage.setItem('colaboradores', JSON.stringify(d)))
+          ]).catch(() => {});
+        }
+      }).catch(() => {});
+    }
+  }
+})();

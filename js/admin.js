@@ -193,8 +193,9 @@
     });
   };
 
-  window.excluirCliente = function(id) {
+  window.excluirCliente = async function(id) {
     if (!confirm('Excluir cliente?')) return;
+    await fetch('/api/users/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + (DB.getSession()?.token||'') } }).catch(()=>{});
     const list = DB.getUsers().filter(u => u.id !== id);
     DB._set('users', list);
     toast('Cliente excluído'); renderClientes(); renderDashboard();
@@ -342,7 +343,7 @@
     `, null);
   };
 
-  window.simularPagamento = function(cobrancaId) {
+  window.simularPagamento = async function(cobrancaId) {
     const cobrancas = DB._get('cobrancas');
     const idx = cobrancas.findIndex(c => c.id === cobrancaId);
     if (idx < 0) return;
@@ -350,7 +351,12 @@
     cobrancas[idx].dataPagamento = hoje();
     cobrancas[idx].updatedAt = new Date().toISOString();
     DB._set('cobrancas', cobrancas);
-    DB.saveTransacao({ barbeariaId: barbearia.id, tipo: 'receita', categoria: 'Assinaturas', descricao: `Pagamento assinatura - ${DB.getUser(cobrancas[idx].clienteId)?.nome||''}`, valor: parseFloat(cobrancas[idx].valor)||0, data: hoje() });
+    await fetch('/api/cobrancas/' + cobrancaId, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (DB.getSession()?.token||'') },
+      body: JSON.stringify({ status: 'pago', data_pagamento: new Date().toISOString() })
+    }).catch(()=>{});
+    await DB.saveTransacao({ barbeariaId: barbearia.id, tipo: 'receita', categoria: 'Assinaturas', descricao: `Pagamento assinatura - ${DB.getUser(cobrancas[idx].clienteId)?.nome||''}`, valor: parseFloat(cobrancas[idx].valor)||0, data: hoje() });
     toast('Pagamento simulado com sucesso');
     const assId = cobrancas[idx].assinaturaId;
     fecharModal();
