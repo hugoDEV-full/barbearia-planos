@@ -9,7 +9,7 @@ async function list(req, res, next) {
     const params = [];
     if (tipo) { params.push(tipo); sql += ` AND tipo = $${params.length}`; }
     if (barbearia_id) { params.push(barbearia_id); sql += ` AND barbearia_id = $${params.length}`; }
-    if (search) { params.push(`%${search}%`); sql += ` AND (nome ILIKE $${params.length} OR email ILIKE $${params.length})`; }
+    if (search) { params.push(`%${search}%`); sql += ` AND (nome LIKE $${params.length} OR email LIKE $${params.length})`; }
     sql += ' ORDER BY created_at DESC';
     const result = await pool.query(sql, params);
     res.json(result.rows);
@@ -43,10 +43,20 @@ async function create(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    const { nome, email, telefone, tipo, avatar, ativo } = req.body;
+    const fields = ['nome', 'email', 'telefone', 'tipo', 'avatar', 'ativo'];
+    const updates = [];
+    const params = [];
+    for (const f of fields) {
+      if (req.body[f] !== undefined) {
+        updates.push(`${f}=$${params.length + 1}`);
+        params.push(req.body[f]);
+      }
+    }
+    if (updates.length === 0) return res.status(400).json({ error: 'Nenhum campo para atualizar' });
+    params.push(req.params.id);
     const result = await pool.query(
-      'UPDATE users SET nome=$1, email=$2, telefone=$3, tipo=$4, avatar=$5, ativo=$6, updated_at=NOW() WHERE id=$7 RETURNING id, barbearia_id, nome, email, telefone, tipo, avatar, ativo, created_at',
-      [nome, email, telefone ?? null, tipo, avatar ?? null, ativo, req.params.id]
+      `UPDATE users SET ${updates.join(', ')}, updated_at=NOW() WHERE id=$${params.length} RETURNING id, barbearia_id, nome, email, telefone, tipo, avatar, ativo, created_at`,
+      params
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Usuário não encontrado' });
     res.json(result.rows[0]);
@@ -57,15 +67,18 @@ async function updateProfile(req, res, next) {
   try {
     const { nome, telefone, senha } = req.body;
     const userId = req.user.id;
-    let sql = 'UPDATE users SET nome=$1, telefone=$2';
-    const params = [nome, telefone ?? null];
+    const updates = [];
+    const params = [];
+    if (nome !== undefined) { updates.push(`nome=$${params.length + 1}`); params.push(nome); }
+    if (telefone !== undefined) { updates.push(`telefone=$${params.length + 1}`); params.push(telefone); }
     if (senha) {
       const hashed = await bcrypt.hash(senha, 10);
+      updates.push(`senha=$${params.length + 1}`);
       params.push(hashed);
-      sql += `, senha=$${params.length}`;
     }
+    if (updates.length === 0) return res.status(400).json({ error: 'Nenhum campo para atualizar' });
     params.push(userId);
-    sql += `, updated_at=NOW() WHERE id=$${params.length} RETURNING id, barbearia_id, nome, email, telefone, tipo, avatar, ativo, created_at`;
+    const sql = `UPDATE users SET ${updates.join(', ')}, updated_at=NOW() WHERE id=$${params.length} RETURNING id, barbearia_id, nome, email, telefone, tipo, avatar, ativo, created_at`;
     const result = await pool.query(sql, params);
     res.json(result.rows[0]);
   } catch (err) { next(err); }

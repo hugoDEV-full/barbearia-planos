@@ -165,25 +165,33 @@
       `).join('');
     }
 
-    window.marcarConfirmado = function(id) {
-      const list = DB._get('agendamentos');
-      const idx = list.findIndex(a => a.id === id);
-      if (idx >= 0) { list[idx].status = 'confirmado'; list[idx].updatedAt = new Date().toISOString(); DB._set('agendamentos', list); }
-      toast('Agendamento confirmado');
-      setTimeout(() => window.location.reload(), 600);
+    window.marcarConfirmado = async function(id) {
+      try {
+        await DB.saveAgendamento({ id, status: 'confirmado' });
+        toast('Agendamento confirmado');
+        setTimeout(() => window.location.reload(), 600);
+      } catch (err) {
+        toast('Erro: ' + err.message, 'error');
+      }
     };
-    window.marcarConcluido = function(id) {
-      const list = DB._get('agendamentos');
-      const idx = list.findIndex(a => a.id === id);
-      if (idx >= 0) { list[idx].status = 'concluido'; list[idx].updatedAt = new Date().toISOString(); DB._set('agendamentos', list); }
-      toast('Agendamento concluído');
-      setTimeout(() => window.location.reload(), 600);
+    window.marcarConcluido = async function(id) {
+      try {
+        await DB.saveAgendamento({ id, status: 'concluido' });
+        toast('Agendamento concluído');
+        setTimeout(() => window.location.reload(), 600);
+      } catch (err) {
+        toast('Erro: ' + err.message, 'error');
+      }
     };
-    window.cancelarAg = function(id) {
+    window.cancelarAg = async function(id) {
       if (!confirm('Cancelar agendamento?')) return;
-      DB.deleteAgendamento(id);
-      toast('Agendamento cancelado', 'warning');
-      setTimeout(() => window.location.reload(), 600);
+      try {
+        await DB.deleteAgendamento(id);
+        toast('Agendamento cancelado', 'warning');
+        setTimeout(() => window.location.reload(), 600);
+      } catch (err) {
+        toast('Erro: ' + err.message, 'error');
+      }
     };
     window.abrirCheckin = function() {
       document.getElementById('checkinModal').classList.add('active');

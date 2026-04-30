@@ -35,7 +35,7 @@ async function create(req, res, next) {
     const id = uuidv4();
     const result = await pool.query(
       'INSERT INTO cobrancas (id, barbearia_id, assinatura_id, cliente_id, valor, data_vencimento, status, metodo) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',
-      [id, barbearia_id || req.user.barbearia_id, assinatura_id, cliente_id, valor, data_vencimento, status || 'pendente', metodo]
+      [id, barbearia_id || req.user.barbearia_id, assinatura_id, cliente_id, valor, data_vencimento, status || 'pendente', metodo ?? null]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) { next(err); }
@@ -43,10 +43,20 @@ async function create(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    const { valor, data_vencimento, data_pagamento, status, metodo } = req.body;
+    const fields = ['valor', 'data_vencimento', 'data_pagamento', 'status', 'metodo'];
+    const updates = [];
+    const params = [];
+    for (const f of fields) {
+      if (req.body[f] !== undefined) {
+        updates.push(`${f}=$${params.length + 1}`);
+        params.push(req.body[f]);
+      }
+    }
+    if (updates.length === 0) return res.status(400).json({ error: 'Nenhum campo para atualizar' });
+    params.push(req.params.id);
     const result = await pool.query(
-      'UPDATE cobrancas SET valor=$1, data_vencimento=$2, data_pagamento=$3, status=$4, metodo=$5 WHERE id=$6 RETURNING *',
-      [valor, data_vencimento, data_pagamento, status, metodo, req.params.id]
+      `UPDATE cobrancas SET ${updates.join(', ')} WHERE id=$${params.length} RETURNING *`,
+      params
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Cobrança não encontrada' });
     res.json(result.rows[0]);

@@ -59,11 +59,20 @@ async function create(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    const { cliente_id, servico_id, colaborador_id, data, horario, obs, status } = req.body;
+    const fields = ['cliente_id', 'servico_id', 'colaborador_id', 'data', 'horario', 'obs', 'status'];
+    const updates = [];
+    const params = [];
+    for (const f of fields) {
+      if (req.body[f] !== undefined) {
+        updates.push(`${f}=$${params.length + 1}`);
+        params.push(req.body[f]);
+      }
+    }
+    if (updates.length === 0) return res.status(400).json({ error: 'Nenhum campo para atualizar' });
+    params.push(req.params.id);
     const result = await pool.query(
-      `UPDATE agendamentos SET cliente_id=$1, servico_id=$2, colaborador_id=$3, data=$4, horario=$5, obs=$6, status=$7, updated_at=NOW()
-       WHERE id=$8 RETURNING *`,
-      [cliente_id, servico_id, colaborador_id, data, horario, obs ?? null, status, req.params.id]
+      `UPDATE agendamentos SET ${updates.join(', ')}, updated_at=NOW() WHERE id=$${params.length} RETURNING *`,
+      params
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Agendamento não encontrado' });
     res.json(result.rows[0]);

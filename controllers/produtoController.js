@@ -7,7 +7,7 @@ async function list(req, res, next) {
     let sql = 'SELECT * FROM produtos WHERE 1=1';
     const params = [];
     if (barbearia_id) { params.push(barbearia_id); sql += ` AND barbearia_id = $${params.length}`; }
-    if (search) { params.push(`%${search}%`); sql += ` AND nome ILIKE $${params.length}`; }
+    if (search) { params.push(`%${search}%`); sql += ` AND nome LIKE $${params.length}`; }
     sql += ' ORDER BY nome';
     const result = await pool.query(sql, params);
     res.json(result.rows);
@@ -36,10 +36,20 @@ async function create(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    const { nome, categoria, quantidade, minimo, preco_custo, preco_venda } = req.body;
+    const fields = ['nome', 'categoria', 'quantidade', 'minimo', 'preco_custo', 'preco_venda'];
+    const updates = [];
+    const params = [];
+    for (const f of fields) {
+      if (req.body[f] !== undefined) {
+        updates.push(`${f}=$${params.length + 1}`);
+        params.push(req.body[f]);
+      }
+    }
+    if (updates.length === 0) return res.status(400).json({ error: 'Nenhum campo para atualizar' });
+    params.push(req.params.id);
     const result = await pool.query(
-      'UPDATE produtos SET nome=$1, categoria=$2, quantidade=$3, minimo=$4, preco_custo=$5, preco_venda=$6, updated_at=NOW() WHERE id=$7 RETURNING *',
-      [nome, categoria, quantidade, minimo, preco_custo, preco_venda, req.params.id]
+      `UPDATE produtos SET ${updates.join(', ')}, updated_at=NOW() WHERE id=$${params.length} RETURNING *`,
+      params
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Produto não encontrado' });
     res.json(result.rows[0]);

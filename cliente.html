@@ -341,24 +341,30 @@
       }
     };
 
-    window.cancelarMinhaAssinatura = function() {
+    window.cancelarMinhaAssinatura = async function() {
       const motivo = prompt('Tem certeza que deseja cancelar sua assinatura?\nInforme o motivo (opcional):');
       if (motivo === null) return;
       const ass = DB.getAssinaturas(barbearia.id).find(a => a.clienteId === user.id);
       if (ass) {
-        DB.cancelarAssinatura(ass.id);
-        toast('Assinatura cancelada com sucesso.', 'warning');
-        renderCliente();
+        try {
+          await DB.cancelarAssinatura(ass.id);
+          toast('Assinatura cancelada com sucesso.', 'warning');
+          renderCliente();
+        } catch (err) {
+          toast('Erro ao cancelar: ' + err.message, 'error');
+        }
       }
     };
 
-    window.cancelarMeuAgendamento = function(id) {
+    window.cancelarMeuAgendamento = async function(id) {
       if (!confirm('Cancelar este agendamento?')) return;
-      const list = DB._get('agendamentos');
-      const idx = list.findIndex(a => a.id === id);
-      if (idx >= 0) { list[idx].status = 'cancelado'; list[idx].updatedAt = new Date().toISOString(); DB._set('agendamentos', list); }
-      toast('Agendamento cancelado.', 'warning');
-      renderCliente();
+      try {
+        await DB.saveAgendamento({ id, status: 'cancelado' });
+        toast('Agendamento cancelado.', 'warning');
+        renderCliente();
+      } catch (err) {
+        toast('Erro ao cancelar: ' + err.message, 'error');
+      }
     };
 
     window.editarMeuAgendamento = function(id) {

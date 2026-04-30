@@ -38,7 +38,8 @@ async function syncAll(barbeariaId) {
     const data = await apiFetch(`/sync?barbearia_id=${barbeariaId}`);
     if (data) {
       Object.keys(data).forEach(key => {
-        localStorage.setItem(key, JSON.stringify(data[key]));
+        const arr = Array.isArray(data[key]) ? data[key].map(item => DB._fromSnake ? DB._fromSnake(item) : item) : data[key];
+        localStorage.setItem(key, JSON.stringify(arr));
       });
     }
   } catch (e) {
@@ -423,6 +424,24 @@ const DB = {
     }
     return out;
   },
+  // ─── Conversor snake_case -> camelCase ───
+  _fromSnake(obj) {
+    const map = {
+      barbearia_id: 'barbeariaId', cliente_id: 'clienteId', plano_id: 'planoId',
+      servico_id: 'servicoId', colaborador_id: 'colaboradorId', produto_id: 'produtoId',
+      assinatura_id: 'assinaturaId', cortes_inclusos: 'cortesInclusos',
+      proxima_cobranca: 'proximaCobranca', data_vencimento: 'dataVencimento',
+      data_pagamento: 'dataPagamento', preco_custo: 'precoCusto', preco_venda: 'precoVenda',
+      percentual_comissao: 'percentualComissao', cor_primaria: 'corPrimaria',
+      horario_funcionamento: 'horarioFuncionamento'
+    };
+    const out = {};
+    for (const key in obj) {
+      const ck = map[key] || key;
+      out[ck] = obj[key];
+    }
+    return out;
+  },
 
   // ─── Sync inicial ───
   async sync(barbeariaId) {
@@ -442,12 +461,12 @@ window.DB = DB;
     if (DB.getBarbearias().length === 0) {
       fetch('/api/barbearias').then(r => r.ok ? r.json() : []).then(list => {
         if (list.length) {
-          localStorage.setItem('barbearias', JSON.stringify(list));
+          localStorage.setItem('barbearias', JSON.stringify(list.map(item => DB._fromSnake(item))));
           const bid = list[0].id;
           Promise.all([
-            fetch('/api/planos?barbearia_id=' + bid).then(r => r.ok ? r.json() : []).then(d => localStorage.setItem('planos', JSON.stringify(d))),
-            fetch('/api/servicos?barbearia_id=' + bid).then(r => r.ok ? r.json() : []).then(d => localStorage.setItem('servicos', JSON.stringify(d))),
-            fetch('/api/colaboradores?barbearia_id=' + bid).then(r => r.ok ? r.json() : []).then(d => localStorage.setItem('colaboradores', JSON.stringify(d)))
+            fetch('/api/planos?barbearia_id=' + bid).then(r => r.ok ? r.json() : []).then(d => localStorage.setItem('planos', JSON.stringify(d.map(item => DB._fromSnake(item))))),
+            fetch('/api/servicos?barbearia_id=' + bid).then(r => r.ok ? r.json() : []).then(d => localStorage.setItem('servicos', JSON.stringify(d.map(item => DB._fromSnake(item))))),
+            fetch('/api/colaboradores?barbearia_id=' + bid).then(r => r.ok ? r.json() : []).then(d => localStorage.setItem('colaboradores', JSON.stringify(d.map(item => DB._fromSnake(item)))))
           ]).catch(() => {});
         }
       }).catch(() => {});

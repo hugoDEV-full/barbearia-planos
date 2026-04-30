@@ -36,10 +36,20 @@ async function create(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    const { nome, especialidade, telefone, percentual_comissao, ativo } = req.body;
+    const fields = ['nome', 'especialidade', 'telefone', 'percentual_comissao', 'ativo'];
+    const updates = [];
+    const params = [];
+    for (const f of fields) {
+      if (req.body[f] !== undefined) {
+        updates.push(`${f}=$${params.length + 1}`);
+        params.push(req.body[f]);
+      }
+    }
+    if (updates.length === 0) return res.status(400).json({ error: 'Nenhum campo para atualizar' });
+    params.push(req.params.id);
     const result = await pool.query(
-      'UPDATE colaboradores SET nome=$1, especialidade=$2, telefone=$3, percentual_comissao=$4, ativo=$5 WHERE id=$6 RETURNING *',
-      [nome, especialidade ?? null, telefone ?? null, percentual_comissao, ativo, req.params.id]
+      `UPDATE colaboradores SET ${updates.join(', ')} WHERE id=$${params.length} RETURNING *`,
+      params
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Colaborador não encontrado' });
     res.json(result.rows[0]);

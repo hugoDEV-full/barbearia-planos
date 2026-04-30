@@ -293,16 +293,16 @@
       colaboradores.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.nome; selBarbeiro.appendChild(o); });
       document.getElementById('agData').min = new Date().toISOString().split('T')[0];
 
-      document.getElementById('agendarForm').addEventListener('submit', e => {
+      document.getElementById('agendarForm').addEventListener('submit', async e => {
         e.preventDefault();
         const nome = document.getElementById('agNome').value.trim();
         const email = document.getElementById('agEmail').value.trim();
         const tel = document.getElementById('agTel').value.trim();
         let cliente = DB.getUsers().find(u => u.email === email && u.barbeariaId === barbearia.id);
         if (!cliente) {
-          cliente = DB.saveUser({ barbeariaId: barbearia.id, nome, email, telefone: tel, tipo: 'cliente', senha: DB.hashSenha('123456'), avatar: '' });
+          cliente = await DB.saveUser({ barbeariaId: barbearia.id, nome, email, telefone: tel, tipo: 'cliente', senha: DB.hashSenha('123456'), avatar: '' });
         }
-        DB.saveAgendamento({
+        await DB.saveAgendamento({
           barbeariaId: barbearia.id, clienteId: cliente.id,
           data: document.getElementById('agData').value,
           horario: document.getElementById('agHora').value,

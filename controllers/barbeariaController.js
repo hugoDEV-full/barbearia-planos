@@ -31,11 +31,20 @@ async function getOne(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    const { nome, slug, slogan, descricao, endereco, telefone, whatsapp, email, instagram, cor_primaria, horario_funcionamento } = req.body;
+    const fields = ['nome', 'slug', 'slogan', 'descricao', 'endereco', 'telefone', 'whatsapp', 'email', 'instagram', 'cor_primaria', 'horario_funcionamento'];
+    const updates = [];
+    const params = [];
+    for (const f of fields) {
+      if (req.body[f] !== undefined) {
+        updates.push(`${f}=$${params.length + 1}`);
+        params.push(f === 'horario_funcionamento' ? JSON.stringify(req.body[f]) : req.body[f]);
+      }
+    }
+    if (updates.length === 0) return res.status(400).json({ error: 'Nenhum campo para atualizar' });
+    params.push(req.params.id);
     const result = await pool.query(
-      `UPDATE barbearias SET nome=$1, slug=$2, slogan=$3, descricao=$4, endereco=$5, telefone=$6, whatsapp=$7, email=$8, instagram=$9, cor_primaria=$10, horario_funcionamento=$11, updated_at=NOW()
-       WHERE id = $12 RETURNING *`,
-      [nome, slug ?? null, slogan ?? null, descricao ?? null, endereco ?? null, telefone ?? null, whatsapp ?? null, email ?? null, instagram ?? null, cor_primaria, JSON.stringify(horario_funcionamento || {}), req.params.id]
+      `UPDATE barbearias SET ${updates.join(', ')}, updated_at=NOW() WHERE id=$${params.length} RETURNING *`,
+      params
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Barbearia não encontrada' });
     res.json(result.rows[0]);

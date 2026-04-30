@@ -117,19 +117,19 @@
     dataInput.addEventListener('change', renderHoras);
     renderHoras();
 
-    document.getElementById('formAgendar').addEventListener('submit', e => {
+    document.getElementById('formAgendar').addEventListener('submit', async e => {
       e.preventDefault();
       if (!horaInput.value) { alert('Selecione um horário.'); return; }
       let cliente = DB.getUsers().find(u => u.email === document.getElementById('email').value.trim() && u.barbeariaId === barbearia.id);
       if (!cliente) {
-        cliente = DB.saveUser({ barbeariaId: barbearia.id, nome: document.getElementById('nome').value.trim(), email: document.getElementById('email').value.trim(), telefone: document.getElementById('tel').value.trim(), tipo: 'cliente', senha: DB.hashSenha('123456'), avatar: '' });
+        cliente = await DB.saveUser({ barbeariaId: barbearia.id, nome: document.getElementById('nome').value.trim(), email: document.getElementById('email').value.trim(), telefone: document.getElementById('tel').value.trim(), tipo: 'cliente', senha: DB.hashSenha('123456'), avatar: '' });
       }
       const colaboradorId = document.getElementById('barbeiro').value || null;
       if (DB.verificarConflitoAgendamento(barbearia.id, dataInput.value, horaInput.value, colaboradorId)) {
         alert('Horário já ocupado para este barbeiro. Escolha outro horário ou barbeiro.');
         return;
       }
-      DB.saveAgendamento({ barbeariaId: barbearia.id, clienteId: cliente.id, data: dataInput.value, horario: horaInput.value, servicoId: document.getElementById('servico').value, colaboradorId, status: 'agendado', obs: document.getElementById('obs').value.trim() });
+      await DB.saveAgendamento({ barbeariaId: barbearia.id, clienteId: cliente.id, data: dataInput.value, horario: horaInput.value, servicoId: document.getElementById('servico').value, colaboradorId, status: 'agendado', obs: document.getElementById('obs').value.trim() });
       window.location.href = 'confirmacao.html?tipo=agendamento';
     });
   </script>

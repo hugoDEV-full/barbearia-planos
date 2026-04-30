@@ -23,7 +23,7 @@ async function create(req, res, next) {
     const id = uuidv4();
     const result = await pool.query(
       'INSERT INTO transacoes (id, barbearia_id, tipo, categoria, descricao, valor, data) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
-      [id, barbearia_id || req.user.barbearia_id, tipo, categoria, descricao, valor, data || new Date().toISOString().split('T')[0]]
+      [id, barbearia_id || req.user.barbearia_id, tipo, categoria ?? null, descricao ?? null, valor, data || new Date().toISOString().split('T')[0]]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) { next(err); }
@@ -31,10 +31,20 @@ async function create(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    const { tipo, categoria, descricao, valor, data } = req.body;
+    const fields = ['tipo', 'categoria', 'descricao', 'valor', 'data'];
+    const updates = [];
+    const params = [];
+    for (const f of fields) {
+      if (req.body[f] !== undefined) {
+        updates.push(`${f}=$${params.length + 1}`);
+        params.push(req.body[f]);
+      }
+    }
+    if (updates.length === 0) return res.status(400).json({ error: 'Nenhum campo para atualizar' });
+    params.push(req.params.id);
     const result = await pool.query(
-      'UPDATE transacoes SET tipo=$1, categoria=$2, descricao=$3, valor=$4, data=$5 WHERE id=$6 RETURNING *',
-      [tipo, categoria, descricao, valor, data, req.params.id]
+      `UPDATE transacoes SET ${updates.join(', ')} WHERE id=$${params.length} RETURNING *`,
+      params
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Transação não encontrada' });
     res.json(result.rows[0]);

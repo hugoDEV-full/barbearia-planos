@@ -36,10 +36,20 @@ async function create(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    const { nome, descricao, preco, cortes_inclusos, beneficios, ativo } = req.body;
+    const fields = ['nome', 'descricao', 'preco', 'cortes_inclusos', 'beneficios', 'ativo'];
+    const updates = [];
+    const params = [];
+    for (const f of fields) {
+      if (req.body[f] !== undefined) {
+        updates.push(`${f}=$${params.length + 1}`);
+        params.push(f === 'beneficios' ? JSON.stringify(req.body[f]) : req.body[f]);
+      }
+    }
+    if (updates.length === 0) return res.status(400).json({ error: 'Nenhum campo para atualizar' });
+    params.push(req.params.id);
     const result = await pool.query(
-      'UPDATE planos SET nome=$1, descricao=$2, preco=$3, cortes_inclusos=$4, beneficios=$5, ativo=$6 WHERE id=$7 RETURNING *',
-      [nome, descricao ?? null, preco, cortes_inclusos, JSON.stringify(beneficios || []), ativo, req.params.id]
+      `UPDATE planos SET ${updates.join(', ')} WHERE id=$${params.length} RETURNING *`,
+      params
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Plano não encontrado' });
     res.json(result.rows[0]);

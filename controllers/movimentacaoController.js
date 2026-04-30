@@ -20,7 +20,7 @@ async function create(req, res, next) {
     const id = uuidv4();
     const client = await pool.connect();
     try {
-      await client.query('BEGIN');
+      await client.beginTransaction();
       const movResult = await client.query(
         'INSERT INTO movimentacoes (id, barbearia_id, produto_id, tipo, quantidade, motivo) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
         [id, barbearia_id || req.user.barbearia_id, produto_id, tipo, quantidade, motivo ?? null]
@@ -28,10 +28,10 @@ async function create(req, res, next) {
       // Atualiza estoque
       const delta = tipo === 'entrada' ? quantidade : -quantidade;
       await client.query('UPDATE produtos SET quantidade = quantidade + $1, updated_at = NOW() WHERE id = $2', [delta, produto_id]);
-      await client.query('COMMIT');
+      await client.commit();
       res.status(201).json(movResult.rows[0]);
     } catch (e) {
-      await client.query('ROLLBACK');
+      await client.rollback();
       throw e;
     } finally {
       client.release();

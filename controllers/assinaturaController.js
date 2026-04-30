@@ -53,7 +53,7 @@ async function update(req, res, next) {
     const { status, proxima_cobranca } = req.body;
     const result = await pool.query(
       'UPDATE assinaturas SET status=$1, proxima_cobranca=$2, updated_at=NOW() WHERE id=$3 RETURNING *',
-      [status, proxima_cobranca, req.params.id]
+      [status, proxima_cobranca ?? null, req.params.id]
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Assinatura não encontrada' });
     res.json(result.rows[0]);

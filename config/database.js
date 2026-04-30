@@ -36,9 +36,9 @@ const wrappedPool = {
       mysqlSql = mysqlSql.replace('$' + i, '?');
       i++;
     }
-    // Detecta RETURNING
-    const hasReturning = /\s+RETURNING\s+\*/i.test(mysqlSql);
-    mysqlSql = mysqlSql.replace(/\s+RETURNING\s+\*/i, '');
+    // Detecta RETURNING (qualquer lista de colunas)
+    const hasReturning = /\s+RETURNING\s+/i.test(mysqlSql);
+    mysqlSql = mysqlSql.replace(/\s+RETURNING\s+.*/i, '');
 
     const [result] = await pool.execute(mysqlSql, params);
 
@@ -73,8 +73,8 @@ const wrappedPool = {
           mysqlSql = mysqlSql.replace('$' + i, '?');
           i++;
         }
-        const hasReturning = /\s+RETURNING\s+\*/i.test(mysqlSql);
-        mysqlSql = mysqlSql.replace(/\s+RETURNING\s+\*/i, '');
+        const hasReturning = /\s+RETURNING\s+/i.test(mysqlSql);
+        mysqlSql = mysqlSql.replace(/\s+RETURNING\s+.*/i, '');
 
         const [result] = await conn.execute(mysqlSql, params);
         if (Array.isArray(result)) {
@@ -93,9 +93,9 @@ const wrappedPool = {
         return { rows: [], rowCount: result.affectedRows };
       },
       release: () => conn.release(),
-      beginTransaction: () => conn.beginTransaction(),
-      commit: () => conn.commit(),
-      rollback: () => conn.rollback()
+      beginTransaction: async () => { await conn.query('START TRANSACTION'); },
+      commit: async () => { await conn.query('COMMIT'); },
+      rollback: async () => { await conn.query('ROLLBACK'); }
     };
   }
 };

@@ -49,7 +49,7 @@ async function dashboard(req, res, next) {
     const ultimos7 = await pool.query(
       `SELECT data, COALESCE(SUM(valor),0) as total 
        FROM transacoes WHERE barbearia_id = $1 AND tipo = 'receita' 
-       AND data >= CURRENT_DATE - INTERVAL '6 days'
+       AND data >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
        GROUP BY data ORDER BY data`,
       [barbearia_id]
     );
@@ -147,11 +147,11 @@ async function evolucaoMensal(req, res, next) {
     if (!barbearia_id) return res.status(400).json({ error: 'barbearia_id obrigatório' });
     const result = await pool.query(
       `SELECT 
-        DATE_TRUNC('month', data) as mes,
+        DATE_FORMAT(data, '%Y-%m-01') as mes,
         COALESCE(SUM(CASE WHEN tipo = 'receita' THEN valor ELSE 0 END),0) as receitas,
         COALESCE(SUM(CASE WHEN tipo = 'despesa' THEN valor ELSE 0 END),0) as despesas
        FROM transacoes WHERE barbearia_id = $1
-       GROUP BY DATE_TRUNC('month', data)
+       GROUP BY DATE_FORMAT(data, '%Y-%m-01')
        ORDER BY mes DESC LIMIT 12`,
       [barbearia_id]
     );
