@@ -22,7 +22,7 @@ if (mpToken && !mpToken.startsWith('TEST-00000')) {
   console.log('⚠️ Mercado Pago em modo SIMULAÇÃO (configure MERCADO_PAGO_ACCESS_TOKEN para produção)');
 }
 
-function isSimulacao() { return !mpAtivo || process.env.NODE_ENV !== 'production'; }
+function isSimulacao() { return !mpAtivo; }
 
 function getWebhookUrl(req) {
   if (process.env.MP_WEBHOOK_URL) return process.env.MP_WEBHOOK_URL;
@@ -79,33 +79,15 @@ async function criarPix(req, res, next) {
       });
     }
 
-    let mpResponse;
-    try {
-      const idempotencyKey = uuidv4();
-      const body = {
-        transaction_amount: parseFloat(valor),
-        description: descricao || 'Assinatura Barbearia Panos',
-        payment_method_id: 'pix',
-        payer: { email: email || req.user?.email, first_name: nome || req.user?.nome },
-        external_reference: cobrancaId
-      };
-      mpResponse = await paymentClient.create({ body, requestOptions: { idempotencyKey } });
-    } catch (mpErr) {
-      console.warn('⚠️ Mercado Pago falhou, usando simulação:', mpErr.message);
-      const fake = gerarQrCodeFake(cobrancaId, valor);
-      await pool.query('UPDATE cobrancas SET mp_payment_id = $1 WHERE id = $2', [`SIM-${cobrancaId}`, cobrancaId]);
-      return res.json({
-        cobranca_id: cobrancaId,
-        mp_payment_id: `SIM-${cobrancaId}`,
-        qr_code: fake.qr_code,
-        qr_code_base64: fake.qr_code_base64,
-        ticket_url: fake.ticket_url,
-        status: 'pending',
-        valor: valor,
-        vencimento: vencimento,
-        simulacao: true
-      });
-    }
+    const idempotencyKey = uuidv4();
+    const body = {
+      transaction_amount: parseFloat(valor),
+      description: descricao || 'Assinatura Barbearia Panos',
+      payment_method_id: 'pix',
+      payer: { email: email || req.user?.email, first_name: nome || req.user?.nome },
+      external_reference: cobrancaId
+    };
+    const mpResponse = await paymentClient.create({ body, requestOptions: { idempotencyKey } });
 
     await pool.query('UPDATE cobrancas SET mp_payment_id = $1 WHERE id = $2', [mpResponse.id, cobrancaId]);
 
@@ -309,35 +291,22 @@ async function criarPreferencia(req, res, next) {
       });
     }
 
-    let mpPref;
-    try {
-      const host = `${req.protocol}://${req.get('host')}`;
-      const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
-      const body = {
-        items: [{ id: cobrancaId, title: descricao || 'Assinatura Barbearia Panos', quantity: 1, unit_price: parseFloat(valor), currency_id: 'BRL' }],
-        payer: { email: email || req.user?.email },
-        external_reference: cobrancaId
+    const host = `${req.protocol}://${req.get('host')}`;
+    const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
+    const prefBody = {
+      items: [{ id: cobrancaId, title: descricao || 'Assinatura Barbearia Panos', quantity: 1, unit_price: parseFloat(valor), currency_id: 'BRL' }],
+      payer: { email: email || req.user?.email },
+      external_reference: cobrancaId
+    };
+    if (!isLocal) {
+      prefBody.back_urls = {
+        success: `${host}/confirmacao.html?tipo=plano&status=aprovado`,
+        failure: `${host}/checkout-plano.html?erro=1`,
+        pending: `${host}/checkout-plano.html?pendente=1`
       };
-      if (!isLocal) {
-        body.back_urls = {
-          success: `${host}/confirmacao.html?tipo=plano&status=aprovado`,
-          failure: `${host}/checkout-plano.html?erro=1`,
-          pending: `${host}/checkout-plano.html?pendente=1`
-        };
-        body.auto_return = 'approved';
-      }
-      mpPref = await preferenceClient.create({ body });
-    } catch (mpErr) {
-      console.warn('⚠️ Mercado Pago falhou, usando simulação:', mpErr.message);
-      await pool.query('UPDATE cobrancas SET mp_preference_id = $1 WHERE id = $2', [`SIM-PREF-${cobrancaId}`, cobrancaId]);
-      return res.json({
-        cobranca_id: cobrancaId,
-        preference_id: `SIM-PREF-${cobrancaId}`,
-        init_point: `http://${req.get('host')}/api/pagamentos/simular-cartao/${cobrancaId}`,
-        sandbox_init_point: `http://${req.get('host')}/api/pagamentos/simular-cartao/${cobrancaId}`,
-        simulacao: true
-      });
+      prefBody.auto_return = 'approved';
     }
+    const mpPref = await preferenceClient.create({ body: prefBody });
 
     await pool.query('UPDATE cobrancas SET mp_preference_id = $1 WHERE id = $2', [mpPref.id, cobrancaId]);
 
