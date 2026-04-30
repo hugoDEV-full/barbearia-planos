@@ -64,18 +64,25 @@ const DB = {
   async saveBarbearia(data) {
     const list = this.getBarbearias();
     const idx = list.findIndex(b => b.id === data.id);
-    const item = idx >= 0
-      ? { ...list[idx], ...data, updatedAt: this._now() }
-      : { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
-    if (idx >= 0) list[idx] = item; else list.push(item);
-    this._set('barbearias', list);
-    // Backend
     if (data.id) {
+      const item = { ...list[idx], ...data, updatedAt: this._now() };
+      if (idx >= 0) list[idx] = item; else list.push(item);
+      this._set('barbearias', list);
       await apiFetch(`/barbearias/${data.id}`, { method: 'PUT', body: this._toSnake(data) }).catch(() => {});
+      return item;
     } else {
-      await apiFetch('/barbearias', { method: 'POST', body: this._toSnake(item) }).catch(() => {});
+      const localItem = { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
+      list.push(localItem);
+      this._set('barbearias', list);
+      try {
+        const backendItem = await apiFetch('/barbearias', { method: 'POST', body: this._toSnake(localItem) });
+        const finalItem = this._fromSnake(backendItem);
+        const list2 = this._get('barbearias');
+        const li = list2.findIndex(b => b.id === localItem.id);
+        if (li >= 0) { list2[li] = finalItem; this._set('barbearias', list2); }
+        return finalItem;
+      } catch (e) { return localItem; }
     }
-    return item;
   },
 
   // ─── Usuários ───
@@ -85,15 +92,25 @@ const DB = {
   async saveUser(data) {
     const list = this.getUsers();
     const idx = list.findIndex(u => u.id === data.id);
-    const item = idx >= 0
-      ? { ...list[idx], ...data, updatedAt: this._now() }
-      : { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
-    if (idx >= 0) list[idx] = item; else list.push(item);
-    this._set('users', list);
     if (data.id) {
+      const item = { ...list[idx], ...data, updatedAt: this._now() };
+      if (idx >= 0) list[idx] = item; else list.push(item);
+      this._set('users', list);
       await apiFetch(`/users/${data.id}`, { method: 'PUT', body: this._toSnake(data) }).catch(() => {});
+      return item;
+    } else {
+      const localItem = { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
+      list.push(localItem);
+      this._set('users', list);
+      try {
+        const backendItem = await apiFetch('/auth/register', { method: 'POST', body: this._toSnake(localItem) });
+        const finalItem = this._fromSnake(backendItem.user || backendItem);
+        const list2 = this._get('users');
+        const li = list2.findIndex(u => u.id === localItem.id);
+        if (li >= 0) { list2[li] = finalItem; this._set('users', list2); }
+        return finalItem;
+      } catch (e) { return localItem; }
     }
-    return item;
   },
 
   // ─── Planos ───
@@ -103,15 +120,25 @@ const DB = {
   async savePlano(data) {
     const list = this._get('planos');
     const idx = list.findIndex(p => p.id === data.id);
-    const item = idx >= 0
-      ? { ...list[idx], ...data, updatedAt: this._now() }
-      : { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
-    if (idx >= 0) list[idx] = item; else list.push(item);
-    this._set('planos', list);
-    const path = data.id ? `/planos/${data.id}` : '/planos';
-    const method = data.id ? 'PUT' : 'POST';
-    await apiFetch(path, { method, body: this._toSnake(item) }).catch(() => {});
-    return item;
+    if (data.id) {
+      const item = { ...list[idx], ...data, updatedAt: this._now() };
+      if (idx >= 0) list[idx] = item; else list.push(item);
+      this._set('planos', list);
+      await apiFetch(`/planos/${data.id}`, { method: 'PUT', body: this._toSnake(data) }).catch(() => {});
+      return item;
+    } else {
+      const localItem = { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
+      list.push(localItem);
+      this._set('planos', list);
+      try {
+        const backendItem = await apiFetch('/planos', { method: 'POST', body: this._toSnake(localItem) });
+        const finalItem = this._fromSnake(backendItem);
+        const list2 = this._get('planos');
+        const li = list2.findIndex(p => p.id === localItem.id);
+        if (li >= 0) { list2[li] = finalItem; this._set('planos', list2); }
+        return finalItem;
+      } catch (e) { return localItem; }
+    }
   },
   async deletePlano(id) {
     this._set('planos', this._get('planos').filter(p => p.id !== id));
@@ -128,15 +155,25 @@ const DB = {
   async saveAssinatura(data) {
     const list = this._get('assinaturas');
     const idx = list.findIndex(a => a.id === data.id);
-    const item = idx >= 0
-      ? { ...list[idx], ...data, updatedAt: this._now() }
-      : { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
-    if (idx >= 0) list[idx] = item; else list.push(item);
-    this._set('assinaturas', list);
-    const path = data.id ? `/assinaturas/${data.id}` : '/assinaturas';
-    const method = data.id ? 'PUT' : 'POST';
-    await apiFetch(path, { method, body: this._toSnake(item) }).catch(() => {});
-    return item;
+    if (data.id) {
+      const item = { ...list[idx], ...data, updatedAt: this._now() };
+      if (idx >= 0) list[idx] = item; else list.push(item);
+      this._set('assinaturas', list);
+      await apiFetch(`/assinaturas/${data.id}`, { method: 'PUT', body: this._toSnake(data) }).catch(() => {});
+      return item;
+    } else {
+      const localItem = { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
+      list.push(localItem);
+      this._set('assinaturas', list);
+      try {
+        const backendItem = await apiFetch('/assinaturas', { method: 'POST', body: this._toSnake(localItem) });
+        const finalItem = this._fromSnake(backendItem);
+        const list2 = this._get('assinaturas');
+        const li = list2.findIndex(a => a.id === localItem.id);
+        if (li >= 0) { list2[li] = finalItem; this._set('assinaturas', list2); }
+        return finalItem;
+      } catch (e) { return localItem; }
+    }
   },
   async cancelarAssinatura(id) {
     const list = this._get('assinaturas');
@@ -156,15 +193,25 @@ const DB = {
   async saveCobranca(data) {
     const list = this._get('cobrancas');
     const idx = list.findIndex(c => c.id === data.id);
-    const item = idx >= 0
-      ? { ...list[idx], ...data, updatedAt: this._now() }
-      : { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
-    if (idx >= 0) list[idx] = item; else list.push(item);
-    this._set('cobrancas', list);
-    const path = data.id ? `/cobrancas/${data.id}` : '/cobrancas';
-    const method = data.id ? 'PUT' : 'POST';
-    await apiFetch(path, { method, body: this._toSnake(item) }).catch(() => {});
-    return item;
+    if (data.id) {
+      const item = { ...list[idx], ...data, updatedAt: this._now() };
+      if (idx >= 0) list[idx] = item; else list.push(item);
+      this._set('cobrancas', list);
+      await apiFetch(`/cobrancas/${data.id}`, { method: 'PUT', body: this._toSnake(data) }).catch(() => {});
+      return item;
+    } else {
+      const localItem = { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
+      list.push(localItem);
+      this._set('cobrancas', list);
+      try {
+        const backendItem = await apiFetch('/cobrancas', { method: 'POST', body: this._toSnake(localItem) });
+        const finalItem = this._fromSnake(backendItem);
+        const list2 = this._get('cobrancas');
+        const li = list2.findIndex(c => c.id === localItem.id);
+        if (li >= 0) { list2[li] = finalItem; this._set('cobrancas', list2); }
+        return finalItem;
+      } catch (e) { return localItem; }
+    }
   },
 
   // ─── Cortes Usados ───
@@ -175,11 +222,17 @@ const DB = {
   },
   async usarCorte(data) {
     const list = this._get('cortesUsados');
-    const item = { ...data, id: this._uid(), createdAt: this._now() };
-    list.push(item);
+    const localItem = { ...data, id: this._uid(), createdAt: this._now() };
+    list.push(localItem);
     this._set('cortesUsados', list);
-    await apiFetch('/cortes-usados', { method: 'POST', body: this._toSnake(item) }).catch(() => {});
-    return item;
+    try {
+      const backendItem = await apiFetch('/cortes-usados', { method: 'POST', body: this._toSnake(localItem) });
+      const finalItem = this._fromSnake(backendItem);
+      const list2 = this._get('cortesUsados');
+      const li = list2.findIndex(c => c.id === localItem.id);
+      if (li >= 0) { list2[li] = finalItem; this._set('cortesUsados', list2); }
+      return finalItem;
+    } catch (e) { return localItem; }
   },
 
   // ─── Serviços ───
@@ -189,15 +242,25 @@ const DB = {
   async saveServico(data) {
     const list = this._get('servicos');
     const idx = list.findIndex(s => s.id === data.id);
-    const item = idx >= 0
-      ? { ...list[idx], ...data, updatedAt: this._now() }
-      : { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
-    if (idx >= 0) list[idx] = item; else list.push(item);
-    this._set('servicos', list);
-    const path = data.id ? `/servicos/${data.id}` : '/servicos';
-    const method = data.id ? 'PUT' : 'POST';
-    await apiFetch(path, { method, body: this._toSnake(item) }).catch(() => {});
-    return item;
+    if (data.id) {
+      const item = { ...list[idx], ...data, updatedAt: this._now() };
+      if (idx >= 0) list[idx] = item; else list.push(item);
+      this._set('servicos', list);
+      await apiFetch(`/servicos/${data.id}`, { method: 'PUT', body: this._toSnake(data) }).catch(() => {});
+      return item;
+    } else {
+      const localItem = { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
+      list.push(localItem);
+      this._set('servicos', list);
+      try {
+        const backendItem = await apiFetch('/servicos', { method: 'POST', body: this._toSnake(localItem) });
+        const finalItem = this._fromSnake(backendItem);
+        const list2 = this._get('servicos');
+        const li = list2.findIndex(s => s.id === localItem.id);
+        if (li >= 0) { list2[li] = finalItem; this._set('servicos', list2); }
+        return finalItem;
+      } catch (e) { return localItem; }
+    }
   },
   async deleteServico(id) {
     this._set('servicos', this._get('servicos').filter(s => s.id !== id));
@@ -211,15 +274,25 @@ const DB = {
   async saveColaborador(data) {
     const list = this._get('colaboradores');
     const idx = list.findIndex(c => c.id === data.id);
-    const item = idx >= 0
-      ? { ...list[idx], ...data, updatedAt: this._now() }
-      : { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
-    if (idx >= 0) list[idx] = item; else list.push(item);
-    this._set('colaboradores', list);
-    const path = data.id ? `/colaboradores/${data.id}` : '/colaboradores';
-    const method = data.id ? 'PUT' : 'POST';
-    await apiFetch(path, { method, body: this._toSnake(item) }).catch(() => {});
-    return item;
+    if (data.id) {
+      const item = { ...list[idx], ...data, updatedAt: this._now() };
+      if (idx >= 0) list[idx] = item; else list.push(item);
+      this._set('colaboradores', list);
+      await apiFetch(`/colaboradores/${data.id}`, { method: 'PUT', body: this._toSnake(data) }).catch(() => {});
+      return item;
+    } else {
+      const localItem = { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
+      list.push(localItem);
+      this._set('colaboradores', list);
+      try {
+        const backendItem = await apiFetch('/colaboradores', { method: 'POST', body: this._toSnake(localItem) });
+        const finalItem = this._fromSnake(backendItem);
+        const list2 = this._get('colaboradores');
+        const li = list2.findIndex(c => c.id === localItem.id);
+        if (li >= 0) { list2[li] = finalItem; this._set('colaboradores', list2); }
+        return finalItem;
+      } catch (e) { return localItem; }
+    }
   },
   async deleteColaborador(id) {
     this._set('colaboradores', this._get('colaboradores').filter(c => c.id !== id));
@@ -236,15 +309,25 @@ const DB = {
   async saveAgendamento(data) {
     const list = this._get('agendamentos');
     const idx = list.findIndex(a => a.id === data.id);
-    const item = idx >= 0
-      ? { ...list[idx], ...data, updatedAt: this._now() }
-      : { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
-    if (idx >= 0) list[idx] = item; else list.push(item);
-    this._set('agendamentos', list);
-    const path = data.id ? `/agendamentos/${data.id}` : '/agendamentos';
-    const method = data.id ? 'PUT' : 'POST';
-    await apiFetch(path, { method, body: this._toSnake(item) }).catch(() => {});
-    return item;
+    if (data.id) {
+      const item = { ...list[idx], ...data, updatedAt: this._now() };
+      if (idx >= 0) list[idx] = item; else list.push(item);
+      this._set('agendamentos', list);
+      await apiFetch(`/agendamentos/${data.id}`, { method: 'PUT', body: this._toSnake(data) }).catch(() => {});
+      return item;
+    } else {
+      const localItem = { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
+      list.push(localItem);
+      this._set('agendamentos', list);
+      try {
+        const backendItem = await apiFetch('/agendamentos', { method: 'POST', body: this._toSnake(localItem) });
+        const finalItem = this._fromSnake(backendItem);
+        const list2 = this._get('agendamentos');
+        const li = list2.findIndex(a => a.id === localItem.id);
+        if (li >= 0) { list2[li] = finalItem; this._set('agendamentos', list2); }
+        return finalItem;
+      } catch (e) { return localItem; }
+    }
   },
   async deleteAgendamento(id) {
     this._set('agendamentos', this._get('agendamentos').filter(a => a.id !== id));
@@ -258,15 +341,25 @@ const DB = {
   async saveProduto(data) {
     const list = this._get('produtos');
     const idx = list.findIndex(p => p.id === data.id);
-    const item = idx >= 0
-      ? { ...list[idx], ...data, updatedAt: this._now() }
-      : { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
-    if (idx >= 0) list[idx] = item; else list.push(item);
-    this._set('produtos', list);
-    const path = data.id ? `/produtos/${data.id}` : '/produtos';
-    const method = data.id ? 'PUT' : 'POST';
-    await apiFetch(path, { method, body: this._toSnake(item) }).catch(() => {});
-    return item;
+    if (data.id) {
+      const item = { ...list[idx], ...data, updatedAt: this._now() };
+      if (idx >= 0) list[idx] = item; else list.push(item);
+      this._set('produtos', list);
+      await apiFetch(`/produtos/${data.id}`, { method: 'PUT', body: this._toSnake(data) }).catch(() => {});
+      return item;
+    } else {
+      const localItem = { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
+      list.push(localItem);
+      this._set('produtos', list);
+      try {
+        const backendItem = await apiFetch('/produtos', { method: 'POST', body: this._toSnake(localItem) });
+        const finalItem = this._fromSnake(backendItem);
+        const list2 = this._get('produtos');
+        const li = list2.findIndex(p => p.id === localItem.id);
+        if (li >= 0) { list2[li] = finalItem; this._set('produtos', list2); }
+        return finalItem;
+      } catch (e) { return localItem; }
+    }
   },
   async deleteProduto(id) {
     this._set('produtos', this._get('produtos').filter(p => p.id !== id));
@@ -277,8 +370,8 @@ const DB = {
   },
   async addMovimentacao(data) {
     const list = this._get('movimentacoes');
-    const item = { ...data, id: this._uid(), createdAt: this._now() };
-    list.push(item);
+    const localItem = { ...data, id: this._uid(), createdAt: this._now() };
+    list.push(localItem);
     this._set('movimentacoes', list);
     // Atualiza quantidade do produto localmente
     const produtos = this._get('produtos');
@@ -288,8 +381,14 @@ const DB = {
       produtos[pIdx].updatedAt = this._now();
       this._set('produtos', produtos);
     }
-    await apiFetch('/movimentacoes', { method: 'POST', body: this._toSnake(item) }).catch(() => {});
-    return item;
+    try {
+      const backendItem = await apiFetch('/movimentacoes', { method: 'POST', body: this._toSnake(localItem) });
+      const finalItem = this._fromSnake(backendItem);
+      const list2 = this._get('movimentacoes');
+      const li = list2.findIndex(m => m.id === localItem.id);
+      if (li >= 0) { list2[li] = finalItem; this._set('movimentacoes', list2); }
+      return finalItem;
+    } catch (e) { return localItem; }
   },
 
   // ─── Finanças ───
@@ -299,15 +398,25 @@ const DB = {
   async saveTransacao(data) {
     const list = this._get('transacoes');
     const idx = list.findIndex(t => t.id === data.id);
-    const item = idx >= 0
-      ? { ...list[idx], ...data, updatedAt: this._now() }
-      : { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
-    if (idx >= 0) list[idx] = item; else list.push(item);
-    this._set('transacoes', list);
-    const path = data.id ? `/transacoes/${data.id}` : '/transacoes';
-    const method = data.id ? 'PUT' : 'POST';
-    await apiFetch(path, { method, body: this._toSnake(item) }).catch(() => {});
-    return item;
+    if (data.id) {
+      const item = { ...list[idx], ...data, updatedAt: this._now() };
+      if (idx >= 0) list[idx] = item; else list.push(item);
+      this._set('transacoes', list);
+      await apiFetch(`/transacoes/${data.id}`, { method: 'PUT', body: this._toSnake(data) }).catch(() => {});
+      return item;
+    } else {
+      const localItem = { ...data, id: this._uid(), createdAt: this._now(), updatedAt: this._now() };
+      list.push(localItem);
+      this._set('transacoes', list);
+      try {
+        const backendItem = await apiFetch('/transacoes', { method: 'POST', body: this._toSnake(localItem) });
+        const finalItem = this._fromSnake(backendItem);
+        const list2 = this._get('transacoes');
+        const li = list2.findIndex(t => t.id === localItem.id);
+        if (li >= 0) { list2[li] = finalItem; this._set('transacoes', list2); }
+        return finalItem;
+      } catch (e) { return localItem; }
+    }
   },
   async deleteTransacao(id) {
     this._set('transacoes', this._get('transacoes').filter(t => t.id !== id));
